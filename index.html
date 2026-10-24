@@ -12,7 +12,7 @@ try { const th = localStorage.getItem("vpb.theme"); if (th === "light" || th ===
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#F6F4EF;
@@ -23,7 +23,8 @@ try { const th = localStorage.getItem("vpb.theme"); if (th === "light" || th ===
   --text:#1B1A18;
   --muted:#6E6A62;
   --faint:#9C978D;
-  --accent:#C9831F;
+  --accent:#D52B1E;
+  --accent-ink:#FFFFFF;
   --on-text:#FFFFFF;
   --seg-style:#7A4BD6;
   --seg-who:#0B7F93;
@@ -33,14 +34,14 @@ try { const th = localStorage.getItem("vpb.theme"); if (th === "light" || th ===
   --shadow:0 1px 2px rgba(27,26,24,.04),0 8px 24px -12px rgba(27,26,24,.08);
   --radius:14px;
   --sans:'Inter','Noto Sans SC',-apple-system,'PingFang SC','Microsoft YaHei',system-ui,sans-serif;
-  --serif:'Instrument Serif','Noto Serif SC',Georgia,serif;
+  --display:'Outfit','Noto Sans SC',-apple-system,'PingFang SC',system-ui,sans-serif;
   --mono:'JetBrains Mono',ui-monospace,'SFMono-Regular',Menlo,monospace;
   color-scheme:light;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --bg:#0D0E11;--surface:#15171B;--surface-2:#1A1D22;--line:#262931;--line-strong:#343844;
-    --text:#ECEAE5;--muted:#9B9890;--faint:#6E6B65;--accent:#E8A33D;--on-text:#0D0E11;
+    --text:#ECEAE5;--muted:#9B9890;--faint:#6E6B65;--accent:#F0584C;--accent-ink:#FFFFFF;--on-text:#0D0E11;
     --seg-style:#B89CFF;--seg-who:#6CD0E0;--seg-look:#F0B45E;--seg-pose:#7FD6A0;--seg-rules:#FF8DA6;
     --shadow:0 1px 2px rgba(0,0,0,.3),0 12px 32px -16px rgba(0,0,0,.6);
     color-scheme:dark;
@@ -48,7 +49,7 @@ try { const th = localStorage.getItem("vpb.theme"); if (th === "light" || th ===
 }
 :root[data-theme="dark"]{
   --bg:#0D0E11;--surface:#15171B;--surface-2:#1A1D22;--line:#262931;--line-strong:#343844;
-  --text:#ECEAE5;--muted:#9B9890;--faint:#6E6B65;--accent:#E8A33D;--on-text:#0D0E11;
+  --text:#ECEAE5;--muted:#9B9890;--faint:#6E6B65;--accent:#F0584C;--accent-ink:#FFFFFF;--on-text:#0D0E11;
   --seg-style:#B89CFF;--seg-who:#6CD0E0;--seg-look:#F0B45E;--seg-pose:#7FD6A0;--seg-rules:#FF8DA6;
   --shadow:0 1px 2px rgba(0,0,0,.3),0 12px 32px -16px rgba(0,0,0,.6);
   color-scheme:dark;
@@ -108,11 +109,11 @@ a{color:inherit}
 .eyebrow{font-size:12px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:18px;display:flex;align-items:center;gap:10px}
 .eyebrow::before{content:"";width:22px;height:1px;background:var(--line-strong)}
 h1{
-  font-family:var(--serif);font-weight:400;font-size:clamp(40px,7vw,76px);
-  line-height:1.02;letter-spacing:-.02em;margin-bottom:20px;max-width:14ch;
+  font-family:var(--display);font-weight:600;font-size:clamp(40px,7vw,72px);
+  line-height:1.02;letter-spacing:-.035em;margin-bottom:20px;max-width:15ch;
 }
-:lang(zh-CN) h1{font-weight:500;letter-spacing:0;line-height:1.15;max-width:none}
-h1 em{font-style:italic;color:var(--accent)}
+[lang=zh-CN] h1{font-weight:700;letter-spacing:0;line-height:1.15;max-width:none}
+h1 em{font-style:normal;color:var(--accent)}
 .lede{color:var(--muted);max-width:600px;font-size:16.5px;line-height:1.65}
 .pipeline{
   list-style:none;display:grid;grid-template-columns:repeat(7,1fr);margin-top:44px;
@@ -137,7 +138,7 @@ h1 em{font-style:italic;color:var(--accent)}
 }
 .btn:hover{border-color:var(--text)}
 .btn:active{transform:translateY(1px)}
-.btn.primary{background:var(--text);color:var(--on-text);border-color:var(--text)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .btn.primary:hover{opacity:.88}
 .btn svg{width:15px;height:15px}
 .toolbar .primary{margin-left:auto}
@@ -165,8 +166,8 @@ details.tips[open] summary::after{transform:rotate(45deg)}
 /* ---------- section heads ---------- */
 .section-head{display:flex;align-items:baseline;gap:14px;margin:0 0 18px;scroll-margin-top:84px}
 .section-head .no{font-family:var(--mono);font-size:12px;color:var(--faint)}
-.section-head h2{font-family:var(--serif);font-weight:400;font-size:32px;letter-spacing:-.01em;line-height:1.1}
-:lang(zh-CN) .section-head h2{font-weight:500;font-size:26px}
+.section-head h2{font-family:var(--display);font-weight:600;font-size:30px;letter-spacing:-.02em;line-height:1.1}
+[lang=zh-CN] .section-head h2{font-size:26px}
 .section-head p{margin-left:auto;font-size:13px;color:var(--muted);text-align:right}
 @media(max-width:640px){.section-head{flex-wrap:wrap}.section-head p{margin-left:0;text-align:left;flex-basis:100%}}
 
@@ -310,15 +311,15 @@ td.dim{color:var(--muted);white-space:nowrap}
   padding:22px 24px;margin-bottom:22px;
 }
 .quick-head{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:16px}
-.quick-head h2{font-family:var(--serif);font-weight:400;font-size:26px;line-height:1.15}
-:lang(zh-CN) .quick-head h2{font-weight:500;font-size:22px}
+.quick-head h2{font-family:var(--display);font-weight:600;font-size:24px;letter-spacing:-.02em;line-height:1.15}
+[lang=zh-CN] .quick-head h2{font-size:22px}
 .quick-head p{font-size:13px;color:var(--muted);margin-top:2px}
 .quick-steps{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 @media(max-width:820px){.quick-steps{grid-template-columns:1fr}}
 .quick-steps li{display:flex;gap:12px;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2)}
 .quick-steps .n{
   flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;
-  font-family:var(--mono);font-size:12px;background:var(--text);color:var(--on-text);
+  font-family:var(--mono);font-size:12px;background:var(--accent);color:var(--accent-ink);
 }
 .quick-steps strong{display:block;font-size:14px;font-weight:600;margin-bottom:2px}
 .quick-steps p{font-size:12.5px;color:var(--muted);line-height:1.5}
@@ -345,7 +346,8 @@ td.dim{color:var(--muted);white-space:nowrap}
 .btn.small{padding:6px 13px;font-size:12.5px}
 .link-btn{border:none;background:none;cursor:pointer;font-size:12px;color:var(--faint);text-decoration:underline;text-underline-offset:3px}
 .link-btn:hover{color:var(--text)}
-@media(max-width:640px){.progress{top:64px;padding:10px 12px;gap:8px 12px}.pg-next .hide-sm{display:none}}
+@media(max-width:900px){.progress{position:static}}
+@media(max-width:640px){.progress{padding:10px 12px;gap:8px 12px}.pg-next .hide-sm{display:none}}
 
 .head-actions{display:flex;gap:6px;align-items:center;flex:none}
 .done-btn{
@@ -390,8 +392,8 @@ td.dim{color:var(--muted);white-space:nowrap}
 .tour-meta span{font-family:var(--mono);font-size:11.5px;color:var(--faint)}
 .tour-x{border:none;background:none;cursor:pointer;font-size:20px;line-height:1;color:var(--muted);padding:2px 6px;border-radius:6px}
 .tour-x:hover{color:var(--text)}
-.tour-card h3{font-family:var(--serif);font-weight:400;font-size:24px;line-height:1.2;margin-bottom:6px}
-:lang(zh-CN) .tour-card h3{font-weight:500;font-size:19px}
+.tour-card h3{font-family:var(--display);font-weight:600;font-size:21px;letter-spacing:-.01em;line-height:1.25;margin-bottom:6px}
+[lang=zh-CN] .tour-card h3{font-size:19px}
 .tour-card p{font-size:14px;color:var(--muted);line-height:1.6}
 .tour-card p b{color:var(--text);font-weight:600}
 .tour-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:16px}
@@ -401,6 +403,43 @@ td.dim{color:var(--muted);white-space:nowrap}
 .tour-nav{display:flex;gap:6px}
 .tour-nav .btn{padding:7px 14px;font-size:13px}
 .tour-nav .btn:disabled{opacity:.35;cursor:default}
+
+/* ---------- projects / pickers ---------- */
+.projectbar{
+  display:flex;align-items:flex-end;gap:10px 14px;flex-wrap:wrap;
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  padding:14px 16px;margin-bottom:12px;
+}
+.pickers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 14px;flex:1 1 100%}
+@media(max-width:720px){.pickers{grid-template-columns:1fr}}
+.proj-actions{display:flex;gap:6px;flex-wrap:wrap}
+.proj-actions .btn{padding:8px 12px;font-size:12.5px}
+.btn.danger:hover{border-color:var(--accent);color:var(--accent)}
+.field select.strong{font-weight:600}
+.tool-tip{
+  display:flex;gap:10px;font-size:13px;color:var(--muted);padding:12px 16px;margin-bottom:22px;
+  background:color-mix(in srgb,var(--accent) 6%,var(--surface));border:1px solid color-mix(in srgb,var(--accent) 25%,var(--line));
+  border-radius:12px;line-height:1.55;
+}
+.tool-tip b{color:var(--text);font-weight:600}
+.tool-tip svg{width:16px;height:16px;flex:none;margin-top:2px;color:var(--accent)}
+
+.shot-form .tag{display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+.icon-btn{
+  width:28px;height:28px;display:grid;place-items:center;cursor:pointer;border-radius:8px;
+  border:1px solid var(--line);background:var(--surface);color:var(--muted);transition:color .2s,border-color .2s;
+}
+.icon-btn:hover:not(:disabled){color:var(--accent);border-color:var(--accent)}
+.icon-btn:disabled{opacity:.35;cursor:default}
+.icon-btn svg{width:14px;height:14px}
+@media(max-width:560px){.shot-form .tag{flex-direction:row;justify-content:space-between;align-items:center}}
+.add-shot{
+  display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px;
+  font-size:12.5px;color:var(--muted);
+}
+.add-shot .btn{border-style:dashed}
+.neg{margin-top:10px}
+.neg .out{font-size:12px}
 
 footer{border-top:1px solid var(--line);padding:28px 0 40px;font-size:12.5px;color:var(--muted)}
 footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
@@ -465,8 +504,21 @@ footer a:hover{border-color:var(--text)}
     </ol>
   </section>
 
+  <div class="projectbar" id="projectBar">
+    <div class="pickers">
+      <div class="field"><label for="projSel" data-i18n="project"></label><select id="projSel" class="strong"></select></div>
+      <div class="field"><label for="exSel" data-i18n="examples"></label><select id="exSel"></select></div>
+      <div class="field"><label for="toolSel" data-i18n="tool"></label><select id="toolSel"></select></div>
+    </div>
+    <div class="proj-actions">
+      <button type="button" class="btn" id="newProj" data-i18n="newProj"></button>
+      <button type="button" class="btn" id="dupProj" data-i18n="dupProj"></button>
+      <button type="button" class="btn" id="renameProj" data-i18n="renameProj"></button>
+      <button type="button" class="btn danger" id="delProj" data-i18n="delProj"></button>
+    </div>
+  </div>
+
   <div class="toolbar">
-    <button type="button" class="btn" id="exampleBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M4 9h16M9 9v11"/></svg><span data-i18n="loadEx"></span></button>
     <button type="button" class="btn" id="resetBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg><span data-i18n="reset"></span></button>
     <button type="button" class="btn primary" id="exportBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span data-i18n="exportAll"></span></button>
   </div>
@@ -521,6 +573,10 @@ footer a:hover{border-color:var(--text)}
     <div class="group-title" data-i18n="secShots"></div>
     <p class="group-hint" data-i18n-html="shotsHint"></p>
     <div class="shots" id="shotForms"></div>
+    <div class="add-shot">
+      <span id="shotCount"></span>
+      <button type="button" class="btn" id="addShot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span data-i18n="addShot"></span></button>
+    </div>
   </form>
 
   <div class="section-head">
@@ -529,6 +585,7 @@ footer a:hover{border-color:var(--text)}
     <p data-i18n="outSub"></p>
   </div>
   <div class="progress" id="progress"></div>
+  <div class="tool-tip" id="toolTip"></div>
   <div id="outputs"></div>
 
 </main>
@@ -557,7 +614,7 @@ footer a:hover{border-color:var(--text)}
 
 <script>
 /* ================= 数据 ================= */
-const SHOT_COUNT = 5;
+const MAX_SHOTS = 12;
 
 const STYLES = {
   clay: {
@@ -597,9 +654,20 @@ const STYLES = {
   }
 };
 
-const SIZES = ["Wide","Medium","Close-up","Over-the-shoulder","Medium close-up"];
-const MOVES = ["Static","Slow push-in"];
 const CLOSE_SIZES = ["Close-up","Medium close-up"];
+
+/* 不同工具的写法差异 */
+const TOOLS = {
+  general:    {name:"Any tool"},
+  magnific:   {name:"Magnific"},
+  kling:      {name:"Kling", concise:true, negative:true},
+  runway:     {name:"Runway", concise:true},
+  higgsfield: {name:"Higgsfield", concise:true},
+  veo:        {name:"Veo", audio:true},
+  grok:       {name:"Grok", chat:true, audio:true},
+  chatgpt:    {name:"ChatGPT", chat:true},
+  gemini:     {name:"Gemini", chat:true, audio:true}
+};
 
 const OPTS = {
   pronoun: [
@@ -616,8 +684,8 @@ const OPTS = {
     {v:"custom", zh:"自定义(保留我写的)", en:"Custom (keep my text)"}
   ],
   ratio: [
-    {v:"16:9", zh:"16:9 横屏", en:"16:9 landscape"},
-    {v:"9:16", zh:"9:16 竖屏", en:"9:16 vertical"},
+    {v:"16:9", zh:"16:9 横屏(电脑、投影)", en:"16:9 landscape (laptop, slides)"},
+    {v:"9:16", zh:"9:16 竖屏(手机)", en:"9:16 vertical (phone)"},
     {v:"1:1", zh:"1:1 方形", en:"1:1 square"}
   ],
   light: [
@@ -634,147 +702,186 @@ const OPTS = {
   move: [
     {v:"Static", zh:"固定 Static", en:"Static"},
     {v:"Slow push-in", zh:"缓慢推近 Slow push-in", en:"Slow push-in"}
+  ],
+  tool: [
+    {v:"general", zh:"通用(任何工具)", en:"Any tool (general)"},
+    {v:"magnific", zh:"Magnific(原 Freepik)", en:"Magnific (formerly Freepik)"},
+    {v:"grok", zh:"Grok", en:"Grok"},
+    {v:"chatgpt", zh:"ChatGPT", en:"ChatGPT"},
+    {v:"gemini", zh:"Gemini", en:"Gemini"},
+    {v:"kling", zh:"Kling 可灵", en:"Kling"},
+    {v:"veo", zh:"Veo", en:"Veo"},
+    {v:"runway", zh:"Runway", en:"Runway"},
+    {v:"higgsfield", zh:"Higgsfield", en:"Higgsfield"}
   ]
 };
 
-const EXAMPLE = {
-  name:"Ethan Lim", pronoun:"he", role:"Transaction Monitoring Analyst at a modern bank",
-  age:"late 20s", ethnicity:"Southeast Asian",
-  hair:"thick wavy black hair", glasses:"black rectangular glasses",
-  outfit:"light blue shirt with rolled sleeves, dark gray trousers",
-  badge:"white lanyard with a blank card", shoes:"brown loafers",
-  personality:"calm, focused, careful",
-  stylePreset:"clay", styleText:STYLES.clay.text, styleLock:STYLES.clay.lock,
-  location:"office",
-  setting:"cozy modern bank office, light wood desk, two monitors, desk lamp, pastel sticky notes, large window",
-  light:"left", ratio:"16:9",
-  s0_size:"Wide", s0_move:"Slow push-in", s0_action:"starts his day at the desk",
-  s0_vo:"Every morning, a new queue of alerts is waiting.",
-  s1_size:"Over-the-shoulder", s1_move:"Static", s1_action:"leans in and studies a row of equal-height bars on his monitor",
-  s1_vo:"Most look routine. But this one shows a row of transfers, all just under the threshold.",
-  s2_size:"Close-up", s2_move:"Static", s2_action:"frowns and taps his chin",
-  s2_vo:"Ethan digs into the account history. The pattern doesn't add up.",
-  s3_size:"Over-the-shoulder", s3_move:"Static", s3_action:"clicks the mouse once, and the orange button on his monitor turns into a check mark",
-  s3_vo:"He documents his findings and escalates the case.",
-  s4_size:"Medium close-up", s4_move:"Static", s4_action:"leans back, sips his coffee and smiles",
-  s4_vo:"Another day of keeping the bank, and its customers, safe."
-};
+const shot = (size, move, action, vo) => ({size, move, action, vo});
+const withStyle = (key, rest) => ({...rest, stylePreset:key, styleText:STYLES[key].text, styleLock:STYLES[key].lock});
+
+/* 示例:全部是虚构人物和数据 */
+const EXAMPLES = [
+  {
+    id:"ethan", en:"Ethan · Transaction monitoring analyst (clay 3D, 5 shots)", zh:"Ethan · 交易监控分析师(黏土 3D,5 镜)",
+    data: withStyle("clay", {
+      name:"Ethan Lim", pronoun:"he", role:"Transaction Monitoring Analyst at a modern bank",
+      age:"late 20s", ethnicity:"Southeast Asian",
+      hair:"thick wavy black hair", glasses:"black rectangular glasses",
+      outfit:"light blue shirt with rolled sleeves, dark gray trousers",
+      badge:"white lanyard with a blank card", shoes:"brown loafers",
+      personality:"calm, focused, careful",
+      location:"office",
+      setting:"cozy modern bank office, light wood desk, two monitors, desk lamp, pastel sticky notes, large window",
+      light:"left", ratio:"16:9",
+      shots:[
+        shot("Wide","Slow push-in","starts his day at the desk","Every morning, a new queue of alerts is waiting."),
+        shot("Over-the-shoulder","Static","leans in and studies a row of equal-height bars on his monitor","Most look routine. But this one shows a row of transfers, all just under the threshold."),
+        shot("Close-up","Static","frowns and taps his chin","Ethan digs into the account history. The pattern doesn't add up."),
+        shot("Over-the-shoulder","Static","clicks the mouse once, and the orange button on his monitor turns into a check mark","He documents his findings and escalates the case."),
+        shot("Medium close-up","Static","leans back, sips his coffee and smiles","Another day of keeping the bank, and its customers, safe.")
+      ]
+    })
+  },
+  {
+    id:"aisha", en:"Aisha · Helping a senior with mobile banking (Pixar-like 3D, 6 shots)", zh:"Aisha · 教长辈用手机银行(皮克斯风,6 镜)",
+    data: withStyle("pixar", {
+      name:"Aisha Rahman", pronoun:"she", role:"customer service officer at a friendly bank branch",
+      age:"early 30s", ethnicity:"Malay",
+      hair:"soft dusty-pink hijab, neatly wrapped", glasses:"thin gold round glasses",
+      outfit:"white blouse, navy blazer, navy trousers",
+      badge:"red lanyard with a blank name card", shoes:"black flat shoes",
+      personality:"warm, patient, cheerful",
+      location:"bank branch",
+      setting:"bright modern bank branch, low wooden service counter, potted plants, soft seating area, large glass windows",
+      light:"right", ratio:"16:9",
+      shots:[
+        shot("Wide","Slow push-in","greets an elderly man at the counter with a warm smile","At the branch, Aisha's first customer today is Uncle Lim."),
+        shot("Medium","Static","sits beside him and points to his phone","He wants to bank on his phone, but isn't sure where to begin."),
+        shot("Close-up","Static","nods and smiles encouragingly","Aisha takes it one step at a time."),
+        shot("Over-the-shoulder","Static","watches him type slowly on his phone","She reminds him: never share your PIN or one-time password with anyone."),
+        shot("Medium close-up","Static","gives a cheerful thumbs-up","Now Uncle Lim can check his balance anytime."),
+        shot("Wide","Slow push-in","waves goodbye as he leaves","Helping customers feel confident. That's what we're here for.")
+      ]
+    })
+  },
+  {
+    id:"meiling", en:"Mei Ling · Spotting a scam call (flat illustration, 9:16, 6 shots)", zh:"Mei Ling · 识破诈骗电话(扁平插画,竖屏,6 镜)",
+    data: withStyle("flat", {
+      name:"Mei Ling", pronoun:"she", role:"retired school teacher",
+      age:"mid 60s", ethnicity:"Chinese Malaysian",
+      hair:"short silver-gray bob", glasses:"red reading glasses on a beaded chain",
+      outfit:"floral blouse, light cardigan, beige trousers",
+      badge:"", shoes:"comfortable house slippers",
+      personality:"kind, sharp, curious",
+      location:"living room",
+      setting:"cozy living room, rattan sofa, potted plants, small side table with a teacup, window with sheer curtains",
+      light:"left", ratio:"9:16",
+      shots:[
+        shot("Medium","Static","sips her tea as her phone starts ringing","Mei Ling gets a call from someone who says he's from her bank."),
+        shot("Close-up","Static","listens to the phone with a worried frown","He says her account is frozen, and asks for her one-time password."),
+        shot("Medium close-up","Slow push-in","pauses and narrows her eyes thoughtfully","Wait. A real bank will never ask for your OTP."),
+        shot("Medium","Static","calmly puts the phone down","So she hangs up."),
+        shot("Medium","Static","holds her bank card and dials a number on her phone","And calls the official number on the back of her card to check."),
+        shot("Medium close-up","Static","smiles with relief and gives a small nod","Pause. Check. Never share your OTP.")
+      ]
+    })
+  },
+  {
+    id:"priya", en:"Priya · First day at work (anime, 9:16, 4 shots)", zh:"Priya · 上班第一天(日系动漫,竖屏,4 镜)",
+    data: withStyle("anime", {
+      name:"Priya Nair", pronoun:"she", role:"new graduate joining a bank's operations team",
+      age:"early 20s", ethnicity:"Indian Malaysian",
+      hair:"long black hair in a low ponytail", glasses:"small gold hoop earrings",
+      outfit:"pastel yellow blouse, gray pencil skirt",
+      badge:"new white staff lanyard with a blank card", shoes:"black flats",
+      personality:"a little nervous, excited, eager to learn",
+      location:"office",
+      setting:"bright open-plan office, rows of white desks, green plants, glass meeting rooms, city view",
+      light:"right", ratio:"9:16",
+      shots:[
+        shot("Wide","Slow push-in","steps out of the lift and looks around the office","Day one. New badge, new team, a hundred new names."),
+        shot("Medium","Static","shakes hands with a friendly teammate","Her buddy, Kevin, shows her where everything is."),
+        shot("Over-the-shoulder","Static","takes notes in a notebook during training","Training starts with the basics: always protect customer data."),
+        shot("Medium close-up","Static","smiles and takes a deep breath","It's a lot to learn. But she's not doing it alone.")
+      ]
+    })
+  },
+  {
+    id:"jason", en:"Jason · Clean desk before going home (realistic, 5 shots)", zh:"Jason · 下班前清理桌面(写实,5 镜)",
+    data: withStyle("real", {
+      name:"Jason Tan", pronoun:"he", role:"relationship manager at a bank",
+      age:"mid 30s", ethnicity:"Chinese Malaysian",
+      hair:"short neat black hair with a side part", glasses:"black smartwatch",
+      outfit:"crisp white shirt, dark navy tie, charcoal trousers",
+      badge:"dark blue lanyard with a blank card", shoes:"black leather oxford shoes",
+      personality:"busy, friendly, a little forgetful",
+      location:"office",
+      setting:"modern bank office floor, glass partitions, tidy desks, a laptop, warm evening light",
+      light:"left", ratio:"16:9",
+      shots:[
+        shot("Wide","Static","stands up from his desk, ready to leave for the day","Six p.m. Jason is ready to head home."),
+        shot("Medium close-up","Static","pauses and looks back at his desk","But wait. What's still on his desk?"),
+        shot("Over-the-shoulder","Slow push-in","looks down at a stack of papers next to an open laptop","Customer files. An unlocked laptop."),
+        shot("Medium","Static","puts the papers into a drawer and locks it","Files go in the locked drawer. Screen locked. Desk clear."),
+        shot("Medium close-up","Static","smiles and switches off the desk lamp","A clean desk keeps customer information safe.")
+      ]
+    })
+  },
+  {
+    id:"weijie", en:"Wei Jie · Festive greeting (clay 3D, 1:1, 3 shots)", zh:"Wei Jie · 节日祝福(黏土 3D,方形,3 镜)",
+    data: withStyle("clay", {
+      name:"Wei Jie", pronoun:"he", role:"team lead in a bank's operations team",
+      age:"early 40s", ethnicity:"Chinese Malaysian",
+      hair:"short spiky black hair", glasses:"thin silver round glasses",
+      outfit:"bright red polo shirt, khaki trousers",
+      badge:"white lanyard with a blank card", shoes:"white sneakers",
+      personality:"jolly, warm, a bit goofy",
+      location:"office corner",
+      setting:"festive office corner with red lanterns, a bowl of mandarin oranges, gold paper cut-outs, a small potted kumquat plant",
+      light:"right", ratio:"1:1",
+      shots:[
+        shot("Medium","Static","hangs a red lantern on a hook and steps back to admire it","Happy Chinese New Year from all of us!"),
+        shot("Close-up","Static","holds up two mandarin oranges and grins","Wishing you good health and good luck..."),
+        shot("Wide","Slow push-in","waves happily with both hands","...and a wonderful year ahead!")
+      ]
+    })
+  }
+];
 
 function blankState() {
-  const s = {
+  return {
     name:"", pronoun:"he", role:"", age:"", ethnicity:"",
     hair:"", glasses:"", outfit:"", badge:"", shoes:"", personality:"",
     stylePreset:"clay", styleText:STYLES.clay.text, styleLock:STYLES.clay.lock,
-    location:"", setting:"", light:"left", ratio:"16:9"
+    location:"", setting:"", light:"left", ratio:"16:9",
+    shots:[shot("Wide","Static","",""), shot("Medium","Static","",""), shot("Close-up","Static","","")]
   };
-  for (let i = 0; i < SHOT_COUNT; i++) {
-    s[`s${i}_size`] = i === 0 ? "Wide" : "Medium";
-    s[`s${i}_move`] = "Static";
-    s[`s${i}_action`] = "";
-    s[`s${i}_vo`] = "";
-  }
-  return s;
 }
+function clone(x) { return JSON.parse(JSON.stringify(x)); }
 
 /* ================= 界面文字 ================= */
 const I18N = {
-  zh: {
-    title:"AI 视频提示词生成器",
-    brand:"视频提示词生成器",
-    back:"姊妹工具:图片提示词实验室 ↗",
-    eyebrow:"AI 短视频工作流",
-    h1:'每一个镜头的<em>提示词</em>',
-    morning:"日间", night:"夜间",
-    formTitle:"角色与分镜", formSub:"填一次,下面所有提示词实时更新",
-    sub:"填一次角色和分镜,自动生成做短视频每一步要用的英文提示词:角色主图、空背景、每个镜头的静帧和图生视频提示词,外加分镜脚本表。",
-    p1:"故事", p2:"角色设定", p3:"风格 + 主图", p4:"分镜脚本", p5:"静帧", p6:"图生视频", p7:"剪映剪辑",
-    pipeNote:"提示词一律是<b>英文</b>,复制到 Magnific / Grok / Kling / Veo 等工具直接用",
-    loadEx:"载入示例", reset:"重置", exportAll:"导出全部提示词",
-    privacy:"只用虚构数据:不要填真实客户姓名、账号、金额,也不要上传系统截图。",
-    tipsTitle:"出片小贴士",
-    tips:[
-      "画面比例要在<b>工具的设置里</b>选好,不能只写在提示词里。",
-      "<b>上传的图决定输出的形状</b>:主图、背景、静帧都用同一个比例生成。",
-      "先把<b>静帧</b>确认满意,再去做视频。静帧不对,视频只会更糟。",
-      "<b>换机位在静帧里做</b>,不要指望视频去转镜头角度。",
-      "「保持一切完全不变,只改一两处」比「给我一个新角度」稳得多。",
-      "特写容易变写实:风格要再强调一遍(本页的特写提示词已自动加上)。",
-      "角色很爱看镜头:每段视频提示词结尾都写了 never looks at the camera。",
-      "动作越简单越好:「点按钮」常常变成用手指戳屏幕,改成 clicks the mouse。",
-      "视频生成约 <b>6 秒</b>,剪辑时修到 <b>4–5 秒</b>。",
-      "重试时<b>一次只改一处</b>,才知道是哪句起作用。",
-      "最后在剪映里配旁白、字幕和音乐:旁白就是分镜脚本里的那一列。",
-      "只用虚构数据:不放真实客户名字、数字或截图。"
-    ],
-    secChar:"角色设定", secLook:"固定造型", secStyle:"画风与比例", secSet:"场景", secShots:"5 个镜头",
-    name:"角色名字", pronoun:"代词", age:"年龄段(英文)", role:"职业 / 身份(英文)", eth:"族裔 / 长相(英文)", personality:"性格(英文)",
-    hair:"发型", glasses:"眼镜 / 配饰", badge:"工牌 / 挂绳", outfit:"服装", shoes:"鞋子",
-    stylePreset:"画风预设", styleHint:"换预设会覆盖下面两栏;选「自定义」则保留你写的。",
-    ratio:"画面比例", ratioHint:"同时也要在出图 / 出视频工具的设置里选同一个比例。",
-    styleText:"画风描述(可编辑)", styleLock:"风格锁定要点(可编辑)",
-    lockHint:"会被写进每个静帧和视频提示词,防止角色越画越写实。",
-    location:"地点简称", light:"窗户 / 光线方向", setting:"场景描述(英文)",
-    size:"景别", move:"镜头运动", action:"一个主要动作(动词开头,英文)", vo:"旁白(英文)",
-    actionPh:"leans back and smiles",
-    outTitle:"你的提示词", outSub:"随输入实时更新 · 每张卡片都能一键复制",
-    lgStyle:"风格", lgWho:"人物", lgLook:"造型", lgPose:"姿势与背景", lgRules:"规则",
-    lgCam:"镜头", lgAct:"一个动作", lgLock:"锁定",
-    secMaster:"03 · 风格 + 角色主图", secScript:"04 · 分镜脚本", secShots2:"05–06 · 每个镜头:静帧 → 图生视频",
-    c1:"角色主图", c1note:"先出这张。满意后它就是后面所有镜头的「标准像」。<b>用视频的比例生成</b>,因为之后上传它时,它决定输出的形状。",
-    c2:"近景肖像(可选)", c2note:"<b>上传:</b>角色主图。特写镜头脸容易跑偏时,拿它当脸部参考。",
-    c3:"空背景", c3note:"<b>上传:</b>无。之后和角色主图一起合成第一个镜头。",
-    c4:"分镜脚本", c4note:"时长按旁白字数估算(约 2.5 词/秒)。复制为 TSV,可直接粘贴进 Excel / Google 表格。",
-    copy:"复制", copiedShort:"已复制", copyTsv:"复制表格 (TSV)", copied:"已复制到剪贴板", copyFail:"复制失败,请手动选择文字", exported:"已复制全部提示词",
-    thShot:"镜头", thLen:"时长", thSize:"景别", thCam:"镜头运动", thAct:"动作", thVoice:"旁白与声音",
-    still:"静帧提示词 · Still image", video:"图生视频提示词 · Image-to-video",
-    videoFormula:"图生视频公式:镜头 + 一个动作 + 锁定 + 规则",
-    upload:"上传:",
-    up1:"① 空背景图(它决定画面比例)② 角色主图",
-    upN:"已通过的 S01 静帧(或机位最接近的已通过静帧)",
-    upClose:" + ② 近景肖像(可选,用来锁脸)",
-    upVideo:"上传:这个镜头已通过的静帧",
-    warnClick:"「点按钮 / 点屏幕」容易让角色用手指戳屏幕,改成 clicks the mouse 这类更简单的动作。",
-    warnLong:"这段旁白约 {n} 秒,比一个 4–5 秒的镜头长,考虑拆成两个镜头或删减。",
-    footer:"镜头 + 一个动作 + 锁定 + 规则 · 一次只改一处",
-    confirmReset:"确定清空所有输入吗?", confirmEx:"载入示例会覆盖当前输入,继续吗?",
-    guide:"新手引导",
-    qsTitle:"第一次用?三步上手", qsSub:"不需要任何 AI 经验。跟着做,10 分钟出第一个镜头。",
-    tourBtn:"1 分钟引导",
-    qs1t:"载入示例", qs1:"先点「载入示例」,看看一个做好的项目长什么样(银行分析师 Ethan)。",
-    qs2t:"只改几个词", qs2:"把名字、造型、画风和 5 个镜头换成你的故事。一次改一点,不用从零写。",
-    qs3t:"按顺序复制", qs3:"下面的提示词从上到下逐个复制到出图工具,做完一个就点「标记完成」。",
-    charHint:"用<b>英文</b>填写。造型写得越具体(发型、眼镜、衣服颜色),角色在每个镜头里越不会变样。只用虚构人物。",
-    shotsHint:"每个镜头 = <b>一个简单动作</b> + 一句旁白。景别:<b>Wide</b> 远景看全场 · <b>Medium</b> 腰部以上 · <b>Close-up</b> 脸部特写 · <b>Over-the-shoulder</b> 从肩膀后面看他看的东西。",
-    pgLabel:"我的进度", pgNext:"下一步:", pgGo:"去下一步", pgAll:"全部完成!去剪映把片段拼起来,配上旁白和音乐。", pgReset:"重置进度", pgConfirm:"清除所有「已完成」标记?",
-    pgMaster:"角色主图", pgBg:"空背景", pgScript:"看一遍分镜脚本", pgStill:"静帧", pgVideo:"视频",
-    doneOff:"标记完成", doneOn:"已完成",
-    tourBack:"上一步", tourNext:"下一步", tourFinish:"开始吧", tourStepOf:"第 {n} / {total} 步",
-    tour:[
-      ["欢迎!","这个页面会<b>帮你写提示词</b>。你只要填一张简单的表,然后把每段提示词复制到 AI 工具(Magnific、Grok、Kling…)里,一步一步做出短视频。不需要任何 AI 经验。"],
-      ["先看示例","点「<b>载入示例</b>」看一个做好的项目。最简单的学法:在示例上一次只改几个词。"],
-      ["描述你的角色","用英文写。发型、眼镜、衣服写得越具体,角色在每个镜头里越稳定。只用虚构人物和数据。"],
-      ["选画风和比例","选一个画风预设。比例:16:9 适合电脑和投影,9:16 适合手机。<b>在 AI 工具的设置里也要选同一个比例。</b>"],
-      ["规划 5 个镜头","每个镜头只写<b>一个简单动作</b>和一句旁白。「往后靠、微笑」很好用;「点按钮」常常会出错。"],
-      ["第 1 步:做出你的角色","复制这段,粘贴到出图工具里生成。挑最好的一张<b>保存下来</b>,它就是之后每个镜头的参考图。"],
-      ["第 2 步:做空房间","一样:复制、生成、保存最好的一张。画面里不要有人。"],
-      ["第 3 步:分镜脚本","这是你的拍摄计划,可以复制进 Excel。最后一列旁白就是之后要配的声音。"],
-      ["第 4 步:一个镜头一个镜头来","每个镜头:先用左边的提示词做<b>静帧</b>(上传注明的图片),确认没问题,再用右边的提示词把它变成<b>视频</b>。做完就点「标记完成」。"],
-      ["看进度","这条进度条告诉你做到哪了、下一步做什么。随时点「去下一步」。"],
-      ["全部做完?","「导出全部提示词」一次复制所有内容。最后在剪映里拼接片段、配旁白和音乐。随时可以点顶部的「新手引导」再看一遍。"]
-    ]
-  },
   en: {
     title:"Video Prompt Builder",
     brand:"Video Prompt Builder",
     back:"Sister tool: Image Prompt Lab ↗",
     eyebrow:"AI short-video workflow",
     h1:'Prompts for <em>every shot.</em>',
-    morning:"Morning", night:"Night",
-    formTitle:"Character & shots", formSub:"Fill in once — every prompt below updates live",
+    morning:"Morning", night:"Night", guide:"Guide",
     sub:"Fill in your character and shots once, and get the English prompts for every step of a short AI video: master character image, empty background, a still-image and an image-to-video prompt per shot, plus a director script.",
     p1:"Story", p2:"Character sheet", p3:"Style + master image", p4:"Director script", p5:"Stills", p6:"Image-to-video", p7:"CapCut edit",
-    pipeNote:"All prompts are in <b>English</b> — paste them straight into Magnific, Grok, Kling, Veo and similar tools",
-    loadEx:"Load example", reset:"Reset", exportAll:"Export all prompts",
+    qsTitle:"New here? Start in 3 steps", qsSub:"No AI experience needed. Follow along and you'll have your first shot in about 10 minutes.",
+    tourBtn:"Take the 1-minute tour",
+    qs1t:"Pick an example", qs1:"Choose one from the Examples list. It opens as a new project you can play with.",
+    qs2t:"Change a few words", qs2:"Swap in your own name, look, style and shots. Change a little at a time — no need to start from scratch.",
+    qs3t:"Pick your tool, copy in order", qs3:"Choose your AI tool so the prompts fit it. Then work down the prompts and tick \"Mark done\" as you go.",
+    project:"Project", examples:"Examples", tool:"My AI tool",
+    exPick:"Open an example as a new project…",
+    newProj:"New", dupProj:"Duplicate", renameProj:"Rename", delProj:"Delete",
+    askName:"Name this project:", untitled:"Untitled project", copyOf:"{name} (copy)",
+    confirmDel:"Delete \"{name}\"? This can't be undone.",
+    exOpened:"Example opened as a new project", projCreated:"New project created",
+    reset:"Clear this project", exportAll:"Export all prompts",
     privacy:"Fictional data only: no real customer names, account numbers, amounts or system screenshots.",
     tipsTitle:"Tips from the tutorial",
     tips:[
@@ -791,137 +898,356 @@ const I18N = {
       "Add narration, captions and music in CapCut — the narration is the last column of the director script.",
       "Keep all data fictional: no real customer names, numbers or screenshots."
     ],
-    secChar:"Character", secLook:"Fixed look", secStyle:"Art style & ratio", secSet:"Setting", secShots:"Five shots",
+    formTitle:"Character & shots", formSub:"Fill in once — every prompt below updates live",
+    secChar:"Character", secLook:"Fixed look", secStyle:"Art style & shape", secSet:"Setting", secShots:"Shots",
+    charHint:"Write in <b>English</b>. The more specific the look (hair, glasses, clothing colors), the more the character stays the same in every shot. Fictional people only.",
+    shotsHint:"Each shot = <b>one simple action</b> + one narration line. Most short videos have 3–8 shots. Shot sizes: <b>Wide</b> shows the whole room · <b>Medium</b> waist up · <b>Close-up</b> the face · <b>Over-the-shoulder</b> from behind, showing what they look at.",
     name:"Character name", pronoun:"Pronoun", age:"Age range", role:"Role / job", eth:"Ethnicity / look", personality:"Personality",
-    hair:"Hair", glasses:"Glasses / accessories", badge:"Badge / lanyard", outfit:"Outfit", shoes:"Shoes",
+    hair:"Hair (or headwear)", glasses:"Glasses / accessories", badge:"Badge / lanyard", outfit:"Outfit", shoes:"Shoes",
     stylePreset:"Style preset", styleHint:"Changing the preset overwrites the two fields below; \"Custom\" keeps your text.",
-    ratio:"Aspect ratio", ratioHint:"Also pick the same ratio in your image / video tool's settings.",
+    ratio:"Video shape", ratioHint:"Also pick the same shape in your image / video tool's settings.",
     styleText:"Style description (editable)", styleLock:"Style-lock details (editable)",
     lockHint:"Added to every still and video prompt so the character doesn't drift toward realism.",
     location:"Location (short name)", light:"Window / light direction", setting:"Setting description",
     size:"Shot size", move:"Camera move", action:"One main action (start with a verb)", vo:"Narration line",
-    actionPh:"leans back and smiles",
+    actionPh:"e.g. leans back and smiles", voPh:"e.g. Every morning, a new queue of alerts is waiting.",
+    addShot:"Add a shot", shotCount:"{n} of {max} shots", removeShot:"Remove shot {id}", moveUp:"Move {id} up",
     outTitle:"Your prompts", outSub:"Updates live as you type · every card has a Copy button",
     lgStyle:"Style", lgWho:"Who", lgLook:"Look", lgPose:"Pose & background", lgRules:"Rules",
     lgCam:"Camera", lgAct:"One action", lgLock:"Lock",
     secMaster:"03 · Style + master character", secScript:"04 · Director script", secShots2:"05–06 · Per shot: still → image-to-video",
-    c1:"Character master image", c1note:"Make this first. Once approved, it is the reference for every shot. <b>Generate it in your video ratio</b> — when you upload it later, it decides the output shape.",
+    c1:"Character master image", c1note:"Make this first. Once approved, it is the reference for every shot. <b>Generate it in your video shape</b> — when you upload it later, it decides the output shape.",
     c2:"Close-up portrait (optional)", c2note:"<b>Upload:</b> the master image. Use it as a face reference when close-ups drift.",
     c3:"Empty background", c3note:"<b>Upload:</b> nothing. Combine it with the master image to build the first shot.",
     c4:"Director script", c4note:"Length is estimated from the narration (~2.5 words/second). Copy as TSV to paste into Excel / Google Sheets.",
     copy:"Copy", copiedShort:"Copied", copyTsv:"Copy table (TSV)", copied:"Copied to clipboard", copyFail:"Copy failed — please select the text manually", exported:"All prompts copied",
     thShot:"Shot", thLen:"Length", thSize:"Shot size", thCam:"Camera", thAct:"Action", thVoice:"Voice & sound",
-    still:"Still-image prompt", video:"Image-to-video prompt",
-    videoFormula:"Video formula: Camera + One action + Lock + Rules",
+    still:"Still-image prompt", video:"Image-to-video prompt", negative:"Negative prompt (paste into Kling's negative prompt box)",
     upload:"Upload: ",
     up1:"① Empty background (sets the shape) ② Master character image",
     upN:"The approved S01 still (or the approved still with the closest angle)",
     upClose:" + ② Close-up portrait (optional, locks the face)",
     upVideo:"Upload: the approved still for this shot",
     warnClick:"\"Click a button / tap the screen\" often makes the character poke the screen. Try something simpler, like \"clicks the mouse\".",
-    warnLong:"This narration runs about {n} s — longer than a 4–5 s shot. Consider splitting it or trimming it.",
+    warnLong:"This narration runs about {n} s — longer than a 4–5 s shot. Consider splitting it into two shots or trimming it.",
     footer:"Camera + One action + Lock + Rules · change one thing at a time",
-    confirmReset:"Clear all inputs?", confirmEx:"Loading the example replaces your current inputs. Continue?",
-    guide:"Guide",
-    qsTitle:"New here? Start in 3 steps", qsSub:"No AI experience needed. Follow along and you'll have your first shot in about 10 minutes.",
-    tourBtn:"Take the 1-minute tour",
-    qs1t:"Load the example", qs1:"Click \"Load example\" to see a finished project (Ethan, the bank analyst).",
-    qs2t:"Change a few words", qs2:"Swap in your own name, look, style and five shots. Change a little at a time — no need to start from scratch.",
-    qs3t:"Copy, in order", qs3:"Work down the prompts below, paste each into your AI tool, and tick \"Mark done\" as you go.",
-    charHint:"Write in <b>English</b>. The more specific the look (hair, glasses, clothing colors), the more the character stays the same in every shot. Fictional people only.",
-    shotsHint:"Each shot = <b>one simple action</b> + one narration line. Shot sizes: <b>Wide</b> shows the whole room · <b>Medium</b> waist up · <b>Close-up</b> the face · <b>Over-the-shoulder</b> from behind, showing what they look at.",
-    pgLabel:"Your progress", pgNext:"Next:", pgGo:"Go to next step", pgAll:"All done! Put your clips together in CapCut and add the narration and music.", pgReset:"Reset progress", pgConfirm:"Clear all \"done\" marks?",
+    confirmReset:"Clear every field in this project?",
+    toolTips:{
+      general:"<b>Any tool:</b> prompts are written to work in most image and video tools. Set the video shape in the tool's settings.",
+      magnific:"<b>Magnific:</b> use the image generator for the master image, background and stills, and the video generator for each clip. Upload reference images where a card says so, and set the shape in the settings.",
+      grok:"<b>Grok:</b> works in chat, so prompts are phrased as requests and the shape is spelled out. Grok often makes characters look at the camera — every prompt already says not to. Video prompts ask for quiet room sound only, so you can add narration later.",
+      chatgpt:"<b>ChatGPT:</b> works in chat, so prompts are phrased as requests and the shape is spelled out in words. Upload the reference images in the same message as the prompt.",
+      gemini:"<b>Gemini:</b> works in chat, so prompts are phrased as requests and the shape is spelled out. Video prompts ask for quiet room sound only, so you can add narration later.",
+      kling:"<b>Kling:</b> video prompts are shortened — short, direct motion descriptions work best. Each shot also gets a <b>negative prompt</b> for Kling's negative prompt box.",
+      veo:"<b>Veo:</b> clips can include sound, so video prompts ask for quiet room sound only — add your narration later in CapCut.",
+      runway:"<b>Runway:</b> video prompts are shortened — describe the camera and one motion, and let the uploaded image carry the look.",
+      higgsfield:"<b>Higgsfield:</b> video prompts are shortened — describe the camera and one motion, and let the uploaded image carry the look."
+    },
+    pgLabel:"Your progress", pgNext:"Next:", pgGo:"Go to next step", pgAll:"All done! Put your clips together in CapCut and add the narration and music.", pgReset:"Reset progress", pgConfirm:"Clear all \"done\" marks in this project?",
     pgMaster:"Master character image", pgBg:"Empty background", pgScript:"Review the director script", pgStill:"still image", pgVideo:"video",
     doneOff:"Mark done", doneOn:"Done",
-    tourBack:"Back", tourNext:"Next", tourFinish:"Let's go", tourStepOf:"Step {n} of {total}",
+    tourBack:"Back", tourNext:"Next", tourFinish:"Let's go", tourStepOf:"Step {n} of {total}", close:"Close",
     tour:[
       ["Welcome!","This page <b>writes the prompts for you</b>. Fill in a short form, then copy each prompt into your AI tool (Magnific, Grok, Kling…), one step at a time. No AI experience needed."],
-      ["Start with the example","Click <b>Load example</b> to see a finished project. The easiest way to learn: change only a few words at a time."],
+      ["Start from an example","Pick one from <b>Examples</b>. It opens as a new project, so you can play without losing anything. The easiest way to learn: change a few words at a time."],
+      ["Choose your AI tool","Pick the tool you use. The prompts adjust to how it works best — for example, chat tools get polite requests and Kling gets a negative prompt."],
+      ["Your projects","Every video is its own project, saved in this browser. Create, duplicate, rename or delete projects here."],
       ["Describe your character","Write in English. The more specific the hair, glasses and clothes, the more consistent the character. Fictional people and data only."],
       ["Pick a style and a shape","Choose an art style preset. Shape: 16:9 for laptops and slides, 9:16 for phones. <b>Pick the same shape in your AI tool's settings too.</b>"],
-      ["Plan five short shots","Each shot gets <b>one simple action</b> and one narration line. \"Leans back and smiles\" works well; \"clicks a button\" often goes wrong."],
+      ["Plan your shots","Each shot gets <b>one simple action</b> and one narration line. Add or remove shots (up to 12). \"Leans back and smiles\" works well; \"clicks a button\" often goes wrong."],
       ["Step 1: make your character","Copy this prompt into your image tool and generate. Pick the best result and <b>save it</b> — it's the reference image for every shot."],
       ["Step 2: make the empty room","Same idea: copy, generate, save the best one. No people in it."],
       ["Step 3: your shot list","This is your plan. Copy it into Excel or Google Sheets if you like. The narration column is your voice-over later."],
-      ["Step 4: one shot at a time","For each shot: make the <b>still image</b> first with the left prompt (upload the images listed), check it, then turn it into <b>video</b> with the right prompt. Tick \"Mark done\" as you go."],
+      ["Step 4: one shot at a time","For each shot: make the <b>still image</b> first (upload the images listed), check it, then turn it into <b>video</b> with the second prompt. Tick \"Mark done\" as you go."],
       ["Track your progress","This bar shows what's done and what's next. Click \"Go to next step\" any time."],
       ["All done? Export everything","\"Export all prompts\" copies everything in one go. Then put the clips together in CapCut with your narration and music. Reopen this tour any time from \"Guide\" at the top."]
+    ]
+  },
+  zh: {
+    title:"AI 视频提示词生成器",
+    brand:"视频提示词生成器",
+    back:"姊妹工具:图片提示词实验室 ↗",
+    eyebrow:"AI 短视频工作流",
+    h1:'每一个镜头的<em>提示词</em>',
+    morning:"日间", night:"夜间", guide:"新手引导",
+    sub:"填一次角色和分镜,自动生成做短视频每一步要用的英文提示词:角色主图、空背景、每个镜头的静帧和图生视频提示词,外加分镜脚本表。",
+    p1:"故事", p2:"角色设定", p3:"风格 + 主图", p4:"分镜脚本", p5:"静帧", p6:"图生视频", p7:"剪映剪辑",
+    qsTitle:"第一次用?三步上手", qsSub:"不需要任何 AI 经验。跟着做,10 分钟出第一个镜头。",
+    tourBtn:"1 分钟引导",
+    qs1t:"选一个示例", qs1:"从「示例」下拉菜单挑一个,它会作为新项目打开,随便改都不怕。",
+    qs2t:"只改几个词", qs2:"把名字、造型、画风和镜头换成你的故事。一次改一点,不用从零写。",
+    qs3t:"选工具,按顺序复制", qs3:"选好你用的 AI 工具,提示词会自动调整写法。然后从上到下逐个复制,做完一个就点「标记完成」。",
+    project:"项目", examples:"示例", tool:"我用的 AI 工具",
+    exPick:"打开一个示例(新项目)…",
+    newProj:"新建", dupProj:"复制", renameProj:"重命名", delProj:"删除",
+    askName:"给这个项目起个名字:", untitled:"未命名项目", copyOf:"{name}(副本)",
+    confirmDel:"删除「{name}」?删除后无法恢复。",
+    exOpened:"示例已作为新项目打开", projCreated:"已新建项目",
+    reset:"清空此项目", exportAll:"导出全部提示词",
+    privacy:"只用虚构数据:不要填真实客户姓名、账号、金额,也不要上传系统截图。",
+    tipsTitle:"出片小贴士",
+    tips:[
+      "画面比例要在<b>工具的设置里</b>选好,不能只写在提示词里。",
+      "<b>上传的图决定输出的形状</b>:主图、背景、静帧都用同一个比例生成。",
+      "先把<b>静帧</b>确认满意,再去做视频。静帧不对,视频只会更糟。",
+      "<b>换机位在静帧里做</b>,不要指望视频去转镜头角度。",
+      "「保持一切完全不变,只改一两处」比「给我一个新角度」稳得多。",
+      "特写容易变写实:风格要再强调一遍(本页的特写提示词已自动加上)。",
+      "角色很爱看镜头:每段视频提示词结尾都写了 never looks at the camera。",
+      "动作越简单越好:「点按钮」常常变成用手指戳屏幕,改成 clicks the mouse。",
+      "视频生成约 <b>6 秒</b>,剪辑时修到 <b>4–5 秒</b>。",
+      "重试时<b>一次只改一处</b>,才知道是哪句起作用。",
+      "最后在剪映里配旁白、字幕和音乐:旁白就是分镜脚本里的那一列。",
+      "只用虚构数据:不放真实客户名字、数字或截图。"
+    ],
+    formTitle:"角色与分镜", formSub:"填一次,下面所有提示词实时更新",
+    secChar:"角色设定", secLook:"固定造型", secStyle:"画风与画面形状", secSet:"场景", secShots:"镜头",
+    charHint:"用<b>英文</b>填写。造型写得越具体(发型、眼镜、衣服颜色),角色在每个镜头里越不会变样。只用虚构人物。",
+    shotsHint:"每个镜头 = <b>一个简单动作</b> + 一句旁白。短视频一般 3–8 个镜头。景别:<b>Wide</b> 远景看全场 · <b>Medium</b> 腰部以上 · <b>Close-up</b> 脸部特写 · <b>Over-the-shoulder</b> 从肩膀后面看他看的东西。",
+    name:"角色名字", pronoun:"代词", age:"年龄段(英文)", role:"职业 / 身份(英文)", eth:"族裔 / 长相(英文)", personality:"性格(英文)",
+    hair:"发型(或头巾)", glasses:"眼镜 / 配饰", badge:"工牌 / 挂绳", outfit:"服装", shoes:"鞋子",
+    stylePreset:"画风预设", styleHint:"换预设会覆盖下面两栏;选「自定义」则保留你写的。",
+    ratio:"画面形状", ratioHint:"同时也要在出图 / 出视频工具的设置里选同一个比例。",
+    styleText:"画风描述(可编辑)", styleLock:"风格锁定要点(可编辑)",
+    lockHint:"会被写进每个静帧和视频提示词,防止角色越画越写实。",
+    location:"地点简称", light:"窗户 / 光线方向", setting:"场景描述(英文)",
+    size:"景别", move:"镜头运动", action:"一个主要动作(动词开头,英文)", vo:"旁白(英文)",
+    actionPh:"e.g. leans back and smiles", voPh:"e.g. Every morning, a new queue of alerts is waiting.",
+    addShot:"加一个镜头", shotCount:"{n} / {max} 个镜头", removeShot:"删除镜头 {id}", moveUp:"把 {id} 上移",
+    outTitle:"你的提示词", outSub:"随输入实时更新 · 每张卡片都能一键复制",
+    lgStyle:"风格", lgWho:"人物", lgLook:"造型", lgPose:"姿势与背景", lgRules:"规则",
+    lgCam:"镜头", lgAct:"一个动作", lgLock:"锁定",
+    secMaster:"03 · 风格 + 角色主图", secScript:"04 · 分镜脚本", secShots2:"05–06 · 每个镜头:静帧 → 图生视频",
+    c1:"角色主图", c1note:"先出这张。满意后它就是后面所有镜头的「标准像」。<b>用视频的画面形状生成</b>,因为之后上传它时,它决定输出的形状。",
+    c2:"近景肖像(可选)", c2note:"<b>上传:</b>角色主图。特写镜头脸容易跑偏时,拿它当脸部参考。",
+    c3:"空背景", c3note:"<b>上传:</b>无。之后和角色主图一起合成第一个镜头。",
+    c4:"分镜脚本", c4note:"时长按旁白字数估算(约 2.5 词/秒)。复制为 TSV,可直接粘贴进 Excel / Google 表格。",
+    copy:"复制", copiedShort:"已复制", copyTsv:"复制表格 (TSV)", copied:"已复制到剪贴板", copyFail:"复制失败,请手动选择文字", exported:"已复制全部提示词",
+    thShot:"镜头", thLen:"时长", thSize:"景别", thCam:"镜头运动", thAct:"动作", thVoice:"旁白与声音",
+    still:"静帧提示词 · Still image", video:"图生视频提示词 · Image-to-video", negative:"反向提示词(粘贴到 Kling 的 negative prompt 栏)",
+    upload:"上传:",
+    up1:"① 空背景图(它决定画面形状)② 角色主图",
+    upN:"已通过的 S01 静帧(或机位最接近的已通过静帧)",
+    upClose:" + ② 近景肖像(可选,用来锁脸)",
+    upVideo:"上传:这个镜头已通过的静帧",
+    warnClick:"「点按钮 / 点屏幕」容易让角色用手指戳屏幕,改成 clicks the mouse 这类更简单的动作。",
+    warnLong:"这段旁白约 {n} 秒,比一个 4–5 秒的镜头长,考虑拆成两个镜头或删减。",
+    footer:"镜头 + 一个动作 + 锁定 + 规则 · 一次只改一处",
+    confirmReset:"清空这个项目的所有输入吗?",
+    toolTips:{
+      general:"<b>通用:</b>提示词按大多数出图 / 出视频工具都适用的方式写。记得在工具设置里选画面形状。",
+      magnific:"<b>Magnific:</b>角色主图、背景、静帧用图片生成器,每段视频用视频生成器。卡片上写了要上传的图就上传,画面形状在设置里选。",
+      grok:"<b>Grok:</b>是聊天式工具,所以提示词写成请求句,并用文字写明画面形状。Grok 很爱让角色看镜头,每段提示词都已写明不要。视频提示词要求只保留安静的环境声,方便之后配旁白。",
+      chatgpt:"<b>ChatGPT:</b>是聊天式工具,所以提示词写成请求句,画面形状用文字写明。参考图和提示词放在同一条消息里发送。",
+      gemini:"<b>Gemini:</b>是聊天式工具,所以提示词写成请求句,并写明画面形状。视频提示词要求只保留安静的环境声,方便之后配旁白。",
+      kling:"<b>Kling 可灵:</b>视频提示词已精简,简短直接的动作描述效果最好。每个镜头还附了<b>反向提示词</b>,贴到 Kling 的 negative prompt 栏。",
+      veo:"<b>Veo:</b>生成的片段可能带声音,所以视频提示词要求只保留安静的环境声,旁白之后在剪映里配。",
+      runway:"<b>Runway:</b>视频提示词已精简:只写镜头和一个动作,造型交给上传的图片。",
+      higgsfield:"<b>Higgsfield:</b>视频提示词已精简:只写镜头和一个动作,造型交给上传的图片。"
+    },
+    pgLabel:"我的进度", pgNext:"下一步:", pgGo:"去下一步", pgAll:"全部完成!去剪映把片段拼起来,配上旁白和音乐。", pgReset:"重置进度", pgConfirm:"清除这个项目所有「已完成」标记?",
+    pgMaster:"角色主图", pgBg:"空背景", pgScript:"看一遍分镜脚本", pgStill:"静帧", pgVideo:"视频",
+    doneOff:"标记完成", doneOn:"已完成",
+    tourBack:"上一步", tourNext:"下一步", tourFinish:"开始吧", tourStepOf:"第 {n} / {total} 步", close:"关闭",
+    tour:[
+      ["欢迎!","这个页面会<b>帮你写提示词</b>。你只要填一张简单的表,然后把每段提示词复制到 AI 工具(Magnific、Grok、Kling…)里,一步一步做出短视频。不需要任何 AI 经验。"],
+      ["从示例开始","在「<b>示例</b>」里挑一个。它会作为新项目打开,随便改都不会弄丢东西。最简单的学法:一次只改几个词。"],
+      ["选你用的 AI 工具","选你平时用的工具,提示词会自动调整成它最吃的写法:聊天式工具用请求句,Kling 会多一段反向提示词。"],
+      ["你的项目","每个视频是一个独立项目,保存在这个浏览器里。可以在这里新建、复制、重命名或删除。"],
+      ["描述你的角色","用英文写。发型、眼镜、衣服写得越具体,角色在每个镜头里越稳定。只用虚构人物和数据。"],
+      ["选画风和画面形状","选一个画风预设。形状:16:9 适合电脑和投影,9:16 适合手机。<b>在 AI 工具的设置里也要选同一个比例。</b>"],
+      ["规划镜头","每个镜头只写<b>一个简单动作</b>和一句旁白。可以加减镜头(最多 12 个)。「往后靠、微笑」很好用;「点按钮」常常会出错。"],
+      ["第 1 步:做出你的角色","复制这段,粘贴到出图工具里生成。挑最好的一张<b>保存下来</b>,它就是之后每个镜头的参考图。"],
+      ["第 2 步:做空房间","一样:复制、生成、保存最好的一张。画面里不要有人。"],
+      ["第 3 步:分镜脚本","这是你的拍摄计划,可以复制进 Excel。最后一列旁白就是之后要配的声音。"],
+      ["第 4 步:一个镜头一个镜头来","每个镜头:先用静帧提示词做<b>静帧</b>(上传注明的图片),确认没问题,再用第二段提示词把它变成<b>视频</b>。做完就点「标记完成」。"],
+      ["看进度","这条进度条告诉你做到哪了、下一步做什么。随时点「去下一步」。"],
+      ["全部做完?","「导出全部提示词」一次复制所有内容。最后在剪映里拼接片段、配旁白和音乐。随时可以点顶部的「新手引导」再看一遍。"]
     ]
   }
 };
 
-const LS_KEY = "promptlab.video.v1";
+/* ================= 存储 ================= */
+const LS_STORE = "vpb.projects.v2";
 const LS_LANG = "vpb.lang";
 const LS_THEME = "vpb.theme";
+const LS_TOOL = "vpb.tool";
+
 let lang = "en";
 try { if (localStorage.getItem(LS_LANG) === "zh") lang = "zh"; } catch(e) {}
 function t(k){ return I18N[lang][k]; }
 
-/* ================= 状态 ================= */
-const LS_PROGRESS = "vpb.progress";
-let progress = {};
-try { progress = JSON.parse(localStorage.getItem(LS_PROGRESS)) || {}; } catch(e) { progress = {}; }
-function saveProgress() {
-  try { localStorage.setItem(LS_PROGRESS, JSON.stringify(progress)); } catch(e) {}
-}
-let state = loadState() || {...EXAMPLE};
+let tool = "general";
+try { const tl = localStorage.getItem(LS_TOOL); if (TOOLS[tl]) tool = tl; } catch(e) {}
 
-function loadState() {
-  try {
-    const raw = localStorage.getItem(LS_KEY);
-    if (!raw) return null;
-    return {...blankState(), ...JSON.parse(raw)};
-  } catch(e) { return null; }
+function uid() { return "p" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+
+function normalizeState(raw) {
+  const s = {...blankState(), ...raw};
+  // 兼容旧版的扁平字段 s0_size…
+  if (!Array.isArray(raw.shots)) {
+    const shots = [];
+    for (let i = 0; i < MAX_SHOTS; i++) {
+      if (raw[`s${i}_size`] === undefined) break;
+      shots.push(shot(raw[`s${i}_size`], raw[`s${i}_move`], raw[`s${i}_action`] || "", raw[`s${i}_vo`] || ""));
+    }
+    if (shots.length) s.shots = shots;
+  }
+  Object.keys(s).forEach(k => { if (/^s\d+_/.test(k)) delete s[k]; });
+  s.shots = s.shots.slice(0, MAX_SHOTS).map(x => ({...shot("Medium","Static","",""), ...x}));
+  if (!s.shots.length) s.shots = [shot("Wide","Static","","")];
+  return s;
 }
-function saveState() {
-  try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch(e) {}
+
+function loadStore() {
+  try {
+    const raw = localStorage.getItem(LS_STORE);
+    if (raw) {
+      const st = JSON.parse(raw);
+      if (st && st.projects && Object.keys(st.projects).length) {
+        Object.values(st.projects).forEach(p => { p.data = normalizeState(p.data || {}); p.progress = p.progress || {}; });
+        if (!st.projects[st.current]) st.current = Object.keys(st.projects)[0];
+        return st;
+      }
+    }
+  } catch(e) {}
+  // 第一次打开:迁移旧版数据,否则用 Ethan 示例
+  const id = uid();
+  let data = clone(EXAMPLES[0].data), progress = {}, name = EXAMPLES[0].en.split(" (")[0];
+  try {
+    const old = localStorage.getItem("promptlab.video.v1");
+    if (old) { data = normalizeState(JSON.parse(old)); name = data.name || "My project"; }
+    const oldProg = localStorage.getItem("vpb.progress");
+    if (oldProg) progress = JSON.parse(oldProg) || {};
+  } catch(e) {}
+  return {current:id, projects:{[id]:{name, data:normalizeState(data), progress, updated:Date.now()}}};
+}
+let store = loadStore();
+function project() { return store.projects[store.current]; }
+let state = project().data;
+let progress = project().progress;
+
+let saveTimer;
+function saveStore() {
+  project().updated = Date.now();
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    try { localStorage.setItem(LS_STORE, JSON.stringify(store)); } catch(e) {}
+  }, 150);
+}
+function switchProject(id) {
+  store.current = id;
+  state = project().data;
+  progress = project().progress;
+  saveStore();
+  renderAll();
+}
+function addProject(name, data) {
+  const id = uid();
+  store.projects[id] = {name, data:normalizeState(clone(data)), progress:{}, updated:Date.now()};
+  switchProject(id);
 }
 
 /* ================= 表单 ================= */
-const shotForms = document.getElementById("shotForms");
-for (let i = 0; i < SHOT_COUNT; i++) {
-  const id = n => `f_s${i}_${n}`;
-  shotForms.insertAdjacentHTML("beforeend", `
-    <div class="shot-form">
-      <div class="tag">S0${i+1}</div>
-      <div class="field"><label for="${id("size")}" data-i18n="size"></label><select id="${id("size")}" data-k="s${i}_size" data-opts="size"></select></div>
-      <div class="field"><label for="${id("move")}" data-i18n="move"></label><select id="${id("move")}" data-k="s${i}_move" data-opts="move"></select></div>
-      <div class="field act"><label for="${id("action")}" data-i18n="action"></label><textarea id="${id("action")}" data-k="s${i}_action" data-i18n-ph="actionPh" rows="1"></textarea></div>
-      <div class="field vo"><label for="${id("vo")}" data-i18n="vo"></label><textarea id="${id("vo")}" data-k="s${i}_vo" rows="2" placeholder="e.g. Every morning, a new queue of alerts is waiting."></textarea></div>
-    </div>`);
-}
-
 const form = document.getElementById("form");
-const fields = [...form.querySelectorAll("[data-k]")];
+const shotForms = document.getElementById("shotForms");
+const pad2 = n => String(n).padStart(2, "0");
+const shotId = i => `S${pad2(i + 1)}`;
 
+function optionsHtml(list, value) {
+  return OPTS[list].map(o => `<option value="${o.v}"${o.v === value ? " selected" : ""}>${escapeHtml(o[lang])}</option>`).join("");
+}
 function fillOptions() {
   form.querySelectorAll("select[data-opts]").forEach(sel => {
-    const val = sel.value;
-    sel.innerHTML = OPTS[sel.dataset.opts]
-      .map(o => `<option value="${o.v}">${escapeHtml(o[lang])}</option>`).join("");
-    if (val) sel.value = val;
+    sel.innerHTML = optionsHtml(sel.dataset.opts, state[sel.dataset.k]);
   });
 }
-
 function writeForm() {
-  fields.forEach(el => { el.value = state[el.dataset.k] ?? ""; });
+  form.querySelectorAll("[data-k]").forEach(el => { el.value = state[el.dataset.k] ?? ""; });
+}
+
+const X_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+const UP_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>';
+
+function renderShotForms() {
+  const n = state.shots.length;
+  shotForms.innerHTML = state.shots.map((s, i) => {
+    const id = f => `f_s${i}_${f}`;
+    return `<div class="shot-form" data-shot="${i}">
+      <div class="tag">${shotId(i)}
+        <span style="display:flex;gap:6px">
+          <button type="button" class="icon-btn" data-up="${i}" ${i === 0 ? "disabled" : ""} aria-label="${t("moveUp").replace("{id}", shotId(i))}" title="${t("moveUp").replace("{id}", shotId(i))}">${UP_ICON}</button>
+          <button type="button" class="icon-btn" data-remove="${i}" ${n <= 1 ? "disabled" : ""} aria-label="${t("removeShot").replace("{id}", shotId(i))}" title="${t("removeShot").replace("{id}", shotId(i))}">${X_ICON}</button>
+        </span>
+      </div>
+      <div class="field"><label for="${id("size")}">${t("size")}</label><select id="${id("size")}" data-f="size">${optionsHtml("size", s.size)}</select></div>
+      <div class="field"><label for="${id("move")}">${t("move")}</label><select id="${id("move")}" data-f="move">${optionsHtml("move", s.move)}</select></div>
+      <div class="field act"><label for="${id("action")}">${t("action")}</label><textarea id="${id("action")}" data-f="action" rows="2" placeholder="${t("actionPh")}">${escapeHtml(s.action)}</textarea></div>
+      <div class="field vo"><label for="${id("vo")}">${t("vo")}</label><textarea id="${id("vo")}" data-f="vo" rows="2" placeholder="${escapeHtml(t("voPh"))}">${escapeHtml(s.vo)}</textarea></div>
+    </div>`;
+  }).join("");
+  document.getElementById("shotCount").textContent = t("shotCount").replace("{n}", n).replace("{max}", MAX_SHOTS);
+  document.getElementById("addShot").disabled = n >= MAX_SHOTS;
 }
 
 form.addEventListener("input", onFormChange);
 form.addEventListener("change", onFormChange);
 function onFormChange(e) {
-  const k = e.target.dataset.k;
-  if (!k) return;
-  state[k] = e.target.value;
-  if (k === "stylePreset" && e.type === "change" && state.stylePreset !== "custom") {
-    const st = STYLES[state.stylePreset];
-    state.styleText = st.text;
-    state.styleLock = st.lock;
-    writeForm();
-  }
-  saveState();
+  const el = e.target;
+  const box = el.closest("[data-shot]");
+  if (box && el.dataset.f) {
+    state.shots[+box.dataset.shot][el.dataset.f] = el.value;
+  } else if (el.dataset.k) {
+    state[el.dataset.k] = el.value;
+    if (el.dataset.k === "stylePreset" && e.type === "change" && state.stylePreset !== "custom") {
+      const st = STYLES[state.stylePreset];
+      state.styleText = st.text;
+      state.styleLock = st.lock;
+      writeForm();
+    }
+  } else return;
+  saveStore();
   render();
 }
+
+/* 镜头增删、上移;进度标记跟着镜头一起移动 */
+function reorderProgress(map) {
+  const next = {};
+  Object.keys(progress).forEach(k => {
+    const m = k.match(/^(still|video)(\d+)$/);
+    if (!m) { next[k] = progress[k]; return; }
+    const to = map(+m[2]);
+    if (to !== null) next[m[1] + to] = progress[k];
+  });
+  Object.keys(progress).forEach(k => delete progress[k]);
+  Object.assign(progress, next);
+}
+shotForms.addEventListener("click", e => {
+  const rm = e.target.closest("[data-remove]");
+  const up = e.target.closest("[data-up]");
+  if (rm && state.shots.length > 1) {
+    const i = +rm.dataset.remove;
+    state.shots.splice(i, 1);
+    reorderProgress(j => j === i ? null : j > i ? j - 1 : j);
+  } else if (up) {
+    const i = +up.dataset.up;
+    if (i < 1) return;
+    [state.shots[i - 1], state.shots[i]] = [state.shots[i], state.shots[i - 1]];
+    reorderProgress(j => j === i ? i - 1 : j === i - 1 ? i : j);
+  } else return;
+  saveStore();
+  renderShotForms();
+  render();
+});
+document.getElementById("addShot").addEventListener("click", () => {
+  if (state.shots.length >= MAX_SHOTS) return;
+  state.shots.push(shot("Medium","Static","",""));
+  saveStore();
+  renderShotForms();
+  render();
+  const last = shotForms.querySelector(`[data-shot="${state.shots.length - 1}"] textarea`);
+  if (last) { last.scrollIntoView({behavior:"smooth", block:"center"}); last.focus({preventScroll:true}); }
+});
 
 /* ================= 提示词生成 ================= */
 function pron(p) {
@@ -929,7 +1255,7 @@ function pron(p) {
   if (p === "they") return {S:"They", s:"they", o:"them", p:"their", n:"person", v:w => w};
   return {S:"He", s:"he", o:"him", p:"his", n:"man", v:w => w + "s"};
 }
-function val(k, ph) { return (state[k] || "").trim() || `[${ph}]`; }
+function val(x, ph) { return (x || "").trim() || `[${ph}]`; }
 function clean(x) { return x.trim().replace(/[\s.,;:!]+$/, ""); }
 function end(x) { return clean(x) + "."; }
 function art(w) { return /^[aeiou]/i.test(w) ? "an" : "a"; }
@@ -946,46 +1272,52 @@ function sizeDesc(size, g, loc) {
     default: return `medium close-up, from the chest up`;
   }
 }
+const ORIENT = {"16:9":"landscape", "9:16":"vertical", "1:1":"square"};
 
 function build() {
   const g = pron(state.pronoun);
+  const tp = TOOLS[tool] || TOOLS.general;
   const st = STYLES[state.stylePreset] || STYLES.clay;
-  const styleText = val("styleText", "art style");
-  const lock = clean(val("styleLock", "style-lock details"));
+  const styleText = val(state.styleText, "art style");
+  const lock = clean(val(state.styleLock, "style-lock details"));
   const guard = st.guard(g);
   const styleName = st.name;
-  const ratio = `${state.ratio} aspect ratio.`;
-  const name = val("name", "name");
-  const loc = clean(val("location", "location"));
+  const ratio = tp.chat
+    ? `Make the image ${state.ratio} ${ORIENT[state.ratio] || ""}.`.replace(" .", ".")
+    : `${state.ratio} aspect ratio.`;
+  const name = val(state.name, "name");
+  const loc = clean(val(state.location, "location"));
   const light = state.light === "right" ? "right" : "left";
   const looks = lookList();
-  const eth = clean(val("ethnicity", "ethnicity / look"));
-  const role = clean(val("role", "role"));
+  const eth = clean(val(state.ethnicity, "ethnicity / look"));
+  const role = clean(val(state.role, "role"));
+  const ask = x => tp.chat ? x.replace(/^Create /, "Please create ") : x;
 
   const master = [
-    ["style", end(styleText)],
-    ["who", `Character design of ${name}, ${art(eth)} ${eth} ${g.n} in ${g.p} ${clean(val("age","age range"))}, working as ${art(role)} ${role}.`],
-    ["look", `Fixed look: ${looks}. ${g.S} ${g.v("look")} ${end(val("personality","personality"))}`],
+    ["style", (tp.chat ? "Please create an image. " : "") + end(styleText)],
+    ["who", `Character design of ${name}, ${art(eth)} ${eth} ${g.n} in ${g.p} ${clean(val(state.age, "age range"))}, working as ${art(role)} ${role}.`],
+    ["look", `Fixed look: ${looks}. ${g.S} ${g.v("look")} ${end(val(state.personality, "personality"))}`],
     ["pose", `Full-body front view, standing in a relaxed neutral pose with arms at ${g.p} sides and a gentle expression. Plain soft light-gray background, even soft light, centered with space around ${g.o}.`],
     ["rules", `One character only, no text, no logos. ${ratio}`]
   ];
 
   const glassesWord = clean(state.glasses || "");
-  const closeup = `Same character as the uploaded image. Create a close-up portrait of ${g.o}, head and shoulders, turned slightly to the side, with a calm, gentle expression. ` +
+  const closeup = (tp.chat
+      ? `Please create a close-up portrait of the same character as the uploaded image: head and shoulders, turned slightly to the side, with a calm, gentle expression. `
+      : `Same character as the uploaded image. Create a close-up portrait of ${g.o}, head and shoulders, turned slightly to the side, with a calm, gentle expression. `) +
     `Keep exactly the same face, hair, ${glassesWord ? glassesWord + ", " : ""}outfit and colors. ` +
     `Keep the ${styleName} style exactly: ${lock}. Even this close, no realistic skin texture, pores or wrinkles. ${guard} ` +
     `Plain soft light-gray background. One character only, no text, no logos. ${ratio}`;
 
-  const background = `${end(styleText)} Setting: ${end(val("setting","setting description"))} ` +
+  const background = (tp.chat ? "Please create an image. " : "") + `${end(styleText)} Setting: ${end(val(state.setting, "setting description"))} ` +
     `Soft daylight comes from the window on the ${light}. The room is empty and the chair is empty, ready for a character. ` +
     `Wide establishing view at eye level. Any screens show only simple abstract shapes. ` +
     `No people, no text, no logos. ${ratio}`;
 
-  const shots = [];
-  for (let i = 0; i < SHOT_COUNT; i++) {
-    const size = state[`s${i}_size`], move = state[`s${i}_move`];
-    const action = clean(val(`s${i}_action`, "one simple action"));
-    const vo = (state[`s${i}_vo`] || "").trim();
+  const shots = state.shots.map((sh, i) => {
+    const size = sh.size, move = sh.move;
+    const action = clean(val(sh.action, "one simple action"));
+    const vo = (sh.vo || "").trim();
     const close = CLOSE_SIZES.includes(size);
     const closeExtra = close
       ? ` Even this close, keep the ${styleName} look exactly: ${lock}. No realistic skin texture, pores or wrinkles. If a second image is uploaded, use it as the face reference.`
@@ -1007,27 +1339,38 @@ function build() {
         `Keep ${g.o} exactly like the uploaded image: ${keepLook}` +
         closeExtra + tail;
     }
+    still = ask(still);
 
+    const cam = move === "Slow push-in"
+      ? `Slow, gentle push-in toward ${g.o}, no other camera movement.`
+      : `Static camera, no camera movement.`;
+    const lockSeg = tp.concise
+      ? `Keep ${g.o}, the ${loc} and the ${styleName} style exactly as in the image.`
+      : `Keep ${g.o} exactly as in the image: same face, same ${looks}, same ${styleName} style. Keep the ${loc}, colors and light unchanged.`;
+    const rules = (tp.concise ? "Small, natural movement. " : "Small, natural movements only. ") +
+      (tp.audio ? "Sound: quiet room ambience only, no speech, no music. " : "") +
+      `One continuous shot, calm pacing, no cuts. ${g.S} never ${g.v("look")} at the camera.`;
     const video = [
-      ["cam", move === "Slow push-in"
-        ? `Slow, gentle push-in toward ${g.o}, no other camera movement.`
-        : `Static camera, no camera movement.`],
+      ["cam", (tp.chat ? "Please turn the uploaded image into a short video. " : "") + cam],
       ["act", `${g.S} ${action}.`],
-      ["lock", `Keep ${g.o} exactly as in the image: same face, same ${looks}, same ${styleName} style. Keep the ${loc}, colors and light unchanged.`],
-      ["rules", `Small, natural movements only. One continuous shot, calm pacing, no cuts. ${g.S} never ${g.v("look")} at the camera.`]
+      ["lock", lockSeg],
+      ["rules", rules]
     ];
+    const negative = tp.negative
+      ? "looking at the camera, talking to the camera, realistic skin texture, wrinkles, extra fingers, distorted hands, distorted face, readable text, logos, watermark, camera shake, fast motion, scene cuts"
+      : "";
 
     const words = vo ? vo.split(/\s+/).length : 0;
     const secs = Math.max(4, Math.min(10, Math.ceil(words / 2.5) + 1));
-    const rawAction = state[`s${i}_action`] || "";
+    const rawAction = sh.action || "";
     const clickWarn = /\b(click|press|tap|push|poke)\w*\b/i.test(rawAction) &&
       /\b(button|screen|monitor)\b/i.test(rawAction) && !/\b(mouse|keyboard|trackpad)\b/i.test(rawAction);
 
-    shots.push({
-      id: `S0${i+1}`, size, move, action: clean(rawAction), vo, close, still, video,
+    return {
+      id: shotId(i), size, move, action: clean(rawAction), vo, close, still, video, negative,
       videoText: video.map(s => s[1]).join(" "), secs, clickWarn, longWarn: words > 0 && secs > 6
-    });
-  }
+    };
+  });
 
   const tsvCell = x => String(x).replace(/[\t\r\n]+/g, " ");
   const head = ["Shot","Length","Shot size","Camera","Action","Voice & sound"];
@@ -1040,13 +1383,13 @@ function build() {
 /* ================= 渲染 ================= */
 let out = null;
 const outputs = document.getElementById("outputs");
+const COPY_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>';
+const CHECK_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+const INFO_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>';
 
 function segHtml(segs) {
   return segs.map(([c, x]) => `<span class="seg-${c}">${escapeHtml(x)}</span>`).join(" ");
 }
-const COPY_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>';
-const CHECK_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
-
 function legend(items) {
   return `<div class="legend">${items.map(([c, k]) =>
     `<span class="lg"><i style="background:var(${c})"></i>${t(k)}</span>`).join("")}</div>`;
@@ -1070,6 +1413,7 @@ const VIDEO_LEGEND = [["--seg-look","lgCam"],["--seg-who","lgAct"],["--seg-style
 
 function render() {
   out = build();
+  document.getElementById("toolTip").innerHTML = INFO_ICON + `<div>${t("toolTips")[tool]}</div>`;
   let h = `<section class="out-section"><div class="sub-label" id="outMaster">${t("secMaster")}</div>`;
   h += card("cardMaster", "01", t("c1"), t("c1note"),
     legend(MASTER_LEGEND) + `<div class="out">${segHtml(out.master)}</div>`, "master", null, "master-card", "master");
@@ -1105,6 +1449,7 @@ function render() {
           <div class="upload">${t("upVideo")}</div>
           ${legend(VIDEO_LEGEND)}
           <div class="out">${segHtml(s.video)}</div>
+          ${s.negative ? `<div class="neg"><div class="sub-head"><span>${t("negative")}</span>${copyBtn("neg" + i)}</div><div class="out">${escapeHtml(s.negative)}</div></div>` : ""}
         </div>
       </div>
     </div>`;
@@ -1119,14 +1464,17 @@ function copyText(key) {
   if (key === "closeup") return out.closeup;
   if (key === "background") return out.background;
   if (key === "tsv") return out.tsv;
-  const m = key.match(/^(still|video)(\d)$/);
-  if (m) { const s = out.shots[+m[2]]; return m[1] === "still" ? s.still : s.videoText; }
+  const m = key.match(/^(still|video|neg)(\d+)$/);
+  if (m) {
+    const s = out.shots[+m[2]];
+    return m[1] === "still" ? s.still : m[1] === "video" ? s.videoText : s.negative;
+  }
   return "";
 }
 
 function exportAll() {
   const L = [];
-  L.push(`AI VIDEO PROMPTS — ${state.name || "untitled"} (${state.ratio})`, "");
+  L.push(`AI VIDEO PROMPTS — ${project().name} · ${state.name || "untitled"} (${state.ratio}) · Tool: ${TOOLS[tool].name}`, "");
   L.push("[1] Character master image", out.masterText, "");
   L.push("[2] Close-up portrait (optional)", out.closeup, "");
   L.push("[3] Empty background", out.background, "");
@@ -1136,6 +1484,7 @@ function exportAll() {
     L.push(`[${s.id}] ${s.size} · ${s.move}`);
     L.push(`Still image — ${t("upload")}${up}`, s.still, "");
     L.push("Image-to-video", s.videoText, "");
+    if (s.negative) L.push("Negative prompt", s.negative, "");
   });
   return L.join("\n");
 }
@@ -1145,7 +1494,7 @@ outputs.addEventListener("click", e => {
   if (d) {
     const k = d.dataset.done;
     if (progress[k]) delete progress[k]; else progress[k] = true;
-    saveProgress();
+    saveStore();
     render();
     const again = outputs.querySelector(`[data-done="${k}"]`);
     if (again) again.focus();
@@ -1191,16 +1540,62 @@ function showToast(msg) {
   toastTimer = setTimeout(() => el.classList.remove("show"), 1800);
 }
 
-/* ================= 按钮 ================= */
-document.getElementById("exampleBtn").addEventListener("click", () => {
-  if (!confirm(t("confirmEx"))) return;
-  state = {...EXAMPLE};
-  writeForm(); saveState(); render();
+/* ================= 项目 / 示例 / 工具 ================= */
+const projSel = document.getElementById("projSel");
+const exSel = document.getElementById("exSel");
+const toolSel = document.getElementById("toolSel");
+
+function renderPickers() {
+  const list = Object.entries(store.projects).sort((a, b) => b[1].updated - a[1].updated);
+  projSel.innerHTML = list.map(([id, p]) =>
+    `<option value="${id}"${id === store.current ? " selected" : ""}>${escapeHtml(p.name)}</option>`).join("");
+  exSel.innerHTML = `<option value="">${escapeHtml(t("exPick"))}</option>` +
+    EXAMPLES.map(ex => `<option value="${ex.id}">${escapeHtml(ex[lang])}</option>`).join("");
+  toolSel.innerHTML = optionsHtml("tool", tool);
+  document.getElementById("delProj").disabled = list.length <= 1;
+}
+projSel.addEventListener("change", () => switchProject(projSel.value));
+exSel.addEventListener("change", () => {
+  const ex = EXAMPLES.find(x => x.id === exSel.value);
+  if (!ex) return;
+  addProject(ex[lang].replace(/\s*[(\uFF08].*$/, ""), ex.data);
+  showToast(t("exOpened"));
+  document.getElementById("secChar").scrollIntoView({behavior:"smooth"});
+});
+toolSel.addEventListener("change", () => {
+  tool = toolSel.value;
+  try { localStorage.setItem(LS_TOOL, tool); } catch(e) {}
+  render();
+});
+document.getElementById("newProj").addEventListener("click", () => {
+  const name = prompt(t("askName"), t("untitled"));
+  if (name === null) return;
+  addProject(name.trim() || t("untitled"), blankState());
+  showToast(t("projCreated"));
+});
+document.getElementById("dupProj").addEventListener("click", () => {
+  addProject(t("copyOf").replace("{name}", project().name), state);
+});
+document.getElementById("renameProj").addEventListener("click", () => {
+  const name = prompt(t("askName"), project().name);
+  if (name === null || !name.trim()) return;
+  project().name = name.trim();
+  saveStore();
+  renderPickers();
+});
+document.getElementById("delProj").addEventListener("click", () => {
+  if (Object.keys(store.projects).length <= 1) return;
+  if (!confirm(t("confirmDel").replace("{name}", project().name))) return;
+  delete store.projects[store.current];
+  const next = Object.entries(store.projects).sort((a, b) => b[1].updated - a[1].updated)[0][0];
+  switchProject(next);
 });
 document.getElementById("resetBtn").addEventListener("click", () => {
   if (!confirm(t("confirmReset"))) return;
-  state = blankState();
-  writeForm(); saveState(); render();
+  project().data = state = blankState();
+  project().progress = progress = {};
+  saveStore();
+  renderAll();
 });
 
 /* ================= 进度 ================= */
@@ -1210,10 +1605,10 @@ function progressItems() {
     {k:"bg", label:t("pgBg"), target:"cardBg"},
     {k:"script", label:t("pgScript"), target:"cardScript"}
   ];
-  for (let i = 0; i < SHOT_COUNT; i++) {
-    items.push({k:`still${i}`, label:`S0${i+1} · ${t("pgStill")}`, target:`still${i}`});
-    items.push({k:`video${i}`, label:`S0${i+1} · ${t("pgVideo")}`, target:`video${i}`});
-  }
+  state.shots.forEach((_, i) => {
+    items.push({k:`still${i}`, label:`${shotId(i)} · ${t("pgStill")}`, target:`still${i}`});
+    items.push({k:`video${i}`, label:`${shotId(i)} · ${t("pgVideo")}`, target:`video${i}`});
+  });
   return items;
 }
 function renderProgress() {
@@ -1234,20 +1629,20 @@ document.getElementById("progress").addEventListener("click", e => {
   const g = e.target.closest("[data-goto]");
   if (g) {
     const el = document.getElementById(g.dataset.goto);
-    el.style.scrollMarginTop = "150px";
+    el.style.scrollMarginTop = window.innerWidth > 900 ? "150px" : "80px";
     el.scrollIntoView({behavior:"smooth", block:"start"});
     el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash");
     return;
   }
   if (e.target.closest("#pgReset") && confirm(t("pgConfirm"))) {
-    progress = {};
-    saveProgress();
+    Object.keys(progress).forEach(k => delete progress[k]);
+    saveStore();
     render();
   }
 });
 
 /* ================= 新手引导 ================= */
-const TOUR_TARGETS = [null, "#exampleBtn", "#tourChar", "#tourStyle", "#shotForms", "#cardMaster", "#cardBg", "#cardScript", "#shot0", "#progress", "#exportBtn"];
+const TOUR_TARGETS = [null, "#exSel", "#toolSel", "#projectBar", "#tourChar", "#tourStyle", "#shotForms", "#cardMaster", "#cardBg", "#cardScript", "#shot0", "#progress", "#exportBtn"];
 const tourEl = document.getElementById("tour");
 const tourSpot = document.getElementById("tourSpot");
 const tourCard = document.getElementById("tourCard");
@@ -1257,7 +1652,9 @@ const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 function tourTarget() {
   const sel = TOUR_TARGETS[tourIdx];
-  return sel ? document.querySelector(sel) : null;
+  const el = sel ? document.querySelector(sel) : null;
+  // 下拉框本身太小,高亮它所在的整个字段
+  return el && el.tagName === "SELECT" ? el.closest(".field") : el;
 }
 function startTour() {
   tourOpener = document.activeElement;
@@ -1283,7 +1680,7 @@ function showTourStep() {
   back.textContent = t("tourBack");
   back.disabled = tourIdx === 0;
   next.textContent = tourIdx === steps.length - 1 ? t("tourFinish") : t("tourNext");
-  document.getElementById("tourClose").setAttribute("aria-label", lang === "zh" ? "关闭" : "Close");
+  document.getElementById("tourClose").setAttribute("aria-label", t("close"));
   const el = tourTarget();
   tourEl.classList.toggle("no-target", !el);
   if (el) {
@@ -1366,17 +1763,21 @@ window.addEventListener("resize", onViewportChange);
 try { if (!localStorage.getItem("vpb.toured")) document.getElementById("tourBtn").classList.add("pulse"); } catch(e) {}
 
 /* ================= 语言 ================= */
+function renderAll() {
+  fillOptions();
+  writeForm();
+  renderShotForms();
+  renderPickers();
+  render();
+}
 function applyLang() {
   document.documentElement.lang = lang === "zh" ? "zh-CN" : "en";
   document.title = t("title");
   document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = t(el.dataset.i18n); });
   document.querySelectorAll("[data-i18n-html]").forEach(el => { el.innerHTML = t(el.dataset.i18nHtml); });
-  document.querySelectorAll("[data-i18n-ph]").forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
   document.getElementById("tipsList").innerHTML = t("tips").map(x => `<li>${x}</li>`).join("");
   document.querySelectorAll("[data-lang-btn]").forEach(b => b.setAttribute("aria-pressed", b.dataset.langBtn === lang));
-  fillOptions();
-  writeForm();
-  render();
+  renderAll();
   if (tourIdx >= 0) showTourStep();
 }
 document.querySelectorAll("[data-lang-btn]").forEach(b => b.addEventListener("click", () => {
@@ -1408,6 +1809,7 @@ function escapeHtml(s){
 }
 
 applyLang();
+saveStore();
 </script>
 </body>
 </html>
