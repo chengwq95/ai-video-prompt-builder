@@ -4,7 +4,7 @@ A single-page tool that goes with the AI short-video tutorial. Fill in your char
 
 **Live:** https://chengwq95.github.io/ai-video-prompt-builder/ (once GitHub Pages is enabled)
 
-Sister tool: [Prompt Lab](https://chengwq95.github.io/prompt-lab/) — build AI image prompts from four blocks.
+Companion tool: [Prompt Lab](https://chengwq95.github.io/prompt-lab/) — build AI image prompts from four blocks.
 
 ---
 
