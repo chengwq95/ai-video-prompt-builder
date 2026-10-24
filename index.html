@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 视频提示词生成器</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230B1026'/%3E%3Crect x='10' y='18' width='32' height='28' rx='5' fill='none' stroke='%239AA3C7' stroke-width='4'/%3E%3Cpath d='M42 27l12-7v24l-12-7z' fill='%23C08CFF'/%3E%3Ccircle cx='20' cy='28' r='4' fill='%23F5B85C'/%3E%3Ccircle cx='32' cy='28' r='4' fill='%235CD6E8'/%3E%3Ccircle cx='26' cy='37' r='4' fill='%237BE0A0'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;800&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B1026;
+  --bg-soft:#111838;
+  --panel:#151D42;
+  --panel-2:#1B2452;
+  --line:#2A3568;
+  --text:#E9ECF8;
+  --text-dim:#9AA3C7;
+  --c-time:#F5B85C;
+  --c-subject:#5CD6E8;
+  --c-scene:#7BE0A0;
+  --c-style:#C08CFF;
+  --c-rules:#FF8FA3;
+  --radius:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  html{scroll-behavior:auto}
+}
+body{
+  background:
+    radial-gradient(1100px 500px at 80% -10%, rgba(92,214,232,.08), transparent 60%),
+    radial-gradient(900px 500px at 5% 20%, rgba(192,140,255,.07), transparent 60%),
+    var(--bg);
+  color:var(--text);
+  font-family:'Noto Sans SC',-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;
+  line-height:1.65;
+  padding-bottom:60px;
+}
+.wrap{max-width:1060px;margin:0 auto;padding:0 20px}
+@media(max-width:640px){.wrap{padding:0 16px}}
+
+/* ---------- top bar ---------- */
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding-top:18px}
+.top-link,.lang-btn{
+  font-family:inherit;font-size:13px;color:var(--text-dim);text-decoration:none;
+  border:1px solid var(--line);border-radius:99px;padding:5px 14px;background:transparent;cursor:pointer;
+  transition:color .15s,border-color .15s;
+}
+.top-link:hover,.lang-btn:hover{color:var(--text);border-color:var(--text-dim)}
+.top-link:focus-visible,.lang-btn:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+
+/* ---------- Hero ---------- */
+header{padding:34px 0 24px;text-align:center}
+.eyebrow{
+  display:inline-block;font-size:12px;letter-spacing:.35em;color:var(--text-dim);
+  border:1px solid var(--line);border-radius:99px;padding:5px 16px 5px 19px;margin-bottom:18px;
+}
+h1{
+  font-family:'Noto Serif SC',serif;font-weight:800;font-size:clamp(28px,5vw,44px);
+  letter-spacing:.04em;margin-bottom:14px;
+}
+h1 .glow{
+  background:linear-gradient(100deg,var(--c-time),var(--c-subject) 40%,var(--c-scene) 70%,var(--c-style));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.sub{color:var(--text-dim);max-width:620px;margin:0 auto;font-size:15px}
+
+/* pipeline */
+.pipeline{display:flex;justify-content:center;align-items:center;gap:6px;flex-wrap:wrap;margin:24px 0 8px}
+.p-step{
+  font-family:inherit;font-size:13.5px;font-weight:700;color:var(--text);text-decoration:none;
+  padding:7px 13px;border-radius:10px;background:var(--panel);border:1px solid var(--line);
+  transition:transform .15s,border-color .15s;
+}
+.p-step:hover{transform:translateY(-2px);border-color:var(--text-dim)}
+.p-step:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+.p-step i{font-style:normal;color:var(--text-dim);font-weight:500;margin-right:5px;font-size:12px}
+.p-arrow{color:var(--text-dim);font-size:13px}
+.formula-note{font-size:13px;color:var(--text-dim)}
+.formula-note b{color:var(--text)}
+
+/* ---------- toolbar ---------- */
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0 10px}
+.ghost-btn,.primary-btn{
+  font-family:inherit;font-size:14px;color:var(--text);background:var(--panel);
+  border:1px solid var(--line);border-radius:10px;padding:9px 16px;cursor:pointer;
+  transition:border-color .15s, background .15s;
+}
+.ghost-btn:hover{border-color:var(--text-dim);background:var(--panel-2)}
+.primary-btn{background:var(--text);color:#0B1026;border-color:var(--text);font-weight:700}
+.primary-btn:hover{background:#fff}
+.ghost-btn:focus-visible,.primary-btn:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+.toolbar .primary-btn{margin-left:auto}
+@media(max-width:640px){.toolbar .primary-btn{margin-left:0}.toolbar>*{flex:1 1 auto}}
+.privacy{
+  font-size:13px;color:var(--text-dim);padding:10px 14px;margin-bottom:18px;
+  background:var(--panel);border-left:3px solid var(--c-rules);border-radius:0 8px 8px 0;
+}
+
+/* ---------- tips ---------- */
+details.tips{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:22px;
+}
+details.tips summary{cursor:pointer;padding:12px 16px;font-weight:700;font-size:14px;list-style:none}
+details.tips summary::-webkit-details-marker{display:none}
+details.tips summary::after{content:" ▾";color:var(--text-dim)}
+details.tips[open] summary::after{content:" ▴"}
+details.tips summary:focus-visible{outline:2px solid var(--text);outline-offset:-2px;border-radius:var(--radius)}
+.tips ul{padding:0 18px 14px 36px;font-size:13.5px;color:var(--text-dim)}
+.tips li{margin:4px 0}
+.tips b{color:var(--text)}
+
+/* ---------- form ---------- */
+.builder{
+  background:var(--bg-soft);border:1px solid var(--line);border-radius:18px;padding:6px 22px 18px;
+}
+@media(max-width:640px){.builder{padding:4px 14px 14px}}
+.subgroup-title{
+  font-size:13px;font-weight:700;letter-spacing:.15em;color:var(--text-dim);
+  margin:20px 0 10px;padding-top:14px;border-top:1px dashed var(--line);
+}
+.subgroup-title:first-child{border-top:none;padding-top:10px;margin-top:4px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 14px}
+.grid .wide{grid-column:span 2}
+.grid .full{grid-column:1/-1}
+@media(max-width:820px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.grid{grid-template-columns:1fr}.grid .wide{grid-column:auto}}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.field label{font-size:12.5px;font-weight:500;color:var(--text-dim)}
+.field input,.field select,.field textarea{
+  font-family:inherit;font-size:14px;color:var(--text);background:var(--panel);
+  border:1px solid var(--line);border-radius:8px;padding:8px 11px;width:100%;
+}
+.field textarea{resize:vertical;min-height:40px;line-height:1.5}
+.field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--text-dim);outline-offset:1px}
+.field .hint{font-size:11.5px;color:var(--text-dim);opacity:.85}
+
+.shots{display:grid;grid-template-columns:1fr;gap:12px}
+.shot-form{
+  background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;
+  display:grid;grid-template-columns:44px 1fr 1fr;gap:10px 12px;align-items:start;
+}
+.shot-form .tag{
+  font-family:'JetBrains Mono',monospace;font-weight:600;font-size:14px;color:var(--c-subject);padding-top:24px;
+}
+.shot-form .span2{grid-column:2/4}
+@media(max-width:560px){
+  .shot-form{grid-template-columns:1fr 1fr}
+  .shot-form .tag{grid-column:1/-1;padding-top:0}
+  .shot-form .span2{grid-column:1/-1}
+}
+
+/* ---------- outputs ---------- */
+.out-head{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;flex-wrap:wrap;margin:36px 0 14px}
+.out-head h2{font-family:'Noto Serif SC',serif;font-size:24px}
+.out-head p{font-size:13px;color:var(--text-dim)}
+.sec-label{font-size:12px;letter-spacing:.25em;color:var(--text-dim);margin:26px 0 10px;scroll-margin-top:16px}
+.card{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:16px 16px 14px;margin-bottom:12px;scroll-margin-top:16px;
+}
+.card-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.card h3{font-size:15.5px;display:flex;align-items:center;gap:8px;min-width:0}
+.card h3 .num{
+  font-family:'JetBrains Mono',monospace;font-size:12px;color:#0B1026;background:var(--text-dim);
+  border-radius:6px;padding:1px 7px;flex:none;
+}
+.card-note{font-size:12.5px;color:var(--text-dim);margin-bottom:10px}
+.card-note b{color:var(--text)}
+.copy-btn{
+  font-family:inherit;font-size:12.5px;font-weight:700;border-radius:8px;padding:6px 14px;flex:none;
+  cursor:pointer;border:1px solid var(--text);background:var(--text);color:#0B1026;
+  transition:background .15s;
+}
+.copy-btn:hover{background:#fff}
+.copy-btn:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+.out{
+  font-family:'JetBrains Mono','Noto Sans SC',monospace;font-size:13.5px;line-height:1.8;
+  background:var(--bg-soft);border:1px solid var(--line);border-radius:10px;padding:12px 14px;
+  white-space:pre-wrap;word-break:break-word;
+}
+.legend{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+.lg{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--text-dim)}
+.lg i{width:8px;height:8px;border-radius:50%;flex:none}
+.seg-style{color:var(--c-style)}
+.seg-who{color:var(--c-subject)}
+.seg-look{color:var(--c-time)}
+.seg-pose{color:var(--c-scene)}
+.seg-rules{color:var(--c-rules)}
+.seg-cam{color:var(--c-time)}
+.seg-act{color:var(--c-subject)}
+.seg-lock{color:var(--c-style)}
+
+.sub-block{margin-top:12px}
+.sub-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.sub-head span{font-size:13px;font-weight:700;color:var(--text-dim)}
+.upload{
+  font-size:12.5px;color:var(--text-dim);padding:7px 12px;margin:2px 0 4px;
+  background:var(--bg-soft);border-left:3px solid var(--c-scene);border-radius:0 8px 8px 0;
+}
+.upload b{color:var(--text)}
+.warn{
+  font-size:12.5px;color:var(--c-time);padding:7px 12px;margin-top:6px;
+  background:rgba(245,184,92,.08);border-radius:8px;
+}
+
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--bg-soft)}
+table{border-collapse:collapse;width:100%;font-size:13px;min-width:640px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--text-dim);font-weight:500;font-size:12px;white-space:nowrap}
+tr:last-child td{border-bottom:none}
+td.mono{font-family:'JetBrains Mono',monospace;color:var(--c-subject);white-space:nowrap}
+
+.toast{
+  position:fixed;left:50%;bottom:40px;transform:translateX(-50%) translateY(8px);
+  background:var(--text);color:#0B1026;font-size:13px;font-weight:700;
+  padding:8px 20px;border-radius:99px;opacity:0;pointer-events:none;
+  transition:opacity .25s, transform .25s;z-index:60;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+footer{text-align:center;color:var(--text-dim);font-size:12px;margin-top:44px;letter-spacing:.1em}
+footer a{color:var(--text-dim)}
+</style>
+</head>
+<body>
+
+<div class="wrap topbar">
+  <a class="top-link" href="https://chengwq95.github.io/prompt-lab/" data-i18n="back">姊妹工具:图片提示词实验室 ↗</a>
+  <button class="lang-btn" id="langBtn" aria-label="Switch language">EN</button>
+</div>
+
+<header class="wrap">
+  <div class="eyebrow">PROMPT LAB · VIDEO</div>
+  <h1 data-i18n-html="h1">AI 视频<span class="glow">提示词</span>生成器</h1>
+  <p class="sub" data-i18n="sub"></p>
+  <nav class="pipeline" aria-label="Workflow">
+    <a class="p-step" href="#secChar"><i>1</i><span data-i18n="p1"></span></a><span class="p-arrow">→</span>
+    <a class="p-step" href="#secChar"><i>2</i><span data-i18n="p2"></span></a><span class="p-arrow">→</span>
+    <a class="p-step" href="#outMaster"><i>3</i><span data-i18n="p3"></span></a><span class="p-arrow">→</span>
+    <a class="p-step" href="#outScript"><i>4</i><span data-i18n="p4"></span></a><span class="p-arrow">→</span>
+    <a class="p-step" href="#outShots"><i>5</i><span data-i18n="p5"></span></a><span class="p-arrow">→</span>
+    <a class="p-step" href="#outShots"><i>6</i><span data-i18n="p6"></span></a><span class="p-arrow">→</span>
+    <a class="p-step" href="#tips"><i>7</i><span data-i18n="p7"></span></a>
+  </nav>
+  <p class="formula-note" data-i18n-html="pipeNote"></p>
+</header>
+
+<main class="wrap">
+
+  <div class="toolbar">
+    <button class="ghost-btn" id="exampleBtn" data-i18n="loadEx"></button>
+    <button class="ghost-btn" id="resetBtn" data-i18n="reset"></button>
+    <button class="primary-btn" id="exportBtn" data-i18n="exportAll"></button>
+  </div>
+  <div class="privacy" data-i18n="privacy"></div>
+
+  <details class="tips" id="tips">
+    <summary data-i18n="tipsTitle"></summary>
+    <ul id="tipsList"></ul>
+  </details>
+
+  <form class="builder" id="form" autocomplete="off" onsubmit="return false">
+    <div class="subgroup-title" id="secChar" data-i18n="secChar"></div>
+    <div class="grid">
+      <div class="field"><label for="f_name" data-i18n="name"></label><input id="f_name" data-k="name"></div>
+      <div class="field"><label for="f_pronoun" data-i18n="pronoun"></label><select id="f_pronoun" data-k="pronoun" data-opts="pronoun"></select></div>
+      <div class="field"><label for="f_age" data-i18n="age"></label><input id="f_age" data-k="age" placeholder="late 20s"></div>
+      <div class="field wide"><label for="f_role" data-i18n="role"></label><input id="f_role" data-k="role" placeholder="Transaction Monitoring Analyst at a modern bank"></div>
+      <div class="field"><label for="f_eth" data-i18n="eth"></label><input id="f_eth" data-k="ethnicity" placeholder="Southeast Asian"></div>
+      <div class="field full"><label for="f_pers" data-i18n="personality"></label><input id="f_pers" data-k="personality" placeholder="calm, focused, careful"></div>
+    </div>
+
+    <div class="subgroup-title" data-i18n="secLook"></div>
+    <div class="grid">
+      <div class="field"><label for="f_hair" data-i18n="hair"></label><input id="f_hair" data-k="hair"></div>
+      <div class="field"><label for="f_glasses" data-i18n="glasses"></label><input id="f_glasses" data-k="glasses"></div>
+      <div class="field"><label for="f_badge" data-i18n="badge"></label><input id="f_badge" data-k="badge"></div>
+      <div class="field wide"><label for="f_outfit" data-i18n="outfit"></label><input id="f_outfit" data-k="outfit"></div>
+      <div class="field"><label for="f_shoes" data-i18n="shoes"></label><input id="f_shoes" data-k="shoes"></div>
+    </div>
+
+    <div class="subgroup-title" data-i18n="secStyle"></div>
+    <div class="grid">
+      <div class="field"><label for="f_preset" data-i18n="stylePreset"></label><select id="f_preset" data-k="stylePreset" data-opts="styles"></select><span class="hint" data-i18n="styleHint"></span></div>
+      <div class="field wide"><label for="f_ratio" data-i18n="ratio"></label><select id="f_ratio" data-k="ratio" data-opts="ratio"></select><span class="hint" data-i18n="ratioHint"></span></div>
+      <div class="field full"><label for="f_style" data-i18n="styleText"></label><textarea id="f_style" data-k="styleText" rows="2"></textarea></div>
+      <div class="field full"><label for="f_lock" data-i18n="styleLock"></label><input id="f_lock" data-k="styleLock"><span class="hint" data-i18n="lockHint"></span></div>
+    </div>
+
+    <div class="subgroup-title" data-i18n="secSet"></div>
+    <div class="grid">
+      <div class="field"><label for="f_loc" data-i18n="location"></label><input id="f_loc" data-k="location" placeholder="office"></div>
+      <div class="field wide"><label for="f_light" data-i18n="light"></label><select id="f_light" data-k="light" data-opts="light"></select></div>
+      <div class="field full"><label for="f_setting" data-i18n="setting"></label><textarea id="f_setting" data-k="setting" rows="2"></textarea></div>
+    </div>
+
+    <div class="subgroup-title" data-i18n="secShots"></div>
+    <div class="shots" id="shotForms"></div>
+  </form>
+
+  <div class="out-head">
+    <h2 data-i18n="outTitle"></h2>
+    <p data-i18n="outSub"></p>
+  </div>
+  <div id="outputs"></div>
+
+</main>
+
+<footer class="wrap"><span data-i18n="footer"></span> · <a href="https://chengwq95.github.io/prompt-lab/" data-i18n="back"></a></footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ================= 数据 ================= */
+const SHOT_COUNT = 5;
+
+const STYLES = {
+  clay: {
+    name: "soft clay-like 3D",
+    text: "Soft clay-like 3D animation style, rounded toy-like proportions, slightly oversized head, solid black dot eyes, rosy cheeks, matte felt textures, warm soft light, pastel muted colors",
+    lock: "solid black dot eyes, rosy cheeks, rounded toy-like proportions, slightly oversized head, matte felt textures",
+    guard: g => `Do not make ${g.o} more realistic or older.`
+  },
+  pixar: {
+    name: "Pixar-like 3D animated",
+    text: "Pixar-like 3D animated film style, stylized proportions, large expressive eyes, smooth stylized skin, soft cinematic lighting, rich warm colors",
+    lock: "large expressive cartoon eyes, smooth stylized skin, slightly exaggerated proportions, soft cinematic lighting",
+    guard: g => `Do not make ${g.o} more realistic or older.`
+  },
+  anime: {
+    name: "Japanese anime",
+    text: "Japanese anime style, clean line art, cel shading, expressive eyes, soft gradient backgrounds, bright clear colors",
+    lock: "clean line art, flat cel shading, large anime eyes, simple shapes",
+    guard: g => `Do not make ${g.o} more realistic, 3D or older.`
+  },
+  real: {
+    name: "realistic cinematic",
+    text: "Realistic cinematic photo style, natural skin texture, 35mm film look, shallow depth of field, soft natural window light, muted color grade",
+    lock: "same face shape, same skin tone, same proportions, same cinematic color grade",
+    guard: g => `Do not change ${g.p} age, face or body shape.`
+  },
+  flat: {
+    name: "flat 2D illustration",
+    text: "Flat 2D vector illustration style, simple geometric shapes, no outlines, flat colors, subtle grain texture, limited pastel palette",
+    lock: "flat colors, simple shapes, no 3D shading, minimal facial features",
+    guard: g => `Do not make ${g.o} 3D, more realistic or older.`
+  },
+  custom: {
+    name: "same art",
+    text: "", lock: "",
+    guard: g => `Do not change the art style and do not make ${g.o} more realistic or older.`
+  }
+};
+
+const SIZES = ["Wide","Medium","Close-up","Over-the-shoulder","Medium close-up"];
+const MOVES = ["Static","Slow push-in"];
+const CLOSE_SIZES = ["Close-up","Medium close-up"];
+
+const OPTS = {
+  pronoun: [
+    {v:"he", zh:"He · 他", en:"He"},
+    {v:"she", zh:"She · 她", en:"She"},
+    {v:"they", zh:"They · 中性", en:"They"}
+  ],
+  styles: [
+    {v:"clay", zh:"软萌黏土 3D · Soft clay-like 3D", en:"Soft clay-like 3D"},
+    {v:"pixar", zh:"皮克斯风 3D · Pixar-like 3D", en:"Pixar-like 3D"},
+    {v:"anime", zh:"日系动漫 · Anime", en:"Anime"},
+    {v:"real", zh:"写实电影感 · Realistic cinematic", en:"Realistic cinematic"},
+    {v:"flat", zh:"扁平插画 · Flat illustration", en:"Flat illustration"},
+    {v:"custom", zh:"自定义(保留我写的)", en:"Custom (keep my text)"}
+  ],
+  ratio: [
+    {v:"16:9", zh:"16:9 横屏", en:"16:9 landscape"},
+    {v:"9:16", zh:"9:16 竖屏", en:"9:16 vertical"},
+    {v:"1:1", zh:"1:1 方形", en:"1:1 square"}
+  ],
+  light: [
+    {v:"left", zh:"窗户在左边 · left", en:"Window on the left"},
+    {v:"right", zh:"窗户在右边 · right", en:"Window on the right"}
+  ],
+  size: [
+    {v:"Wide", zh:"远景 Wide", en:"Wide"},
+    {v:"Medium", zh:"中景 Medium", en:"Medium"},
+    {v:"Close-up", zh:"特写 Close-up", en:"Close-up"},
+    {v:"Over-the-shoulder", zh:"过肩 Over-the-shoulder", en:"Over-the-shoulder"},
+    {v:"Medium close-up", zh:"中近景 Medium close-up", en:"Medium close-up"}
+  ],
+  move: [
+    {v:"Static", zh:"固定 Static", en:"Static"},
+    {v:"Slow push-in", zh:"缓慢推近 Slow push-in", en:"Slow push-in"}
+  ]
+};
+
+const EXAMPLE = {
+  name:"Ethan Lim", pronoun:"he", role:"Transaction Monitoring Analyst at a modern bank",
+  age:"late 20s", ethnicity:"Southeast Asian",
+  hair:"thick wavy black hair", glasses:"black rectangular glasses",
+  outfit:"light blue shirt with rolled sleeves, dark gray trousers",
+  badge:"white lanyard with a blank card", shoes:"brown loafers",
+  personality:"calm, focused, careful",
+  stylePreset:"clay", styleText:STYLES.clay.text, styleLock:STYLES.clay.lock,
+  location:"office",
+  setting:"cozy modern bank office, light wood desk, two monitors, desk lamp, pastel sticky notes, large window",
+  light:"left", ratio:"16:9",
+  s0_size:"Wide", s0_move:"Slow push-in", s0_action:"starts his day at the desk",
+  s0_vo:"Every morning, a new queue of alerts is waiting.",
+  s1_size:"Over-the-shoulder", s1_move:"Static", s1_action:"leans in and studies a row of equal-height bars on his monitor",
+  s1_vo:"Most look routine. But this one shows a row of transfers, all just under the threshold.",
+  s2_size:"Close-up", s2_move:"Static", s2_action:"frowns and taps his chin",
+  s2_vo:"Ethan digs into the account history. The pattern doesn't add up.",
+  s3_size:"Over-the-shoulder", s3_move:"Static", s3_action:"clicks the mouse once, and the orange button on his monitor turns into a check mark",
+  s3_vo:"He documents his findings and escalates the case.",
+  s4_size:"Medium close-up", s4_move:"Static", s4_action:"leans back, sips his coffee and smiles",
+  s4_vo:"Another day of keeping the bank, and its customers, safe."
+};
+
+function blankState() {
+  const s = {
+    name:"", pronoun:"he", role:"", age:"", ethnicity:"",
+    hair:"", glasses:"", outfit:"", badge:"", shoes:"", personality:"",
+    stylePreset:"clay", styleText:STYLES.clay.text, styleLock:STYLES.clay.lock,
+    location:"", setting:"", light:"left", ratio:"16:9"
+  };
+  for (let i = 0; i < SHOT_COUNT; i++) {
+    s[`s${i}_size`] = i === 0 ? "Wide" : "Medium";
+    s[`s${i}_move`] = "Static";
+    s[`s${i}_action`] = "";
+    s[`s${i}_vo`] = "";
+  }
+  return s;
+}
+
+/* ================= 界面文字 ================= */
+const I18N = {
+  zh: {
+    title:"AI 视频提示词生成器",
+    back:"姊妹工具:图片提示词实验室 ↗",
+    h1:'AI 视频<span class="glow">提示词</span>生成器',
+    sub:"填一次角色和分镜,自动生成做短视频每一步要用的英文提示词:角色主图、空背景、每个镜头的静帧和图生视频提示词,外加分镜脚本表。",
+    p1:"故事", p2:"角色设定", p3:"风格 + 主图", p4:"分镜脚本", p5:"静帧", p6:"图生视频", p7:"剪映剪辑",
+    pipeNote:"提示词一律是<b>英文</b>,复制到 Magnific / Grok / Kling / Veo 等工具直接用",
+    loadEx:"📋 载入示例", reset:"↺ 重置", exportAll:"⧉ 导出全部提示词",
+    privacy:"⚠️ 只用虚构数据:不要填真实客户姓名、账号、金额,也不要上传系统截图。",
+    tipsTitle:"💡 出片小贴士(点开看)",
+    tips:[
+      "画面比例要在<b>工具的设置里</b>选好,不能只写在提示词里。",
+      "<b>上传的图决定输出的形状</b>:主图、背景、静帧都用同一个比例生成。",
+      "先把<b>静帧</b>确认满意,再去做视频。静帧不对,视频只会更糟。",
+      "<b>换机位在静帧里做</b>,不要指望视频去转镜头角度。",
+      "「保持一切完全不变,只改一两处」比「给我一个新角度」稳得多。",
+      "特写容易变写实:风格要再强调一遍(本页的特写提示词已自动加上)。",
+      "角色很爱看镜头:每段视频提示词结尾都写了 never looks at the camera。",
+      "动作越简单越好:「点按钮」常常变成用手指戳屏幕,改成 clicks the mouse。",
+      "视频生成约 <b>6 秒</b>,剪辑时修到 <b>4–5 秒</b>。",
+      "重试时<b>一次只改一处</b>,才知道是哪句起作用。",
+      "最后在剪映里配旁白、字幕和音乐:旁白就是分镜脚本里的那一列。",
+      "只用虚构数据:不放真实客户名字、数字或截图。"
+    ],
+    secChar:"角色设定 · CHARACTER", secLook:"固定造型 · FIXED LOOK", secStyle:"画风与比例 · STYLE", secSet:"场景 · SETTING", secShots:"分镜 · 5 个镜头",
+    name:"角色名字", pronoun:"代词", age:"年龄段(英文)", role:"职业 / 身份(英文)", eth:"族裔 / 长相(英文)", personality:"性格(英文)",
+    hair:"发型", glasses:"眼镜 / 配饰", badge:"工牌 / 挂绳", outfit:"服装", shoes:"鞋子",
+    stylePreset:"画风预设", styleHint:"换预设会覆盖下面两栏;选「自定义」则保留你写的。",
+    ratio:"画面比例", ratioHint:"同时也要在出图 / 出视频工具的设置里选同一个比例。",
+    styleText:"画风描述(可编辑)", styleLock:"风格锁定要点(可编辑)",
+    lockHint:"会被写进每个静帧和视频提示词,防止角色越画越写实。",
+    location:"地点简称", light:"窗户 / 光线方向", setting:"场景描述(英文)",
+    size:"景别", move:"镜头运动", action:"一个主要动作(动词开头,英文)", vo:"旁白(英文)",
+    actionPh:"leans back and smiles",
+    outTitle:"生成的提示词", outSub:"随输入实时更新 · 每张卡片都能一键复制",
+    lgStyle:"风格", lgWho:"人物", lgLook:"造型", lgPose:"姿势与背景", lgRules:"规则",
+    lgCam:"镜头", lgAct:"一个动作", lgLock:"锁定",
+    secMaster:"第 3 步 · 风格 + 角色主图", secScript:"第 4 步 · 分镜脚本", secShots2:"第 5–6 步 · 每个镜头:静帧 → 图生视频",
+    c1:"角色主图", c1note:"先出这张。满意后它就是后面所有镜头的「标准像」。<b>用视频的比例生成</b>,因为之后上传它时,它决定输出的形状。",
+    c2:"近景肖像(可选)", c2note:"<b>上传:</b>角色主图。特写镜头脸容易跑偏时,拿它当脸部参考。",
+    c3:"空背景", c3note:"<b>上传:</b>无。之后和角色主图一起合成第一个镜头。",
+    c4:"分镜脚本", c4note:"时长按旁白字数估算(约 2.5 词/秒)。复制为 TSV,可直接粘贴进 Excel / Google 表格。",
+    copy:"复制", copyTsv:"复制表格 (TSV)", copied:"已复制到剪贴板", copyFail:"复制失败,请手动选择文字", exported:"已复制全部提示词",
+    thShot:"镜头", thLen:"时长", thSize:"景别", thCam:"镜头运动", thAct:"动作", thVoice:"旁白与声音",
+    still:"静帧提示词 · Still image", video:"图生视频提示词 · Image-to-video",
+    videoFormula:"图生视频公式:镜头 + 一个动作 + 锁定 + 规则",
+    upload:"上传:",
+    up1:"① 空背景图(它决定画面比例)② 角色主图",
+    upN:"已通过的 S01 静帧(或机位最接近的已通过静帧)",
+    upClose:" + ② 近景肖像(可选,用来锁脸)",
+    upVideo:"上传:这个镜头已通过的静帧",
+    warnClick:"⚠️ 「点按钮 / 点屏幕」容易让角色用手指戳屏幕,改成 clicks the mouse 这类更简单的动作。",
+    warnLong:"⚠️ 这段旁白约 {n} 秒,比一个 4–5 秒的镜头长,考虑拆成两个镜头或删减。",
+    footer:"镜头 + 一个动作 + 锁定 + 规则 · 一次只改一处",
+    confirmReset:"确定清空所有输入吗?", confirmEx:"载入示例会覆盖当前输入,继续吗?"
+  },
+  en: {
+    title:"AI Video Prompt Builder",
+    back:"Sister tool: Image Prompt Lab ↗",
+    h1:'AI Video <span class="glow">Prompt</span> Builder',
+    sub:"Fill in your character and shots once, and get the English prompts for every step of a short AI video: master character image, empty background, a still-image and an image-to-video prompt per shot, plus a director script.",
+    p1:"Story", p2:"Character sheet", p3:"Style + master image", p4:"Director script", p5:"Stills", p6:"Image-to-video", p7:"CapCut edit",
+    pipeNote:"All prompts are in <b>English</b> — paste them straight into Magnific, Grok, Kling, Veo and similar tools",
+    loadEx:"📋 Load example", reset:"↺ Reset", exportAll:"⧉ Export all prompts",
+    privacy:"⚠️ Fictional data only: no real customer names, account numbers, amounts or system screenshots.",
+    tipsTitle:"💡 Tips (tap to open)",
+    tips:[
+      "Set the aspect ratio <b>in the tool's settings</b>, not only in the prompt.",
+      "<b>The uploaded image decides the output shape</b>: make the master image, background and stills in the same ratio.",
+      "Approve the <b>still</b> before you make the video. A bad still only gets worse in motion.",
+      "<b>Change camera angles in the still image</b>, not in the video.",
+      "\"Keep everything exactly the same, except for one or two things\" works better than asking for a new angle.",
+      "Close-ups drift toward realism: restate the style firmly (this page adds it for you).",
+      "Characters love looking at the camera: every video prompt ends with \"never looks at the camera\".",
+      "Keep actions simple: \"click a button\" often becomes poking the screen — say \"clicks the mouse\" instead.",
+      "Generate about <b>6 s</b> of video and trim to <b>4–5 s</b> in the edit.",
+      "When retrying, <b>change one thing at a time</b> so you know what made the difference.",
+      "Add narration, captions and music in CapCut — the narration is the last column of the director script.",
+      "Keep all data fictional: no real customer names, numbers or screenshots."
+    ],
+    secChar:"CHARACTER", secLook:"FIXED LOOK", secStyle:"ART STYLE & RATIO", secSet:"SETTING", secShots:"SHOTS · 5 SHOTS",
+    name:"Character name", pronoun:"Pronoun", age:"Age range", role:"Role / job", eth:"Ethnicity / look", personality:"Personality",
+    hair:"Hair", glasses:"Glasses / accessories", badge:"Badge / lanyard", outfit:"Outfit", shoes:"Shoes",
+    stylePreset:"Style preset", styleHint:"Changing the preset overwrites the two fields below; \"Custom\" keeps your text.",
+    ratio:"Aspect ratio", ratioHint:"Also pick the same ratio in your image / video tool's settings.",
+    styleText:"Style description (editable)", styleLock:"Style-lock details (editable)",
+    lockHint:"Added to every still and video prompt so the character doesn't drift toward realism.",
+    location:"Location (short name)", light:"Window / light direction", setting:"Setting description",
+    size:"Shot size", move:"Camera move", action:"One main action (start with a verb)", vo:"Narration line",
+    actionPh:"leans back and smiles",
+    outTitle:"Generated prompts", outSub:"Updates live as you type · every card has a Copy button",
+    lgStyle:"Style", lgWho:"Who", lgLook:"Look", lgPose:"Pose & background", lgRules:"Rules",
+    lgCam:"Camera", lgAct:"One action", lgLock:"Lock",
+    secMaster:"STEP 3 · STYLE + MASTER CHARACTER IMAGE", secScript:"STEP 4 · DIRECTOR SCRIPT", secShots2:"STEPS 5–6 · PER SHOT: STILL → IMAGE-TO-VIDEO",
+    c1:"Character master image", c1note:"Make this first. Once approved, it is the reference for every shot. <b>Generate it in your video ratio</b> — when you upload it later, it decides the output shape.",
+    c2:"Close-up portrait (optional)", c2note:"<b>Upload:</b> the master image. Use it as a face reference when close-ups drift.",
+    c3:"Empty background", c3note:"<b>Upload:</b> nothing. Combine it with the master image to build the first shot.",
+    c4:"Director script", c4note:"Length is estimated from the narration (~2.5 words/second). Copy as TSV to paste into Excel / Google Sheets.",
+    copy:"Copy", copyTsv:"Copy table (TSV)", copied:"Copied to clipboard", copyFail:"Copy failed — please select the text manually", exported:"All prompts copied",
+    thShot:"Shot", thLen:"Length", thSize:"Shot size", thCam:"Camera", thAct:"Action", thVoice:"Voice & sound",
+    still:"Still-image prompt", video:"Image-to-video prompt",
+    videoFormula:"Video formula: Camera + One action + Lock + Rules",
+    upload:"Upload: ",
+    up1:"① Empty background (sets the shape) ② Master character image",
+    upN:"The approved S01 still (or the approved still with the closest angle)",
+    upClose:" + ② Close-up portrait (optional, locks the face)",
+    upVideo:"Upload: the approved still for this shot",
+    warnClick:"⚠️ \"Click a button / tap the screen\" often makes the character poke the screen. Try something simpler, like \"clicks the mouse\".",
+    warnLong:"⚠️ This narration runs about {n} s — longer than a 4–5 s shot. Consider splitting it or trimming it.",
+    footer:"Camera + One action + Lock + Rules · change one thing at a time",
+    confirmReset:"Clear all inputs?", confirmEx:"Loading the example replaces your current inputs. Continue?"
+  }
+};
+
+const LS_KEY = "promptlab.video.v1";
+const LS_LANG = "promptlab.video.lang";
+let lang = "zh";
+try { if (localStorage.getItem(LS_LANG) === "en") lang = "en"; } catch(e) {}
+function t(k){ return I18N[lang][k]; }
+
+/* ================= 状态 ================= */
+let state = loadState() || {...EXAMPLE};
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return null;
+    return {...blankState(), ...JSON.parse(raw)};
+  } catch(e) { return null; }
+}
+function saveState() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch(e) {}
+}
+
+/* ================= 表单 ================= */
+const shotForms = document.getElementById("shotForms");
+for (let i = 0; i < SHOT_COUNT; i++) {
+  const id = n => `f_s${i}_${n}`;
+  shotForms.insertAdjacentHTML("beforeend", `
+    <div class="shot-form">
+      <div class="tag">S0${i+1}</div>
+      <div class="field"><label for="${id("size")}" data-i18n="size"></label><select id="${id("size")}" data-k="s${i}_size" data-opts="size"></select></div>
+      <div class="field"><label for="${id("move")}" data-i18n="move"></label><select id="${id("move")}" data-k="s${i}_move" data-opts="move"></select></div>
+      <div class="field span2"><label for="${id("action")}" data-i18n="action"></label><textarea id="${id("action")}" data-k="s${i}_action" data-i18n-ph="actionPh" rows="2"></textarea></div>
+      <div class="field span2"><label for="${id("vo")}" data-i18n="vo"></label><textarea id="${id("vo")}" data-k="s${i}_vo" rows="2"></textarea></div>
+    </div>`);
+}
+
+const form = document.getElementById("form");
+const fields = [...form.querySelectorAll("[data-k]")];
+
+function fillOptions() {
+  form.querySelectorAll("select[data-opts]").forEach(sel => {
+    const val = sel.value;
+    sel.innerHTML = OPTS[sel.dataset.opts]
+      .map(o => `<option value="${o.v}">${escapeHtml(o[lang])}</option>`).join("");
+    if (val) sel.value = val;
+  });
+}
+
+function writeForm() {
+  fields.forEach(el => { el.value = state[el.dataset.k] ?? ""; });
+}
+
+form.addEventListener("input", onFormChange);
+form.addEventListener("change", onFormChange);
+function onFormChange(e) {
+  const k = e.target.dataset.k;
+  if (!k) return;
+  state[k] = e.target.value;
+  if (k === "stylePreset" && e.type === "change" && state.stylePreset !== "custom") {
+    const st = STYLES[state.stylePreset];
+    state.styleText = st.text;
+    state.styleLock = st.lock;
+    writeForm();
+  }
+  saveState();
+  render();
+}
+
+/* ================= 提示词生成 ================= */
+function pron(p) {
+  if (p === "she") return {S:"She", s:"she", o:"her", p:"her", n:"woman", v:w => w + "s"};
+  if (p === "they") return {S:"They", s:"they", o:"them", p:"their", n:"person", v:w => w};
+  return {S:"He", s:"he", o:"him", p:"his", n:"man", v:w => w + "s"};
+}
+function val(k, ph) { return (state[k] || "").trim() || `[${ph}]`; }
+function clean(x) { return x.trim().replace(/[\s.,;:!]+$/, ""); }
+function end(x) { return clean(x) + "."; }
+function art(w) { return /^[aeiou]/i.test(w) ? "an" : "a"; }
+function lookList() {
+  const items = ["hair","glasses","outfit","badge","shoes"].map(k => clean(state[k] || "")).filter(Boolean);
+  return items.length ? items.join(", ") : "[hair, glasses, outfit…]";
+}
+function sizeDesc(size, g, loc) {
+  switch (size) {
+    case "Wide": return `wide shot, showing ${g.o} at full body with the whole ${loc} around ${g.o}`;
+    case "Medium": return `medium shot, from the waist up`;
+    case "Close-up": return `close-up on ${g.p} face and shoulders`;
+    case "Over-the-shoulder": return `over-the-shoulder shot from just behind ${g.p} shoulder, showing what ${g.s} is looking at`;
+    default: return `medium close-up, from the chest up`;
+  }
+}
+
+function build() {
+  const g = pron(state.pronoun);
+  const st = STYLES[state.stylePreset] || STYLES.clay;
+  const styleText = val("styleText", "art style");
+  const lock = clean(val("styleLock", "style-lock details"));
+  const guard = st.guard(g);
+  const styleName = st.name;
+  const ratio = `${state.ratio} aspect ratio.`;
+  const name = val("name", "name");
+  const loc = clean(val("location", "location"));
+  const light = state.light === "right" ? "right" : "left";
+  const looks = lookList();
+  const eth = clean(val("ethnicity", "ethnicity / look"));
+  const role = clean(val("role", "role"));
+
+  const master = [
+    ["style", end(styleText)],
+    ["who", `Character design of ${name}, ${art(eth)} ${eth} ${g.n} in ${g.p} ${clean(val("age","age range"))}, working as ${art(role)} ${role}.`],
+    ["look", `Fixed look: ${looks}. ${g.S} ${g.v("look")} ${end(val("personality","personality"))}`],
+    ["pose", `Full-body front view, standing in a relaxed neutral pose with arms at ${g.p} sides and a gentle expression. Plain soft light-gray background, even soft light, centered with space around ${g.o}.`],
+    ["rules", `One character only, no text, no logos. ${ratio}`]
+  ];
+
+  const glassesWord = clean(state.glasses || "");
+  const closeup = `Same character as the uploaded image. Create a close-up portrait of ${g.o}, head and shoulders, turned slightly to the side, with a calm, gentle expression. ` +
+    `Keep exactly the same face, hair, ${glassesWord ? glassesWord + ", " : ""}outfit and colors. ` +
+    `Keep the ${styleName} style exactly: ${lock}. Even this close, no realistic skin texture, pores or wrinkles. ${guard} ` +
+    `Plain soft light-gray background. One character only, no text, no logos. ${ratio}`;
+
+  const background = `${end(styleText)} Setting: ${end(val("setting","setting description"))} ` +
+    `Soft daylight comes from the window on the ${light}. The room is empty and the chair is empty, ready for a character. ` +
+    `Wide establishing view at eye level. Any screens show only simple abstract shapes. ` +
+    `No people, no text, no logos. ${ratio}`;
+
+  const shots = [];
+  for (let i = 0; i < SHOT_COUNT; i++) {
+    const size = state[`s${i}_size`], move = state[`s${i}_move`];
+    const action = clean(val(`s${i}_action`, "one simple action"));
+    const vo = (state[`s${i}_vo`] || "").trim();
+    const close = CLOSE_SIZES.includes(size);
+    const closeExtra = close
+      ? ` Even this close, keep the ${styleName} look exactly: ${lock}. No realistic skin texture, pores or wrinkles. If a second image is uploaded, use it as the face reference.`
+      : "";
+    const keepLook = `${lock}, same ${looks}. ${guard}`;
+    const tail = ` ${g.S} never ${g.v("look")} at the camera. No readable text, no logos. ${ratio}`;
+
+    let still;
+    if (i === 0) {
+      still = `Create a new still image that places the same ${g.n} from the second uploaded image into the ${loc} from the first uploaded image. ` +
+        `Camera: ${sizeDesc(size, g, loc)}. Pose: ${g.S} ${action}. ` +
+        `Keep ${g.o} exactly like the second uploaded image: ${keepLook} ` +
+        `Keep the room, furniture, colors and the soft light from the window on the ${light} exactly the same as the first uploaded image.` +
+        closeExtra + tail;
+    } else {
+      still = `Create a new still image of the same ${g.n} in the same ${loc} as the uploaded image, from a different camera angle: ${sizeDesc(size, g, loc)}. ` +
+        `Pose: ${g.S} ${action}. ` +
+        `Keep everything else exactly the same as the uploaded image: same ${loc}, same furniture, same colors, same soft light from the window on the ${light}. ` +
+        `Keep ${g.o} exactly like the uploaded image: ${keepLook}` +
+        closeExtra + tail;
+    }
+
+    const video = [
+      ["cam", move === "Slow push-in"
+        ? `Slow, gentle push-in toward ${g.o}, no other camera movement.`
+        : `Static camera, no camera movement.`],
+      ["act", `${g.S} ${action}.`],
+      ["lock", `Keep ${g.o} exactly as in the image: same face, same ${looks}, same ${styleName} style. Keep the ${loc}, colors and light unchanged.`],
+      ["rules", `Small, natural movements only. One continuous shot, calm pacing, no cuts. ${g.S} never ${g.v("look")} at the camera.`]
+    ];
+
+    const words = vo ? vo.split(/\s+/).length : 0;
+    const secs = Math.max(4, Math.min(10, Math.ceil(words / 2.5) + 1));
+    const rawAction = state[`s${i}_action`] || "";
+    const clickWarn = /\b(click|press|tap|push|poke)\w*\b/i.test(rawAction) &&
+      /\b(button|screen|monitor)\b/i.test(rawAction) && !/\b(mouse|keyboard|trackpad)\b/i.test(rawAction);
+
+    shots.push({
+      id: `S0${i+1}`, size, move, action: clean(rawAction), vo, close, still, video,
+      videoText: video.map(s => s[1]).join(" "), secs, clickWarn, longWarn: words > 0 && secs > 6
+    });
+  }
+
+  const tsvCell = x => String(x).replace(/[\t\r\n]+/g, " ");
+  const head = ["Shot","Length","Shot size","Camera","Action","Voice & sound"];
+  const rows = shots.map(s => [s.id, `~${s.secs} s`, s.size, s.move, s.action, s.vo ? `VO: "${s.vo}"` : ""]);
+  const tsv = [head, ...rows].map(r => r.map(tsvCell).join("\t")).join("\n");
+
+  return {master, masterText: master.map(s => s[1]).join(" "), closeup, background, shots, rows, tsv};
+}
+
+/* ================= 渲染 ================= */
+let out = null;
+const outputs = document.getElementById("outputs");
+
+function segHtml(segs) {
+  return segs.map(([c, x]) => `<span class="seg-${c}">${escapeHtml(x)}</span>`).join(" ");
+}
+function legend(items) {
+  return `<div class="legend">${items.map(([c, k]) =>
+    `<span class="lg"><i style="background:var(${c})"></i>${t(k)}</span>`).join("")}</div>`;
+}
+function card(id, num, title, note, body, copyKey, copyLabel) {
+  return `<div class="card" id="${id}">
+    <div class="card-head"><h3><span class="num">${num}</span>${title}</h3>
+      <button class="copy-btn" data-copy="${copyKey}">${copyLabel || t("copy")}</button></div>
+    <p class="card-note">${note}</p>${body}</div>`;
+}
+
+function render() {
+  out = build();
+  let h = `<div class="sec-label" id="outMaster">${t("secMaster")}</div>`;
+  h += card("cardMaster", "1", t("c1"), t("c1note"),
+    legend([["--c-style","lgStyle"],["--c-subject","lgWho"],["--c-time","lgLook"],["--c-scene","lgPose"],["--c-rules","lgRules"]]) +
+    `<div class="out">${segHtml(out.master)}</div>`, "master");
+  h += card("cardClose", "2", t("c2"), t("c2note"), `<div class="out">${escapeHtml(out.closeup)}</div>`, "closeup");
+  h += card("cardBg", "3", t("c3"), t("c3note"), `<div class="out">${escapeHtml(out.background)}</div>`, "background");
+
+  h += `<div class="sec-label" id="outScript">${t("secScript")}</div>`;
+  const th = ["thShot","thLen","thSize","thCam","thAct","thVoice"].map(k => `<th>${t(k)}</th>`).join("");
+  const trs = out.rows.map(r => `<tr>${r.map((c, j) =>
+    `<td${j === 0 ? ' class="mono"' : ""}>${escapeHtml(c)}</td>`).join("")}</tr>`).join("");
+  h += card("cardScript", "4", t("c4"), t("c4note"),
+    `<div class="table-wrap"><table><thead><tr>${th}</tr></thead><tbody>${trs}</tbody></table></div>`, "tsv", t("copyTsv"));
+
+  h += `<div class="sec-label" id="outShots">${t("secShots2")}</div>`;
+  out.shots.forEach((s, i) => {
+    const up = i === 0 ? t("up1") : t("upN") + (s.close ? t("upClose") : "");
+    h += `<div class="card">
+      <div class="card-head"><h3><span class="num">${s.id}</span>${escapeHtml(s.size)} · ${escapeHtml(s.move)}</h3></div>
+      ${s.clickWarn ? `<div class="warn">${t("warnClick")}</div>` : ""}
+      ${s.longWarn ? `<div class="warn">${t("warnLong").replace("{n}", s.secs)}</div>` : ""}
+      <div class="sub-block">
+        <div class="sub-head"><span>${t("still")}</span><button class="copy-btn" data-copy="still${i}">${t("copy")}</button></div>
+        <div class="upload"><b>${t("upload")}</b>${escapeHtml(up)}</div>
+        <div class="out">${escapeHtml(s.still)}</div>
+      </div>
+      <div class="sub-block">
+        <div class="sub-head"><span>${t("video")}</span><button class="copy-btn" data-copy="video${i}">${t("copy")}</button></div>
+        <div class="upload">${t("upVideo")}</div>
+        ${legend([["--c-time","lgCam"],["--c-subject","lgAct"],["--c-style","lgLock"],["--c-rules","lgRules"]])}
+        <div class="out">${segHtml(s.video)}</div>
+      </div>
+    </div>`;
+  });
+  outputs.innerHTML = h;
+}
+
+function copyText(key) {
+  if (key === "master") return out.masterText;
+  if (key === "closeup") return out.closeup;
+  if (key === "background") return out.background;
+  if (key === "tsv") return out.tsv;
+  const m = key.match(/^(still|video)(\d)$/);
+  if (m) { const s = out.shots[+m[2]]; return m[1] === "still" ? s.still : s.videoText; }
+  return "";
+}
+
+function exportAll() {
+  const L = [];
+  L.push(`AI VIDEO PROMPTS — ${state.name || "untitled"} (${state.ratio})`, "");
+  L.push("[1] Character master image", out.masterText, "");
+  L.push("[2] Close-up portrait (optional)", out.closeup, "");
+  L.push("[3] Empty background", out.background, "");
+  L.push("[4] Director script (TSV)", out.tsv, "");
+  out.shots.forEach((s, i) => {
+    const up = i === 0 ? t("up1") : t("upN") + (s.close ? t("upClose") : "");
+    L.push(`[${s.id}] ${s.size} · ${s.move}`);
+    L.push(`Still image — ${t("upload")}${up}`, s.still, "");
+    L.push("Image-to-video", s.videoText, "");
+  });
+  return L.join("\n");
+}
+
+outputs.addEventListener("click", e => {
+  const b = e.target.closest("[data-copy]");
+  if (b) copy(copyText(b.dataset.copy), t("copied"));
+});
+document.getElementById("exportBtn").addEventListener("click", () => copy(exportAll(), t("exported")));
+
+async function copy(text, msg) {
+  try {
+    await navigator.clipboard.writeText(text);
+    showToast(msg);
+  } catch (err) {
+    // fallback
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand("copy"); showToast(msg); }
+    catch(e){ showToast(t("copyFail")); }
+    document.body.removeChild(ta);
+  }
+}
+
+let toastTimer;
+function showToast(msg) {
+  const el = document.getElementById("toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove("show"), 1800);
+}
+
+/* ================= 按钮 ================= */
+document.getElementById("exampleBtn").addEventListener("click", () => {
+  if (!confirm(t("confirmEx"))) return;
+  state = {...EXAMPLE};
+  writeForm(); saveState(); render();
+});
+document.getElementById("resetBtn").addEventListener("click", () => {
+  if (!confirm(t("confirmReset"))) return;
+  state = blankState();
+  writeForm(); saveState(); render();
+});
+
+/* ================= 语言 ================= */
+function applyLang() {
+  document.documentElement.lang = lang === "zh" ? "zh-CN" : "en";
+  document.title = t("title");
+  document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll("[data-i18n-html]").forEach(el => { el.innerHTML = t(el.dataset.i18nHtml); });
+  document.querySelectorAll("[data-i18n-ph]").forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
+  document.getElementById("tipsList").innerHTML = t("tips").map(x => `<li>${x}</li>`).join("");
+  document.getElementById("langBtn").textContent = lang === "zh" ? "EN" : "中文";
+  fillOptions();
+  writeForm();
+  render();
+}
+document.getElementById("langBtn").addEventListener("click", () => {
+  lang = lang === "zh" ? "en" : "zh";
+  try { localStorage.setItem(LS_LANG, lang); } catch(e) {}
+  applyLang();
+});
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+}
+
+applyLang();
+</script>
+</body>
+</html>
