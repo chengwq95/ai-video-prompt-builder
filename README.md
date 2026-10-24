@@ -35,7 +35,7 @@ Story → Character sheet → Style + master image → Director script → Still
 5. **每个镜头的静帧提示词**:用「在已通过的图上修改」的写法,附带风格锁定句,并标明这一镜要上传哪张参考图
 6. **每个镜头的图生视频提示词**:镜头 + 一个动作 + 锁定 + 规则,结尾固定为 "One continuous shot, calm pacing, no cuts. He never looks at the camera."
 
-另有:载入示例、重置、导出全部提示词、出片小贴士、中文 / EN 界面切换;输入自动保存在浏览器里(localStorage),刷新不会丢。
+另有:载入示例、重置、导出全部提示词、出片小贴士;顶栏可切换 EN / 中文(默认英文)和 Morning / Night 日夜主题(默认跟随系统);输入自动保存在浏览器里(localStorage),刷新不会丢。
 
 ## 提示词里已经写进去的经验
 
