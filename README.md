@@ -1,10 +1,10 @@
-# Video Prompt Builder
+# AI Video Prompt Builder
 
 A single-page tool that goes with the AI short-video tutorial. Fill in your character and shots once, and get copy-ready **English** prompts for every step of making a short AI video — for Magnific (formerly Freepik), Grok, ChatGPT, Gemini, Kling, Veo, Runway, Higgsfield and similar tools.
 
 **Live:** https://ai-video-prompt-builder.pages.dev/
 
-Companion tool: [Image Prompt Builder](https://image-prompt-builder.pages.dev/) — build AI image prompts from four blocks.
+Companion tool: [AI Image Prompt Builder](https://ai-image-prompt-builder.pages.dev/) — build AI image prompts from four blocks.
 
 ---
 
@@ -56,4 +56,3 @@ No install, no build step. It's a single HTML file: open `index.html` in any bro
 1. Repository **Settings → Pages**
 2. Source: **Deploy from a branch**, branch `main`, folder `/ (root)`
 3. Save and wait 1–2 minutes, then open `https://chengwq95.github.io/ai-video-prompt-builder/`
-
