@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Video Prompt Builder</title>
+<title>AI Video Prompt Builder</title>
 <meta name="description" content="Copy-ready English prompts for every step of making a short AI video.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2316181D'/%3E%3Cpath d='M25 20.5v23a1.5 1.5 0 0 0 2.3 1.3l18-11.5a1.5 1.5 0 0 0 0-2.6l-18-11.5A1.5 1.5 0 0 0 25 20.5z' fill='%23F4F1EA'/%3E%3Ccircle cx='47' cy='17' r='5' fill='%23E8A33D'/%3E%3C/svg%3E">
 <script>
@@ -451,9 +451,9 @@ footer a:hover{border-color:var(--text)}
 
 <header class="topbar">
   <div class="wrap topbar-inner">
-    <a class="brand" href="#top" aria-label="Video Prompt Builder">
+    <a class="brand" href="#top" aria-label="AI Video Prompt Builder">
       <svg viewBox="0 0 64 64" aria-hidden="true"><rect class="logo-bg" width="64" height="64" rx="16"/><path class="logo-play" d="M25 20.5v23a1.5 1.5 0 0 0 2.3 1.3l18-11.5a1.5 1.5 0 0 0 0-2.6l-18-11.5A1.5 1.5 0 0 0 25 20.5z"/><circle class="logo-dot" cx="47" cy="17" r="5"/></svg>
-      <span data-i18n="brand">Video Prompt Builder</span>
+      <span data-i18n="brand">AI Video Prompt Builder</span>
     </a>
     <div class="controls">
       <button type="button" class="guide-btn" id="guideBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg><span class="lbl" data-i18n="guide"></span></button>
@@ -593,7 +593,7 @@ footer a:hover{border-color:var(--text)}
 <footer>
   <div class="wrap">
     <span data-i18n="footer"></span>
-    <a href="https://image-prompt-builder.pages.dev/" data-i18n="back"></a>
+    <a href="https://ai-image-prompt-builder.pages.dev/" data-i18n="back"></a>
   </div>
 </footer>
 
@@ -862,9 +862,9 @@ function clone(x) { return JSON.parse(JSON.stringify(x)); }
 /* ================= 界面文字 ================= */
 const I18N = {
   en: {
-    title:"Video Prompt Builder",
-    brand:"Video Prompt Builder",
-    back:"Companion tool: Image Prompt Builder ↗",
+    title:"AI Video Prompt Builder",
+    brand:"AI Video Prompt Builder",
+    back:"Companion tool: AI Image Prompt Builder ↗",
     eyebrow:"AI short-video workflow",
     h1:'Prompts for <em>every shot.</em>',
     morning:"Morning", night:"Night", guide:"Guide",
@@ -965,8 +965,8 @@ const I18N = {
   },
   zh: {
     title:"AI 视频提示词生成器",
-    brand:"视频提示词生成器",
-    back:"配套工具:图片提示词生成器 ↗",
+    brand:"AI 视频提示词生成器",
+    back:"配套工具:AI 图片提示词生成器 ↗",
     eyebrow:"AI 短视频工作流",
     h1:'每一个镜头的<em>提示词</em>',
     morning:"日间", night:"夜间", guide:"新手引导",
@@ -1813,4 +1813,3 @@ saveStore();
 </script>
 </body>
 </html>
-
