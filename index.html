@@ -743,7 +743,8 @@ const CamPose = (() => {
     const pelvis0 = v(0, 0, 0);
     const J = {};
     J.pelvis = pelvis0;
-    J.chest = add(pelvis0, mv(upperBody, v(0, B.spine, 0)));
+    J.waist = add(pelvis0, mv(chain(body, rx(p.lean * 0.5), rz(p.side * 0.5)), v(0, 0.2, 0)));
+    J.chest = add(J.waist, mv(upperBody, v(0, B.spine - 0.2, 0)));
     J.neck = add(J.chest, mv(upperBody, v(0, B.neck, 0)));
     const headM = chain(upperBody, ry(p.headYaw), rx(p.headPitch), rz(-p.headTilt));
     J.head = add(J.neck, mv(headM, v(0, B.head, 0)));
@@ -771,8 +772,9 @@ const CamPose = (() => {
     let lift;
     if (p.seated) lift = B.seat + 0.06;
     else lift = -Math.min(J.lAnkle[1], J.rAnkle[1], J.lToe[1], J.rToe[1]) + 0.07;
-    for (const k in J) if (k !== "headM") J[k] = add(J[k], v(0, lift, 0));
+    for (const k in J) if (Array.isArray(J[k]) && J[k].length === 3) J[k] = add(J[k], v(0, lift, 0));
     J.forward = mv(body, v(0, 0, 1));
+    J.ubM = upperBody; J.bodyM = body;
     J.headForward = mv(headM, v(0, 0, 1));
     return J;
   }
@@ -833,9 +835,11 @@ const CamPose = (() => {
     if (d < 1.25) return ["全身景", "full shot, whole body in frame"];
     return ["远景", "wide shot"];
   }
-  function describeCamera(c, lang) {
+  // yaw: which way the character faces, so "front view" always means seeing their face.
+  function describeCamera(c, lang, yaw = 0) {
     const i = lang === "zh" ? 0 : 1;
-    const az = AZ[Math.round((((c.az % 360) + 360) % 360) / 45) % 8][i];
+    const rel = c.az - yaw;
+    const az = AZ[Math.round((((rel % 360) + 360) % 360) / 45) % 8][i];
     return [az, elWords(c.el)[i], distWords(c.dist)[i]].join(lang === "zh" ? "," : ", ");
   }
 
@@ -932,7 +936,7 @@ const CamPose = (() => {
     let ratio = opts.ratio || "16:9";
     let state = { tab: "camera", cam: { az: 45, el: 10, dist: 1 }, pose: Object.assign(BASE(), { preset: "stand" }), part: "rArm" };
     if (opts.value) load(opts.value);
-    let view = { yaw: 35, pitch: 20, dist: 5.6 };
+    let view = { yaw: 35, pitch: 18, dist: 4.6 };
 
     root.classList.add("cps");
     root.innerHTML = `
@@ -977,33 +981,118 @@ const CamPose = (() => {
       inset.width = iw * dpr; inset.height = ih * dpr;
     }
 
-    const FIG = { body: "#b9a8ff", limb: "#a996ff", joint: "#ff7eb6", head: "#cbbcff" };
-    function figurePrims(J) {
+    // A smooth artist's mannequin: tapered limbs, ball joints, a shaped torso and an egg-shaped
+    // head with guide lines that show where the face points.
+    const SKIN = { hi: "#ffffff", base: "#e4e1ee", shade: "#9d98b8", line: "rgba(32,26,56,.9)" };
+    const PICK = { hi: "#fff4f9", base: "#ffd3e6", shade: "#d98cb0", line: "rgba(80,20,50,.9)" };
+    function figurePrims(J, pick) {
       const prims = [];
-      const cap = (a, b, r, col, part) => prims.push({ k: "cap", a, b, r, col, part });
-      const ball = (a, r, col, part) => prims.push({ k: "ball", a, r, col, part });
-      cap(J.pelvis, J.chest, 0.115, FIG.body, "body");
-      cap(J.lShoulder, J.rShoulder, 0.065, FIG.body, "body");
-      cap(J.lHip, J.rHip, 0.085, FIG.body, "body");
-      cap(J.chest, J.neck, 0.05, FIG.body, "body");
+      const limb = (a, b, ra, rb, part, bias = 0) => prims.push({ k: "limb", a, b, ra, rb, part, bias });
+      const ball = (c, r, part, bias = -0.01) => prims.push({ k: "ball", c, r, part, bias });
+      const right = mv(J.ubM, v(1, 0, 0)), hipRight = mv(J.bodyM, v(1, 0, 0));
+      // Torso: hips, waist and a wide chest (wider than deep, like a real body).
+      limb(add(J.pelvis, mul(hipRight, 0.07)), add(J.pelvis, mul(hipRight, -0.07)), 0.11, 0.11, "body");
+      limb(J.pelvis, J.waist, 0.12, 0.105, "body");
+      limb(J.waist, add(J.chest, mv(J.ubM, v(0, -0.06, 0))), 0.105, 0.125, "body");
+      const chestC = add(J.chest, mv(J.ubM, v(0, -0.07, 0.01)));
+      limb(add(chestC, mul(right, 0.075)), add(chestC, mul(right, -0.075)), 0.115, 0.115, "body");
+      limb(J.chest, add(J.neck, mv(J.headM, v(0, 0.03, 0))), 0.048, 0.042, "head");
       for (const s of ["l", "r"]) {
-        cap(J[s + "Shoulder"], J[s + "Elbow"], 0.045, FIG.limb, s + "Arm");
-        cap(J[s + "Elbow"], J[s + "Wrist"], 0.04, FIG.limb, s + "Arm");
-        cap(J[s + "Wrist"], J[s + "Hand"], 0.035, FIG.limb, s + "Arm");
-        cap(J[s + "Hip"], J[s + "Knee"], 0.065, FIG.limb, s + "Leg");
-        cap(J[s + "Knee"], J[s + "Ankle"], 0.052, FIG.limb, s + "Leg");
-        cap(J[s + "Ankle"], J[s + "Toe"], 0.04, FIG.limb, s + "Leg");
+        const arm = s + "Arm", leg = s + "Leg";
+        ball(J[s + "Shoulder"], 0.066, arm, -0.02);
+        limb(J[s + "Shoulder"], J[s + "Elbow"], 0.056, 0.042, arm);
+        ball(J[s + "Elbow"], 0.041, arm);
+        limb(J[s + "Elbow"], J[s + "Wrist"], 0.045, 0.03, arm);
+        ball(J[s + "Wrist"], 0.026, arm);
+        limb(J[s + "Wrist"], J[s + "Hand"], 0.034, 0.026, arm);
+        limb(J[s + "Hip"], J[s + "Knee"], 0.098, 0.062, leg);
+        ball(J[s + "Knee"], 0.058, leg);
+        limb(J[s + "Knee"], J[s + "Ankle"], 0.064, 0.038, leg);
+        ball(J[s + "Ankle"], 0.034, leg);
+        limb(add(J[s + "Ankle"], v(0, -0.03, 0)), J[s + "Toe"], 0.04, 0.03, leg);
       }
-      ball(J.head, B.headR, FIG.head, "head");
+      prims.push({ k: "head", c: J.head, M: J.headM, part: "head" });
+      prims.push({ k: "guide", J });
       if (state.pose.seated) {
         const y = B.seat, c = [0, 0, -0.05];
         prims.push({ k: "box", a: add(c, v(-0.22, 0, -0.2)), b: add(c, v(0.22, y, 0.2)) });
       }
-      return prims;
+      return prims.map(p => ({ ...p, col: pick && p.part === pick ? PICK : SKIN }));
+    }
+
+    // Shading: a light from the upper left of the screen.
+    const LIGHT = norm2(-0.55, -0.85);
+    function norm2(x, y) { const l = Math.hypot(x, y) || 1; return [x / l, y / l]; }
+
+    function drawLimb(g, pa, pb, Ra, Rb, col) {
+      const dx = pb.x - pa.x, dy = pb.y - pa.y, len = Math.hypot(dx, dy);
+      g.beginPath();
+      if (len <= Math.abs(Ra - Rb) + 0.5) { const big = Ra > Rb ? [pa, Ra] : [pb, Rb]; g.arc(big[0].x, big[0].y, big[1], 0, Math.PI * 2); }
+      else {
+        const th = Math.atan2(dy, dx), al = Math.asin(clamp((Ra - Rb) / len, -1, 1));
+        g.arc(pa.x, pa.y, Ra, th + Math.PI / 2 + al, th + Math.PI * 1.5 - al);
+        g.arc(pb.x, pb.y, Rb, th - Math.PI / 2 - al, th + Math.PI / 2 + al);
+        g.closePath();
+      }
+      let n = len ? [-dy / len, dx / len] : [0, 1];
+      if (n[0] * LIGHT[0] + n[1] * LIGHT[1] > 0) n = [-n[0], -n[1]];
+      const R = Math.max(Ra, Rb), mx = (pa.x + pb.x) / 2, my = (pa.y + pb.y) / 2;
+      const grd = g.createLinearGradient(mx - n[0] * R, my - n[1] * R, mx + n[0] * R, my + n[1] * R);
+      grd.addColorStop(0, col.shade); grd.addColorStop(0.62, col.base); grd.addColorStop(0.9, col.hi); grd.addColorStop(1, col.base);
+      g.fillStyle = grd; g.fill();
+      g.strokeStyle = col.line; g.lineWidth = 1.3; g.stroke();
+    }
+    function drawBall(g, p, R, col) {
+      const grd = g.createRadialGradient(p.x + LIGHT[0] * R * 0.45, p.y + LIGHT[1] * R * 0.45, R * 0.1, p.x, p.y, R);
+      grd.addColorStop(0, col.hi); grd.addColorStop(0.55, col.base); grd.addColorStop(1, col.shade);
+      g.fillStyle = grd; g.strokeStyle = col.line; g.lineWidth = 1.2;
+      g.beginPath(); g.arc(p.x, p.y, R, 0, Math.PI * 2); g.fill(); g.stroke();
+    }
+    function drawHead(g, vw, pr) {
+      const { c, M, col } = pr;
+      const up = mv(M, v(0, 1, 0)), right = mv(M, v(1, 0, 0)), fwd = mv(M, v(0, 0, 1));
+      const W = 0.092, Hh = 0.122, D = 0.105;
+      const pt = (u, t) => add(c, add(add(mul(up, Hh * Math.cos(t)), mul(right, W * Math.sin(t) * Math.cos(u))), mul(fwd, D * Math.sin(t) * Math.sin(u))));
+      // Outline: the silhouette of the egg is the widest ring of projected points.
+      const pc = vw.project(c);
+      if (!pc) return;
+      const cloud = [];
+      for (let t = 0.05; t < Math.PI; t += Math.PI / 20) for (let u = 0; u < Math.PI * 2; u += Math.PI / 12) {
+        const q = vw.project(pt(u, t));
+        if (q) cloud.push(q);
+      }
+      const ring = [];
+      for (let k = 0; k < 40; k++) {
+        const ca = Math.cos(k / 40 * Math.PI * 2), sa = Math.sin(k / 40 * Math.PI * 2);
+        let best = null, bd = -1e9;
+        for (const q of cloud) { const d = (q.x - pc.x) * ca + (q.y - pc.y) * sa; if (d > bd) { bd = d; best = q; } }
+        if (best) ring.push(best);
+      }
+      g.beginPath(); ring.forEach((q, k) => k ? g.lineTo(q.x, q.y) : g.moveTo(q.x, q.y)); g.closePath();
+      const R = Math.max(...ring.map(q => Math.hypot(q.x - pc.x, q.y - pc.y)));
+      const grd = g.createRadialGradient(pc.x + LIGHT[0] * R * 0.4, pc.y + LIGHT[1] * R * 0.4, R * 0.1, pc.x, pc.y, R * 1.05);
+      grd.addColorStop(0, col.hi); grd.addColorStop(0.55, col.base); grd.addColorStop(1, col.shade);
+      g.fillStyle = grd; g.fill(); g.strokeStyle = col.line; g.lineWidth = 1.3; g.stroke();
+      // Guide lines (centre line and eye line) on the side facing us.
+      const toEye = p => dot(norm(sub(p, c)), norm(sub(vw.eye, p))) > 0.05;
+      g.strokeStyle = "rgba(32,26,56,.55)"; g.lineWidth = 1;
+      const curve = f => { g.beginPath(); let on = false; for (let k = 0; k <= 40; k++) { const P = f(k / 40); const q = vw.project(P); if (!q || !toEye(P)) { on = false; continue; } if (on) g.lineTo(q.x, q.y); else { g.moveTo(q.x, q.y); on = true; } } g.stroke(); };
+      curve(s => pt(Math.PI / 2, 0.15 + s * (Math.PI - 0.3)));                      // centre line, top to chin
+      curve(s => pt(s * Math.PI, Math.PI * 0.56));                                  // eye line, ear to ear
+    }
+    function drawGuides(g, vw, J) {
+      // Centre line down the front of the torso, so you can tell front from back.
+      const fwdU = mv(J.ubM, v(0, 0, 1)), fwdL = mv(J.bodyM, v(0, 0, 1));
+      const pts = [add(J.chest, add(mv(J.ubM, v(0, 0.02, 0)), mul(fwdU, 0.1))), add(J.chest, add(mv(J.ubM, v(0, -0.12, 0)), mul(fwdU, 0.12))),
+        add(J.waist, mul(fwdL, 0.105)), add(J.pelvis, add(v(0, -0.05, 0), mul(fwdL, 0.11)))];
+      if (dot(fwdL, norm(sub(vw.eye, J.waist))) <= 0.1) return;
+      const q = pts.map(p => vw.project(p));
+      if (q.some(x => !x)) return;
+      g.strokeStyle = "rgba(32,26,56,.35)"; g.lineWidth = 1;
+      g.beginPath(); q.forEach((p, k) => k ? g.lineTo(p.x, p.y) : g.moveTo(p.x, p.y)); g.stroke();
     }
 
     function drawScene(g, vw, opts2) {
-      const { w, h } = vw;
       // floor grid
       g.lineWidth = 1;
       for (let i = -6; i <= 6; i++) {
@@ -1015,48 +1104,23 @@ const CamPose = (() => {
         }
       }
       const J = skeleton(state.pose);
-      // soft shadow
+      // soft shadow under the feet
       const sh = vw.project(v(0, 0, 0));
-      if (sh) { g.fillStyle = "rgba(0,0,0,.35)"; g.beginPath(); g.ellipse(sh.x, sh.y, 0.32 * sh.s, 0.1 * sh.s, 0, 0, Math.PI * 2); g.fill(); }
-      const prims = figurePrims(J);
+      if (sh) {
+        const grd = g.createRadialGradient(sh.x, sh.y, 0, sh.x, sh.y, 0.4 * sh.s);
+        grd.addColorStop(0, "rgba(0,0,0,.45)"); grd.addColorStop(1, "rgba(0,0,0,0)");
+        g.fillStyle = grd; g.beginPath(); g.ellipse(sh.x, sh.y, 0.4 * sh.s, 0.13 * sh.s, 0, 0, Math.PI * 2); g.fill();
+      }
+      const prims = figurePrims(J, opts2.pick);
       const items = [];
       for (const pr of prims) {
         if (pr.k === "box") { items.push({ z: (vw.project(mul(add(pr.a, pr.b), 0.5)) || { z: 0 }).z, draw: () => drawBox(g, vw, pr) }); continue; }
-        const pa = vw.project(pr.a), pb = pr.k === "cap" ? vw.project(pr.b) : pa;
+        if (pr.k === "guide") { const q = vw.project(add(pr.J.waist, mul(mv(pr.J.bodyM, v(0, 0, 1)), 0.12))); if (q) items.push({ z: q.z - 0.05, draw: () => drawGuides(g, vw, pr.J) }); continue; }
+        if (pr.k === "head") { const q = vw.project(pr.c); if (q) items.push({ z: q.z, draw: () => drawHead(g, vw, pr) }); continue; }
+        if (pr.k === "ball") { const q = vw.project(pr.c); if (q) items.push({ z: q.z + pr.bias, draw: () => drawBall(g, q, pr.r * q.s, pr.col) }); continue; }
+        const pa = vw.project(pr.a), pb = vw.project(pr.b);
         if (!pa || !pb) continue;
-        const z = (pa.z + pb.z) / 2;
-        items.push({ z, draw: () => {
-          const shade = clamp(1.2 - z / (opts2.depth || 14), 0.7, 1);
-          if (pr.k === "cap") {
-            const w2 = 2 * pr.r * (pa.s + pb.s) / 2;
-            g.lineCap = "round";
-            g.strokeStyle = "rgba(20,14,40,.55)"; g.lineWidth = w2 + 2.5;
-            g.beginPath(); g.moveTo(pa.x, pa.y); g.lineTo(pb.x, pb.y); g.stroke();
-            g.strokeStyle = tint(pr.col, shade); g.lineWidth = w2;
-            g.beginPath(); g.moveTo(pa.x, pa.y); g.lineTo(pb.x, pb.y); g.stroke();
-            g.strokeStyle = "rgba(255,255,255,.18)"; g.lineWidth = Math.max(1, w2 * 0.28);
-            g.beginPath(); g.moveTo(pa.x - w2 * 0.12, pa.y - w2 * 0.12); g.lineTo(pb.x - w2 * 0.12, pb.y - w2 * 0.12); g.stroke();
-          } else {
-            const r = pr.r * pa.s;
-            const grd = g.createRadialGradient(pa.x - r * 0.35, pa.y - r * 0.4, r * 0.1, pa.x, pa.y, r);
-            grd.addColorStop(0, tint("#ffffff", shade)); grd.addColorStop(1, tint(pr.col, shade * 0.9));
-            g.fillStyle = grd; g.strokeStyle = "rgba(20,14,40,.55)"; g.lineWidth = 1.5;
-            g.beginPath(); g.arc(pa.x, pa.y, r, 0, Math.PI * 2); g.fill(); g.stroke();
-            // Face: eyes show which way the head points.
-            const fwd = J.headForward;
-            const toEye = norm(sub(vw.eye, J.head));
-            if (dot(fwd, toEye) > -0.15) {
-              const right = mv(J.headM, v(1, 0, 0)), up = mv(J.headM, v(0, 1, 0));
-              for (const s of [-1, 1]) {
-                const e = add(add(J.head, mul(fwd, B.headR * 0.92)), add(mul(right, s * 0.042), mul(up, 0.015)));
-                const pe = vw.project(e);
-                if (pe) { g.fillStyle = "#2a1f4d"; g.beginPath(); g.arc(pe.x, pe.y, Math.max(1.2, 0.016 * pe.s), 0, Math.PI * 2); g.fill(); }
-              }
-              const n = vw.project(add(J.head, mul(fwd, B.headR * 1.02)));
-              if (n) { g.fillStyle = "rgba(255,126,182,.7)"; g.beginPath(); g.arc(n.x, n.y + 0.03 * n.s, Math.max(1, 0.012 * n.s), 0, Math.PI * 2); g.fill(); }
-            }
-          }
-        } });
+        items.push({ z: (pa.z + pb.z) / 2 + pr.bias, draw: () => drawLimb(g, pa, pb, pr.ra * pa.s, pr.rb * pb.s, pr.col) });
       }
       items.sort((a, b) => b.z - a.z).forEach(it => it.draw());
       return J;
@@ -1079,28 +1143,24 @@ const CamPose = (() => {
       });
     }
 
-    function tint(hex, k) {
-      const n = parseInt(hex.slice(1), 16);
-      const r = (n >> 16) & 255, gg = (n >> 8) & 255, b = n & 255;
-      return `rgb(${Math.round(r * k)},${Math.round(gg * k)},${Math.round(b * k)})`;
-    }
-
     const CENTER = v(0, 0.95, 0), RING = 1.55;
     function ringPoint(az, el, r = RING) {
       const d = camDir({ az, el });
       return add(CENTER, mul(d, r));
     }
-    function camPoint() { return ringPoint(state.cam.az, state.cam.el, RING * (0.55 + state.cam.dist * 0.6)); }
+    function camPoint() { return ringPoint(state.cam.az, state.cam.el, RING * (0.8 + state.cam.dist * 0.55)); }
 
     function render() {
       if (!W) return;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, W, H);
-      const eye = add(v(0, 0.78, 0), mul(norm(v(-Math.sin(view.yaw * D2R) * Math.cos(view.pitch * D2R), Math.sin(view.pitch * D2R), Math.cos(view.yaw * D2R) * Math.cos(view.pitch * D2R))), view.dist));
-      mainView = makeView(eye, v(0, 0.78, 0), 38, W, H);
+      // The camera tab steps back so the rings fit; the pose tab comes closer to the figure.
+      const far = state.tab === "camera" ? 1.38 : 1, look = v(0, state.tab === "camera" ? 0.8 : 0.9, 0);
+      const eye = add(look, mul(norm(v(-Math.sin(view.yaw * D2R) * Math.cos(view.pitch * D2R), Math.sin(view.pitch * D2R), Math.cos(view.yaw * D2R) * Math.cos(view.pitch * D2R))), view.dist * far));
+      mainView = makeView(eye, look, 38, W, H);
       handles = [];
       const vw = mainView;
-      const J = drawScene(ctx, vw, { depth: 14 });
+      const J = drawScene(ctx, vw, { pick: state.tab === "pose" ? state.part : null });
 
       if (state.tab === "camera") {
         // azimuth ring on the floor plane at subject height
@@ -1119,10 +1179,10 @@ const CamPose = (() => {
         if (cp) { drawCamIcon(ctx, cp); handle(cp, "#ff9a3c", "dist", 9); }
       } else {
         // joint handles for picking body parts
-        const pts = { body: J.chest, head: J.head, lArm: J.lHand, rArm: J.rHand, lLeg: J.lAnkle, rLeg: J.rAnkle };
+        const pts = { body: J.pelvis, head: add(J.head, mv(J.headM, v(0, 0.19, 0))), lArm: J.lHand, rArm: J.rHand, lLeg: J.lToe, rLeg: J.rToe };
         for (const [part, p] of Object.entries(pts)) {
           const pp = vw.project(p);
-          handle(pp, part === state.part ? "#ffffff" : "#ff7eb6", "part:" + part, part === state.part ? 8 : 6, part === state.part);
+          handle(pp, part === state.part ? "#ff4f9a" : "rgba(255,126,182,.85)", "part:" + part, part === state.part ? 6.5 : 5, part === state.part);
         }
       }
       renderInset();
@@ -1138,7 +1198,7 @@ const CamPose = (() => {
       if (!p) return;
       ctx.fillStyle = col; ctx.shadowColor = col; ctx.shadowBlur = 12;
       ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI * 2); ctx.fill(); ctx.shadowBlur = 0;
-      ctx.strokeStyle = ring ? "#ff7eb6" : "rgba(255,255,255,.85)"; ctx.lineWidth = ring ? 3 : 1.5; ctx.stroke();
+      ctx.strokeStyle = "rgba(255,255,255,.9)"; ctx.lineWidth = ring ? 2.5 : 1.5; ctx.stroke();
       handles.push({ id, x: p.x, y: p.y, r: r + 8 });
     }
     function drawCamIcon(g, p) {
@@ -1159,7 +1219,7 @@ const CamPose = (() => {
       const sc = shotCamera(state.cam, J);
       // Keep the vertical field of view for tall frames by scaling with the frame height.
       const vw = makeView(sc.pos, sc.target, sc.fov * (h > w ? 1.25 : 1), w, h);
-      drawScene(ictx, vw, { depth: 20 });
+      drawScene(ictx, vw, {});
     }
 
     /* --- interaction --- */
@@ -1205,7 +1265,7 @@ const CamPose = (() => {
       } else if (drag.kind === "dist") {
         let best = 1, bd = 1e9;
         for (let d = 0.6; d <= 1.401; d += 0.02) {
-          const q = vw.project(ringPoint(state.cam.az, state.cam.el, RING * (0.55 + d * 0.6)));
+          const q = vw.project(ringPoint(state.cam.az, state.cam.el, RING * (0.8 + d * 0.55)));
           if (q) { const dd = Math.hypot(q.x - p.x, q.y - p.y); if (dd < bd) { bd = dd; best = d; } }
         }
         state.cam.dist = Math.round(best * 20) / 20;
@@ -1240,6 +1300,9 @@ const CamPose = (() => {
       }
     }
     const wrap = a => ((((a + 180) % 360) + 360) % 360) - 180;
+    const wrap360 = a => ((Math.round(a) % 360) + 360) % 360;
+    // The azimuth slider reads relative to the character: 0 = facing them.
+    const relAz = () => wrap360(state.cam.az - state.pose.yaw);
 
     function changed(poseEdit) {
       if (poseEdit) state.pose.preset = null;
@@ -1265,7 +1328,7 @@ const CamPose = (() => {
       let html = "";
       if (state.tab === "camera") {
         html += `<div class="cps-chips"><span>${tx.camPresets}</span>${CAM_PRESETS.map((c, i) => `<button type="button" data-campreset="${i}">${c[lang]}</button>`).join("")}</div>`;
-        html += sliderRow("cam.az", tx.az, 0, 355, state.cam.az, tx.azHint, 5);
+        html += sliderRow("cam.az", tx.az, 0, 355, relAz(), tx.azHint, 5);
         html += sliderRow("cam.el", tx.el, -30, 60, state.cam.el, tx.elHint, 5);
         html += sliderRow("cam.dist", tx.dist, 0.6, 1.4, state.cam.dist, tx.distHint, 0.05, "");
       } else {
@@ -1286,13 +1349,14 @@ const CamPose = (() => {
       panel.querySelectorAll("[data-sl]").forEach(inp => {
         const [grp, prop] = inp.dataset.sl.split(".");
         const target = grp === "cam" ? state.cam : (state.part === "body" || state.part === "head" ? state.pose : state.pose[state.part]);
-        inp.value = target[prop];
-        inp.closest(".cps-sl").querySelector("output").textContent = fmt(target[prop], grp === "cam" && prop === "dist" ? "" : "°");
+        const val = grp === "cam" && prop === "az" ? relAz() : target[prop];
+        inp.value = val;
+        inp.closest(".cps-sl").querySelector("output").textContent = fmt(val, grp === "cam" && prop === "dist" ? "" : "°");
       });
       panel.querySelectorAll("[data-preset]").forEach(b => b.setAttribute("aria-pressed", state.pose.preset === b.dataset.preset));
     }
     function updateOut() {
-      root.querySelector(".cps-out-text").textContent = state.tab === "camera" ? describeCamera(state.cam, opts.plang ? opts.plang() : lang) : describePose(state.pose, state.cam, opts.plang ? opts.plang() : lang);
+      root.querySelector(".cps-out-text").textContent = state.tab === "camera" ? describeCamera(state.cam, opts.plang ? opts.plang() : lang, state.pose.yaw) : describePose(state.pose, state.cam, opts.plang ? opts.plang() : lang);
     }
 
     root.addEventListener("click", e => {
@@ -1304,7 +1368,7 @@ const CamPose = (() => {
         renderPanel(); render(); emit(state.tab === "camera" ? "cam" : "pose"); return;
       }
       const cp = e.target.closest("[data-campreset]");
-      if (cp) { state.cam = { ...CAM_PRESETS[+cp.dataset.campreset].c }; syncSliders(); updateOut(); render(); emit("cam"); return; }
+      if (cp) { const c = CAM_PRESETS[+cp.dataset.campreset].c; state.cam = { ...c, az: wrap360(c.az + state.pose.yaw) }; syncSliders(); updateOut(); render(); emit("cam"); return; }
       const pr = e.target.closest("[data-preset]");
       if (pr) {
         const preset = PRESETS.find(x => x.id === pr.dataset.preset);
@@ -1319,7 +1383,7 @@ const CamPose = (() => {
       if (sl) {
         const [grp, prop] = sl.dataset.sl.split(".");
         const target = grp === "cam" ? state.cam : (state.part === "body" || state.part === "head" ? state.pose : state.pose[state.part]);
-        target[prop] = +sl.value;
+        target[prop] = grp === "cam" && prop === "az" ? wrap360(+sl.value + state.pose.yaw) : +sl.value;
         changed(grp === "pose");
         render();
       }
@@ -1336,7 +1400,7 @@ const CamPose = (() => {
       setLang(l) { lang = l; renderPanel(); },
       setRatio(r) { ratio = r; size(); render(); },
       refresh() { size(); render(); updateOut(); },
-      describe: (l) => ({ camera: describeCamera(state.cam, l), pose: describePose(state.pose, state.cam, l) })
+      describe: (l) => ({ camera: describeCamera(state.cam, l, state.pose.yaw), pose: describePose(state.pose, state.cam, l) })
     };
   }
 
@@ -1966,7 +2030,7 @@ function reorderProgress(map) {
 /* 3D 镜头与姿势(每个镜头可选) */
 const angleOn = a => a && (a.useCam || a.usePose);
 function angleWords(a) {
-  const d = { camera: CamPose.describeCamera(a.cam, "en"), pose: CamPose.describePose(a.pose, a.cam, "en") };
+  const d = { camera: CamPose.describeCamera(a.cam, "en", a.pose ? a.pose.yaw : 0), pose: CamPose.describePose(a.pose, a.cam, "en") };
   return { camera: a.useCam ? d.camera : "", pose: a.usePose ? d.pose : "" };
 }
 function angleSummary(s, i) {
