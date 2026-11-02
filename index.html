@@ -445,6 +445,59 @@ footer{border-top:1px solid var(--line);padding:28px 0 40px;font-size:12.5px;col
 footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 footer a{color:var(--text);text-decoration:none;border-bottom:1px solid var(--line-strong)}
 footer a:hover{border-color:var(--text)}
+/* ---------- 3D 镜头与姿势 ---------- */
+.cps{display:grid;gap:12px}
+.cps-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.cps-tabs{display:inline-flex;padding:3px;border:1px solid var(--line);border-radius:99px;background:var(--surface)}
+.cps-tabs button{border:none;background:transparent;cursor:pointer;font-size:13px;font-weight:500;color:var(--muted);padding:6px 16px;border-radius:99px;transition:background .2s,color .2s}
+.cps-tabs button[aria-selected="true"]{background:var(--text);color:var(--on-text)}
+.cps-reset{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:6px 14px;font-size:12.5px;color:var(--muted);cursor:pointer}
+.cps-reset:hover{color:var(--text);border-color:var(--line-strong)}
+.cps-stage{position:relative;height:380px;border-radius:16px;overflow:hidden;
+  background:radial-gradient(120% 90% at 50% 0%,#2a2346 0%,#14121f 55%,#0b0a10 100%);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
+.cps-main{position:absolute;inset:0;width:100%;height:100%;touch-action:none;display:block}
+.cps-inset{position:absolute;right:12px;top:12px;padding:6px 6px 4px;border-radius:12px;background:rgba(12,10,20,.72);
+  box-shadow:0 0 0 1px rgba(255,255,255,.1),0 8px 24px rgba(0,0,0,.4);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);pointer-events:none}
+.cps-inset canvas{display:block;border-radius:7px;box-shadow:0 0 0 1px rgba(255,154,60,.55)}
+.cps-inset-label{display:block;margin-top:4px;font-size:10.5px;letter-spacing:.06em;color:rgba(255,255,255,.62);text-align:center}
+.cps-help{position:absolute;left:12px;bottom:10px;right:12px;font-size:11.5px;line-height:1.45;color:rgba(255,255,255,.55);pointer-events:none}
+.cps-out{display:flex;gap:10px;align-items:baseline;padding:10px 14px;border-radius:12px;background:var(--surface-2);border:1px solid var(--line);font-size:13px}
+.cps-out b{flex:none;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.cps-out-text{font-family:var(--mono);font-size:12.5px;line-height:1.6}
+.cps-panel{display:grid;gap:12px}
+.cps-chips{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.cps-chips span{font-size:12px;color:var(--muted);margin-right:4px}
+.cps-chips button,.cps-parts button{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:5px 12px;font-size:12.5px;cursor:pointer;color:var(--text);transition:border-color .2s,background .2s}
+.cps-chips button:hover,.cps-parts button:hover{border-color:var(--line-strong)}
+.cps-chips button[aria-pressed="true"],.cps-parts button[aria-pressed="true"]{background:var(--text);color:var(--on-text);border-color:var(--text)}
+.cps-parts{display:flex;flex-wrap:wrap;gap:6px}
+.cps-sl{display:grid;gap:4px;font-size:12.5px}
+.cps-sl-top{display:flex;justify-content:space-between;color:var(--muted)}
+.cps-sl output{font-family:var(--mono);color:var(--text)}
+.cps-sl input{width:100%;accent-color:var(--accent)}
+.cps-sl small{font-size:11.5px;color:var(--faint)}
+.cps-check{display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer}
+.cps-check input{accent-color:var(--accent)}
+@media(max-width:640px){.cps-stage{height:320px}}
+.shot-3d{grid-column:2/5;display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:12.5px;color:var(--muted)}
+.shot-3d .val{font-family:var(--mono);font-size:12px;color:var(--text)}
+.shot-3d button{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:4px 11px;font-size:12px;cursor:pointer;color:var(--text)}
+.shot-3d button:hover{border-color:var(--accent);color:var(--accent)}
+.shot-3d .badge{font-family:var(--mono);font-size:11px;font-weight:600;padding:1px 7px;border-radius:6px;background:var(--text);color:var(--on-text)}
+@media(max-width:900px){.shot-3d{grid-column:2/4}}
+@media(max-width:560px){.shot-3d{grid-column:1/-1}}
+.studio-dlg{width:min(880px,calc(100% - 24px));max-height:calc(100% - 24px);margin:auto;border:1px solid var(--line);border-radius:18px;background:var(--surface);color:var(--text);padding:0;box-shadow:0 30px 80px -20px rgba(0,0,0,.5)}
+.studio-dlg::backdrop{background:rgba(10,10,14,.55);backdrop-filter:blur(3px)}
+.dlg-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line)}
+.dlg-head h3{font-family:var(--display);font-weight:600;font-size:19px}
+.dlg-body{padding:16px 18px;display:grid;gap:12px}
+.dlg-note{font-size:12.5px;color:var(--muted);line-height:1.55}
+.dlg-use{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;font-size:13px;color:var(--muted)}
+.dlg-use label{display:inline-flex;align-items:center;gap:7px;color:var(--text);font-weight:500;cursor:pointer;padding:5px 12px 5px 10px;border:1px solid var(--line);border-radius:99px;background:var(--surface-2)}
+.dlg-use label:has(input:checked){border-color:var(--accent)}
+.dlg-use input{accent-color:var(--accent)}
+.dlg-foot{display:flex;justify-content:flex-end;gap:8px;padding:12px 18px 16px;border-top:1px solid var(--line)}
 </style>
 </head>
 <body>
@@ -612,6 +665,685 @@ footer a:hover{border-color:var(--text)}
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+<dialog class="studio-dlg" id="studioDlg" aria-labelledby="dlgTitle">
+  <div class="dlg-head"><h3 id="dlgTitle"></h3><button type="button" class="icon-btn" id="dlgClose" aria-label="Close">×</button></div>
+  <div class="dlg-body">
+    <p class="dlg-note" data-i18n="dlgNote"></p>
+    <div class="dlg-use"><span data-i18n="dlgUse"></span>
+      <label><input type="checkbox" id="dlgCam"> <span data-i18n="useCam"></span></label>
+      <label><input type="checkbox" id="dlgPose"> <span data-i18n="usePose"></span></label>
+    </div>
+    <div id="studio"></div>
+  </div>
+  <div class="dlg-foot"><button type="button" class="btn" id="dlgRemove" data-i18n="angleRemove"></button><button type="button" class="btn primary" id="dlgDone" data-i18n="dlgDone"></button></div>
+</dialog>
+
+<script>
+/* ================= 3D 镜头与姿势(Camera & Pose Studio) =================
+   A small 3D studio drawn on <canvas>, no libraries: drag the handles to set the camera angle,
+   pose a mannequin, and get the matching prompt words. Shared by the image and video builders.
+   Coordinates: metres, y up; the character faces +z, so its right hand is on -x. */
+const CamPose = (() => {
+  const D2R = Math.PI / 180;
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+  /* ---------- tiny vector / matrix helpers (3x3 rotation matrices as flat arrays) ---------- */
+  const v = (x, y, z) => [x, y, z];
+  const add = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
+  const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+  const mul = (a, s) => [a[0] * s, a[1] * s, a[2] * s];
+  const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+  const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+  const norm = a => { const l = Math.hypot(a[0], a[1], a[2]) || 1; return [a[0] / l, a[1] / l, a[2] / l]; };
+  const rx = d => { const c = Math.cos(d * D2R), s = Math.sin(d * D2R); return [1, 0, 0, 0, c, -s, 0, s, c]; };
+  const ry = d => { const c = Math.cos(d * D2R), s = Math.sin(d * D2R); return [c, 0, s, 0, 1, 0, -s, 0, c]; };
+  const rz = d => { const c = Math.cos(d * D2R), s = Math.sin(d * D2R); return [c, -s, 0, s, c, 0, 0, 0, 1]; };
+  const mm = (a, b) => {
+    const o = new Array(9);
+    for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) o[r * 3 + c] = a[r * 3] * b[c] + a[r * 3 + 1] * b[3 + c] + a[r * 3 + 2] * b[6 + c];
+    return o;
+  };
+  const mv = (m, p) => [m[0] * p[0] + m[1] * p[1] + m[2] * p[2], m[3] * p[0] + m[4] * p[1] + m[5] * p[2], m[6] * p[0] + m[7] * p[1] + m[8] * p[2]];
+  const chain = (...ms) => ms.reduce(mm);
+
+  /* ---------- pose model ---------- */
+  // Arm: raise = out to the side (0 down, 90 level, 180 overhead), fwd = forward (negative: behind),
+  // bend = elbow. Leg: fwd = hip forward, side = out to the side, bend = knee.
+  const limb = (a = 0, b = 0, c = 0, d = 0) => ({ a, b, c, d });
+  const BASE = () => ({
+    yaw: 0, lean: 0, side: 0, headYaw: 0, headPitch: 0, headTilt: 0, seated: false,
+    lArm: limb(8, 0, 10), rArm: limb(8, 0, 10), lLeg: limb(0, 4, 0), rLeg: limb(0, 4, 0)
+  });
+  const P = (o) => Object.assign(BASE(), o);
+
+  const PRESETS = [
+    { id: "stand", zh: "自然站立", en: "Standing", say: ["自然站立,双手垂放身侧", "standing relaxed with arms at the sides"], pose: P({}) },
+    { id: "hips", zh: "双手叉腰", en: "Hands on hips", say: ["站立,双手叉腰", "standing with hands on hips"], pose: P({ lArm: limb(55, -10, 110, 80), rArm: limb(55, -10, 110, 80) }) },
+    { id: "cross", zh: "双手抱胸", en: "Arms crossed", say: ["站立,双手抱胸", "standing with arms crossed"], pose: P({ lArm: limb(12, 30, 105, 60), rArm: limb(12, 25, 100, 60) }) },
+    { id: "wave", zh: "挥手", en: "Waving", say: ["站立挥手打招呼", "standing and waving hello with one hand"], pose: P({ rArm: limb(85, 10, 105, -80), headTilt: 6 }) },
+    { id: "cheer", zh: "双手举高", en: "Arms up", say: ["双手高举过头", "both arms raised high above the head"], pose: P({ lArm: limb(160, 10, 15), rArm: limb(160, 10, 15), headPitch: -12 }) },
+    { id: "point", zh: "指向前方", en: "Pointing", say: ["一只手伸直指向远方", "pointing into the distance with one arm outstretched"], pose: P({ rArm: limb(15, 85, 0), headYaw: -10 }) },
+    { id: "phone", zh: "打电话", en: "On the phone", say: ["一手拿手机贴在耳边打电话", "talking on the phone, holding it to the ear"], pose: P({ rArm: limb(-20, 100, 125, 40), headTilt: -8 }) },
+    { id: "lookphone", zh: "低头看手机", en: "Looking at phone", say: ["低头看着手里的手机", "looking down at a phone held in both hands"], pose: P({ lArm: limb(10, 5, 95, 30), rArm: limb(10, 5, 95, 30), headPitch: 32 }) },
+    { id: "think", zh: "托腮思考", en: "Thinking", say: ["一手托腮思考", "thinking with a hand on the chin"], pose: P({ rArm: limb(-20, 45, 135, 60), lArm: limb(12, 30, 100, 60), headTilt: 8, headPitch: 8 }) },
+    { id: "walk", zh: "走路", en: "Walking", say: ["向前走路", "walking forward mid-stride"], pose: P({ lLeg: limb(22, 2, 8), rLeg: limb(-18, 2, 22), lArm: limb(8, -22, 15), rArm: limb(8, 24, 20) }) },
+    { id: "run", zh: "奔跑", en: "Running", say: ["奔跑中", "running mid-stride"], pose: P({ lean: 14, lLeg: limb(55, 2, 75), rLeg: limb(-28, 2, 70), lArm: limb(10, -40, 95), rArm: limb(10, 50, 95) }) },
+    { id: "sit", zh: "坐着", en: "Sitting", say: ["坐在椅子上,双手放在腿上", "sitting on a chair with hands resting on the lap"], pose: P({ seated: true, lLeg: limb(88, 6, 88), rLeg: limb(88, 6, 88), lArm: limb(10, 42, 55), rArm: limb(10, 42, 55) }) },
+    { id: "lookback", zh: "回眸", en: "Looking back", say: ["背对镜头,回头看向身后", "turned away and looking back over the shoulder"], pose: P({ yaw: 155, headYaw: 75, headTilt: 5 }) }
+  ];
+
+  // Body measurements (metres) for a ~1.75 m figure.
+  const B = { pelvis: 0.95, spine: 0.45, neck: 0.1, head: 0.16, headR: 0.115, shoulder: 0.19, upper: 0.3, fore: 0.27, hand: 0.08, hip: 0.1, thigh: 0.45, shin: 0.45, foot: 0.15, seat: 0.48 };
+
+  /** Joint positions for a pose (forward kinematics). */
+  function skeleton(p) {
+    const body = ry(p.yaw);
+    const upperBody = chain(body, rx(p.lean), rz(p.side));
+    const legDir = (L, s) => chain(body, rz(s * L.b), rx(-L.a)); // s = +1 left (+x), -1 right
+    const pelvis0 = v(0, 0, 0);
+    const J = {};
+    J.pelvis = pelvis0;
+    J.chest = add(pelvis0, mv(upperBody, v(0, B.spine, 0)));
+    J.neck = add(J.chest, mv(upperBody, v(0, B.neck, 0)));
+    const headM = chain(upperBody, ry(p.headYaw), rx(p.headPitch), rz(-p.headTilt));
+    J.head = add(J.neck, mv(headM, v(0, B.head, 0)));
+    J.headM = headM;
+    for (const [side, s] of [["l", 1], ["r", -1]]) {
+      const A = p[side + "Arm"];
+      const sh = add(J.chest, mv(upperBody, v(s * B.shoulder, -0.02, 0)));
+      // Raise out to the side about z, forward about x, twist inward (d) about the arm, then bend the elbow.
+      const armM = chain(upperBody, rz(s * A.a), rx(-A.b), ry(-s * (A.d || 0)));
+      const el = add(sh, mv(armM, v(0, -B.upper, 0)));
+      const foreM = chain(armM, rx(-A.c));
+      const wr = add(el, mv(foreM, v(0, -B.fore, 0)));
+      const hd = add(wr, mv(foreM, v(0, -B.hand, 0)));
+      J[side + "Shoulder"] = sh; J[side + "Elbow"] = el; J[side + "Wrist"] = wr; J[side + "Hand"] = hd;
+      const Lg = p[side + "Leg"];
+      const hp = add(pelvis0, mv(body, v(s * B.hip, -0.04, 0)));
+      const legM = legDir(Lg, s);
+      const kn = add(hp, mv(legM, v(0, -B.thigh, 0)));
+      const shinM = chain(legM, rx(Lg.c));
+      const an = add(kn, mv(shinM, v(0, -B.shin, 0)));
+      const toe = add(an, mv(chain(body, rz(s * Lg.b), rx(-Math.min(Lg.a - Lg.c, 0) * 0.3)), v(0, -0.02, B.foot)));
+      J[side + "Hip"] = hp; J[side + "Knee"] = kn; J[side + "Ankle"] = an; J[side + "Toe"] = toe;
+    }
+    // Stand on the ground, or sit on a stool.
+    let lift;
+    if (p.seated) lift = B.seat + 0.06;
+    else lift = -Math.min(J.lAnkle[1], J.rAnkle[1], J.lToe[1], J.rToe[1]) + 0.07;
+    for (const k in J) if (k !== "headM") J[k] = add(J[k], v(0, lift, 0));
+    J.forward = mv(body, v(0, 0, 1));
+    J.headForward = mv(headM, v(0, 0, 1));
+    return J;
+  }
+
+  /* ---------- camera model ---------- */
+  // az: 0 front, 90 the character's right, 180 back, 270 left. el: -30 (low) .. 60 (high). dist: 0.6 (close) .. 1.4 (wide).
+  const camDir = c => norm(v(-Math.sin(c.az * D2R) * Math.cos(c.el * D2R), Math.sin(c.el * D2R), Math.cos(c.az * D2R) * Math.cos(c.el * D2R)));
+  function shotCamera(c, J) {
+    // Frame by shot size: close-up on the face, medium from the waist up, full body, then wide.
+    const foot = Math.min(J.lAnkle[1], J.rAnkle[1]), head = J.head[1];
+    const stops = [
+      [0.6, head - 0.02, 0.85], [0.8, head - 0.2, 1.5], [1.0, (head + J.pelvis[1]) / 2, 2.55],
+      [1.2, (head + foot) / 2 + 0.05, 3.9], [1.4, (head + foot) / 2, 7.5]
+    ];
+    let k = 0;
+    while (k < stops.length - 2 && c.dist > stops[k + 1][0]) k++;
+    const [d0, y0, r0] = stops[k], [d1, y1, r1] = stops[k + 1];
+    const t = clamp((c.dist - d0) / (d1 - d0), 0, 1);
+    const target = v(J.head[0] * (1 - t * 0.5), y0 + (y1 - y0) * t, J.head[2] * (1 - t * 0.5));
+    return { pos: add(target, mul(camDir(c), r0 + (r1 - r0) * t)), target, fov: 32 };
+  }
+
+  /* ---------- projection ---------- */
+  function makeView(eye, target, fovDeg, w, h) {
+    const f = norm(sub(target, eye));
+    const r = norm(cross(f, v(0, 1, 0)));
+    const u = cross(r, f);
+    const k = (h / 2) / Math.tan(fovDeg * D2R / 2);
+    return {
+      eye, f, r, u, w, h,
+      project(p) {
+        const d = sub(p, eye);
+        const z = dot(d, f);
+        if (z < 0.05) return null;
+        return { x: w / 2 + dot(d, r) * k / z, y: h / 2 - dot(d, u) * k / z, z, s: k / z };
+      }
+    };
+  }
+
+  /* ---------- describing the shot and pose in words ---------- */
+  const AZ = [
+    ["正面视角", "front view"], ["右前方四分之三侧面", "front-right three-quarter view"], ["右侧面", "right side view, in profile"],
+    ["右后方四分之三背面", "back-right three-quarter view"], ["背面视角", "back view"], ["左后方四分之三背面", "back-left three-quarter view"],
+    ["左侧面", "left side view, in profile"], ["左前方四分之三侧面", "front-left three-quarter view"]
+  ];
+  function elWords(el) {
+    if (el < -20) return ["低角度仰拍", "low angle shot, looking up at the subject"];
+    if (el < -7) return ["略微仰拍", "slightly low angle"];
+    if (el <= 7) return ["平视", "eye level"];
+    if (el <= 25) return ["略微俯拍", "slightly high angle"];
+    if (el <= 50) return ["高角度俯拍", "high angle shot, looking down at the subject"];
+    return ["鸟瞰俯视", "bird's-eye view from above"];
+  }
+  function distWords(d) {
+    if (d < 0.7) return ["特写", "close-up"];
+    if (d < 0.85) return ["近景", "medium close-up"];
+    if (d < 1.05) return ["中景", "medium shot"];
+    if (d < 1.25) return ["全身景", "full shot, whole body in frame"];
+    return ["远景", "wide shot"];
+  }
+  function describeCamera(c, lang) {
+    const i = lang === "zh" ? 0 : 1;
+    const az = AZ[Math.round((((c.az % 360) + 360) % 360) / 45) % 8][i];
+    return [az, elWords(c.el)[i], distWords(c.dist)[i]].join(lang === "zh" ? "," : ", ");
+  }
+
+  // [zh one arm, en one arm, zh both arms, en both arms]
+  function armWords(A) {
+    if (A.a > 135 || A.b > 140) return ["手臂高举过头", "arm raised overhead", "双手高举过头", "both arms raised overhead"];
+    if (A.b > 60 && A.c < 50) return ["手臂向前伸直", "arm reaching forward", "双臂向前伸直", "both arms reaching forward"];
+    if (A.a > 60 && A.c < 60) return ["手臂向侧面张开", "arm stretched out to the side", "双臂向两侧张开", "arms stretched out to the sides"];
+    if (A.a > 70) return ["手举起来", "hand raised up", "双手举起", "both hands raised"];
+    if (A.c > 85 && A.a >= 20 && A.a <= 65 && A.b < 20) return ["手叉在腰上", "hand on the hip", "双手叉腰", "hands on hips"];
+    if (A.c > 120 && A.b >= 10) return ["手抬到脸旁", "hand raised to the face", "双手抬到脸旁", "both hands raised to the face"];
+    if (A.c > 60 && A.b > 15) return ["手臂弯曲在胸前", "arm bent in front of the chest", "双臂弯曲在胸前", "both arms bent in front of the chest"];
+    if (A.b < -20) return ["手臂向后摆", "arm swinging back", "双臂向后摆", "both arms swinging back"];
+    return null;
+  }
+
+  function describePose(p, cam, lang) {
+    const zh = lang === "zh";
+    const i = zh ? 0 : 1;
+    const parts = [];
+    const preset = p.preset && PRESETS.find(x => x.id === p.preset);
+    if (preset) parts.push(preset.say[i]);
+    else {
+      const bentKnees = p.lLeg.c > 55 && p.rLeg.c > 55;
+      if (p.seated) parts.push(zh ? "坐着" : "sitting");
+      else if (bentKnees && p.lLeg.a > 50 && p.rLeg.a > 50) parts.push(zh ? "蹲着" : "crouching");
+      else if (Math.abs(p.lLeg.a - p.rLeg.a) > 30) parts.push(zh ? "迈步向前" : "mid-stride");
+      else parts.push(zh ? "站立" : "standing");
+      if (p.lean > 15) parts.push(zh ? "身体前倾" : "leaning forward");
+      else if (p.lean < -12) parts.push(zh ? "身体后仰" : "leaning back");
+      if (Math.abs(p.side) > 12) parts.push(zh ? "身体向一侧倾斜" : "body tilted to one side");
+      const l = armWords(p.lArm), r = armWords(p.rArm);
+      if (l && r && l[1] === r[1]) parts.push(l[i + 2]);
+      else {
+        if (l) parts.push((zh ? "左" : "left ") + l[i]);
+        if (r) parts.push((zh ? "右" : "right ") + r[i]);
+      }
+      if (p.lLeg.c > 55 && !p.seated && p.lLeg.a > 40 && p.rLeg.a < 25) parts.push(zh ? "抬起左膝" : "left knee raised");
+      if (p.rLeg.c > 55 && !p.seated && p.rLeg.a > 40 && p.lLeg.a < 25) parts.push(zh ? "抬起右膝" : "right knee raised");
+      if (p.headYaw > 25) parts.push(zh ? "头转向自己的左边" : "head turned to their left");
+      else if (p.headYaw < -25) parts.push(zh ? "头转向自己的右边" : "head turned to their right");
+      if (p.headPitch > 15) parts.push(zh ? "低头" : "looking down");
+      else if (p.headPitch < -15) parts.push(zh ? "抬头向上看" : "looking up");
+      if (Math.abs(p.headTilt) > 12) parts.push(zh ? "微微歪头" : "head tilted");
+    }
+    // Which way the body faces relative to the camera.
+    if (cam) {
+      const rel = ((((p.yaw - cam.az) % 360) + 540) % 360) - 180; // 0 = facing the camera
+      const a = Math.abs(rel);
+      const facing = a < 25 ? ["身体正对镜头", "body facing the camera"]
+        : a < 70 ? ["身体微微侧向一边", "body turned slightly to the side"]
+        : a < 110 ? ["身体侧对镜头", "body in profile to the camera"]
+        : a < 155 ? ["身体大半背对镜头", "body turned mostly away from the camera"]
+        : ["背对镜头", "back to the camera"];
+      if (!(preset && preset.id === "lookback" && a >= 110)) parts.push(facing[i]);
+    }
+    return parts.join(zh ? "," : ", ");
+  }
+
+  /* ---------- text ---------- */
+  const T = {
+    zh: { camera: "镜头", pose: "姿势", view: "镜头画面", reset: "重置", az: "水平角度", el: "上下角度", dist: "距离", azHint: "0°=正面 · 90°=右侧 · 180°=背面 · 270°=左侧", elHint: "负数=仰拍 · 0°=平视 · 正数=俯拍", distHint: "小=特写 · 大=远景",
+      dragCam: "拖动彩色圆点:绿色=水平角度,粉色=上下角度,橙色=距离。拖动空白处可以转动视角。", dragPose: "点人物身上的圆点选择部位,再拖动它调整;拖动空白处可以转动视角。",
+      parts: { body: "身体", head: "头部", lArm: "左手", rArm: "右手", lLeg: "左腿", rLeg: "右腿" },
+      sliders: { yaw: "转身", lean: "前倾 / 后仰", side: "侧弯", headYaw: "左右转头", headPitch: "抬头 / 低头", headTilt: "歪头", a: "向侧面抬起", b: "向前抬起", c: "手肘弯曲", d: "向内转", legA: "向前抬腿", legB: "向外张开", legC: "膝盖弯曲" },
+      seated: "坐着(加一张凳子)", presets: "常用姿势", camPresets: "常用角度", output: "提示词" },
+    en: { camera: "Camera", pose: "Pose", view: "Camera view", reset: "Reset", az: "Azimuth", el: "Elevation", dist: "Distance", azHint: "0°=front · 90°=right · 180°=back · 270°=left", elHint: "negative=low angle · 0°=eye level · positive=high angle", distHint: "small=close-up · large=wide",
+      dragCam: "Drag the colored handles: green = azimuth, pink = elevation, orange = distance. Drag empty space to orbit the view.", dragPose: "Click a dot on the figure to pick a body part, then drag it; drag empty space to orbit the view.",
+      parts: { body: "Body", head: "Head", lArm: "Left arm", rArm: "Right arm", lLeg: "Left leg", rLeg: "Right leg" },
+      sliders: { yaw: "Turn", lean: "Lean fwd / back", side: "Side bend", headYaw: "Turn head", headPitch: "Look up / down", headTilt: "Tilt head", a: "Raise to side", b: "Raise forward", c: "Bend elbow", d: "Twist inward", legA: "Lift forward", legB: "Spread out", legC: "Bend knee" },
+      seated: "Sitting (adds a stool)", presets: "Common poses", camPresets: "Common angles", output: "Prompt" }
+  };
+  const CAM_PRESETS = [
+    { zh: "正面平视", en: "Front, eye level", c: { az: 0, el: 0, dist: 1 } },
+    { zh: "四分之三侧面", en: "Three-quarter", c: { az: 45, el: 10, dist: 1 } },
+    { zh: "侧面", en: "Profile", c: { az: 90, el: 0, dist: 1 } },
+    { zh: "背影", en: "From behind", c: { az: 180, el: 10, dist: 1.15 } },
+    { zh: "仰拍全身", en: "Low-angle full body", c: { az: 20, el: -25, dist: 1.2 } },
+    { zh: "俯拍", en: "High angle", c: { az: 30, el: 40, dist: 1 } },
+    { zh: "脸部特写", en: "Face close-up", c: { az: 15, el: 5, dist: 0.62 } },
+    { zh: "大远景", en: "Wide establishing", c: { az: 30, el: 20, dist: 1.4 } }
+  ];
+
+  const PART_SLIDERS = {
+    body: [["yaw", -180, 180], ["lean", -30, 60], ["side", -30, 30]],
+    head: [["headYaw", -80, 80], ["headPitch", -40, 45], ["headTilt", -30, 30]],
+    lArm: [["a", -45, 180], ["b", -60, 180], ["c", 0, 150], ["d", -90, 120]], rArm: [["a", -45, 180], ["b", -60, 180], ["c", 0, 150], ["d", -90, 120]],
+    lLeg: [["legA", -40, 110], ["legB", -10, 60], ["legC", 0, 140]], rLeg: [["legA", -40, 110], ["legB", -10, 60], ["legC", 0, 140]]
+  };
+
+  /* ---------- the widget ---------- */
+  function create(root, opts = {}) {
+    let lang = opts.lang || "en";
+    let ratio = opts.ratio || "16:9";
+    let state = { tab: "camera", cam: { az: 45, el: 10, dist: 1 }, pose: Object.assign(BASE(), { preset: "stand" }), part: "rArm" };
+    if (opts.value) load(opts.value);
+    let view = { yaw: 35, pitch: 20, dist: 5.6 };
+
+    root.classList.add("cps");
+    root.innerHTML = `
+      <div class="cps-top">
+        <div class="cps-tabs" role="tablist"><button type="button" data-tab="camera"></button><button type="button" data-tab="pose"></button></div>
+        <button type="button" class="cps-reset" data-reset></button>
+      </div>
+      <div class="cps-stage">
+        <canvas class="cps-main" aria-label="3D"></canvas>
+        <div class="cps-inset"><canvas></canvas><span class="cps-inset-label"></span></div>
+        <div class="cps-help"></div>
+      </div>
+      <div class="cps-out"><b></b><span class="cps-out-text"></span></div>
+      <div class="cps-panel"></div>`;
+    const main = root.querySelector(".cps-main");
+    const inset = root.querySelector(".cps-inset canvas");
+    const panel = root.querySelector(".cps-panel");
+    const ctx = main.getContext("2d"), ictx = inset.getContext("2d");
+
+    function load(val) {
+      if (val.cam) state.cam = Object.assign({ az: 45, el: 10, dist: 1 }, val.cam);
+      if (val.pose) {
+        const b = BASE();
+        state.pose = Object.assign(b, val.pose);
+        for (const k of ["lArm", "rArm", "lLeg", "rLeg"]) state.pose[k] = Object.assign(limb(), b[k], val.pose[k] || {});
+      }
+    }
+    const value = () => ({ cam: { ...state.cam }, pose: JSON.parse(JSON.stringify(state.pose)) });
+    // kind: "cam" or "pose", whichever the user just touched.
+    const emit = kind => { opts.onChange && opts.onChange(value(), kind); };
+
+    /* --- drawing --- */
+    let W = 0, H = 0, dpr = 1, mainView, handles = [];
+    function size() {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const r = main.getBoundingClientRect();
+      W = r.width; H = r.height;
+      main.width = W * dpr; main.height = H * dpr;
+      const [rw, rh] = ratio.split(":").map(Number);
+      const iw = rw >= rh ? 148 : 92, ih = iw * rh / rw;
+      inset.style.width = iw + "px"; inset.style.height = ih + "px";
+      inset.width = iw * dpr; inset.height = ih * dpr;
+    }
+
+    const FIG = { body: "#b9a8ff", limb: "#a996ff", joint: "#ff7eb6", head: "#cbbcff" };
+    function figurePrims(J) {
+      const prims = [];
+      const cap = (a, b, r, col, part) => prims.push({ k: "cap", a, b, r, col, part });
+      const ball = (a, r, col, part) => prims.push({ k: "ball", a, r, col, part });
+      cap(J.pelvis, J.chest, 0.115, FIG.body, "body");
+      cap(J.lShoulder, J.rShoulder, 0.065, FIG.body, "body");
+      cap(J.lHip, J.rHip, 0.085, FIG.body, "body");
+      cap(J.chest, J.neck, 0.05, FIG.body, "body");
+      for (const s of ["l", "r"]) {
+        cap(J[s + "Shoulder"], J[s + "Elbow"], 0.045, FIG.limb, s + "Arm");
+        cap(J[s + "Elbow"], J[s + "Wrist"], 0.04, FIG.limb, s + "Arm");
+        cap(J[s + "Wrist"], J[s + "Hand"], 0.035, FIG.limb, s + "Arm");
+        cap(J[s + "Hip"], J[s + "Knee"], 0.065, FIG.limb, s + "Leg");
+        cap(J[s + "Knee"], J[s + "Ankle"], 0.052, FIG.limb, s + "Leg");
+        cap(J[s + "Ankle"], J[s + "Toe"], 0.04, FIG.limb, s + "Leg");
+      }
+      ball(J.head, B.headR, FIG.head, "head");
+      if (state.pose.seated) {
+        const y = B.seat, c = [0, 0, -0.05];
+        prims.push({ k: "box", a: add(c, v(-0.22, 0, -0.2)), b: add(c, v(0.22, y, 0.2)) });
+      }
+      return prims;
+    }
+
+    function drawScene(g, vw, opts2) {
+      const { w, h } = vw;
+      // floor grid
+      g.lineWidth = 1;
+      for (let i = -6; i <= 6; i++) {
+        for (const [a, b] of [[v(i * 0.5, 0, -3), v(i * 0.5, 0, 3)], [v(-3, 0, i * 0.5), v(3, 0, i * 0.5)]]) {
+          const pa = vw.project(a), pb = vw.project(b);
+          if (!pa || !pb) continue;
+          g.strokeStyle = i === 0 ? "rgba(185,168,255,.22)" : "rgba(255,255,255,.06)";
+          g.beginPath(); g.moveTo(pa.x, pa.y); g.lineTo(pb.x, pb.y); g.stroke();
+        }
+      }
+      const J = skeleton(state.pose);
+      // soft shadow
+      const sh = vw.project(v(0, 0, 0));
+      if (sh) { g.fillStyle = "rgba(0,0,0,.35)"; g.beginPath(); g.ellipse(sh.x, sh.y, 0.32 * sh.s, 0.1 * sh.s, 0, 0, Math.PI * 2); g.fill(); }
+      const prims = figurePrims(J);
+      const items = [];
+      for (const pr of prims) {
+        if (pr.k === "box") { items.push({ z: (vw.project(mul(add(pr.a, pr.b), 0.5)) || { z: 0 }).z, draw: () => drawBox(g, vw, pr) }); continue; }
+        const pa = vw.project(pr.a), pb = pr.k === "cap" ? vw.project(pr.b) : pa;
+        if (!pa || !pb) continue;
+        const z = (pa.z + pb.z) / 2;
+        items.push({ z, draw: () => {
+          const shade = clamp(1.2 - z / (opts2.depth || 14), 0.7, 1);
+          if (pr.k === "cap") {
+            const w2 = 2 * pr.r * (pa.s + pb.s) / 2;
+            g.lineCap = "round";
+            g.strokeStyle = "rgba(20,14,40,.55)"; g.lineWidth = w2 + 2.5;
+            g.beginPath(); g.moveTo(pa.x, pa.y); g.lineTo(pb.x, pb.y); g.stroke();
+            g.strokeStyle = tint(pr.col, shade); g.lineWidth = w2;
+            g.beginPath(); g.moveTo(pa.x, pa.y); g.lineTo(pb.x, pb.y); g.stroke();
+            g.strokeStyle = "rgba(255,255,255,.18)"; g.lineWidth = Math.max(1, w2 * 0.28);
+            g.beginPath(); g.moveTo(pa.x - w2 * 0.12, pa.y - w2 * 0.12); g.lineTo(pb.x - w2 * 0.12, pb.y - w2 * 0.12); g.stroke();
+          } else {
+            const r = pr.r * pa.s;
+            const grd = g.createRadialGradient(pa.x - r * 0.35, pa.y - r * 0.4, r * 0.1, pa.x, pa.y, r);
+            grd.addColorStop(0, tint("#ffffff", shade)); grd.addColorStop(1, tint(pr.col, shade * 0.9));
+            g.fillStyle = grd; g.strokeStyle = "rgba(20,14,40,.55)"; g.lineWidth = 1.5;
+            g.beginPath(); g.arc(pa.x, pa.y, r, 0, Math.PI * 2); g.fill(); g.stroke();
+            // Face: eyes show which way the head points.
+            const fwd = J.headForward;
+            const toEye = norm(sub(vw.eye, J.head));
+            if (dot(fwd, toEye) > -0.15) {
+              const right = mv(J.headM, v(1, 0, 0)), up = mv(J.headM, v(0, 1, 0));
+              for (const s of [-1, 1]) {
+                const e = add(add(J.head, mul(fwd, B.headR * 0.92)), add(mul(right, s * 0.042), mul(up, 0.015)));
+                const pe = vw.project(e);
+                if (pe) { g.fillStyle = "#2a1f4d"; g.beginPath(); g.arc(pe.x, pe.y, Math.max(1.2, 0.016 * pe.s), 0, Math.PI * 2); g.fill(); }
+              }
+              const n = vw.project(add(J.head, mul(fwd, B.headR * 1.02)));
+              if (n) { g.fillStyle = "rgba(255,126,182,.7)"; g.beginPath(); g.arc(n.x, n.y + 0.03 * n.s, Math.max(1, 0.012 * n.s), 0, Math.PI * 2); g.fill(); }
+            }
+          }
+        } });
+      }
+      items.sort((a, b) => b.z - a.z).forEach(it => it.draw());
+      return J;
+    }
+
+    function drawBox(g, vw, pr) {
+      const [x0, y0, z0] = pr.a, [x1, y1, z1] = pr.b;
+      const faces = [
+        [[x0, y1, z0], [x1, y1, z0], [x1, y1, z1], [x0, y1, z1]],
+        [[x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1]],
+        [[x0, y0, z0], [x1, y0, z0], [x1, y1, z0], [x0, y1, z0]],
+        [[x0, y0, z0], [x0, y0, z1], [x0, y1, z1], [x0, y1, z0]],
+        [[x1, y0, z0], [x1, y0, z1], [x1, y1, z1], [x1, y1, z0]]
+      ].map(f => f.map(p => vw.project(p)));
+      faces.forEach((f, i) => {
+        if (f.some(p => !p)) return;
+        g.fillStyle = i === 0 ? "rgba(120,110,150,.5)" : "rgba(80,72,110,.45)";
+        g.strokeStyle = "rgba(185,168,255,.25)";
+        g.beginPath(); f.forEach((p, k) => k ? g.lineTo(p.x, p.y) : g.moveTo(p.x, p.y)); g.closePath(); g.fill(); g.stroke();
+      });
+    }
+
+    function tint(hex, k) {
+      const n = parseInt(hex.slice(1), 16);
+      const r = (n >> 16) & 255, gg = (n >> 8) & 255, b = n & 255;
+      return `rgb(${Math.round(r * k)},${Math.round(gg * k)},${Math.round(b * k)})`;
+    }
+
+    const CENTER = v(0, 0.95, 0), RING = 1.55;
+    function ringPoint(az, el, r = RING) {
+      const d = camDir({ az, el });
+      return add(CENTER, mul(d, r));
+    }
+    function camPoint() { return ringPoint(state.cam.az, state.cam.el, RING * (0.55 + state.cam.dist * 0.6)); }
+
+    function render() {
+      if (!W) return;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, W, H);
+      const eye = add(v(0, 0.78, 0), mul(norm(v(-Math.sin(view.yaw * D2R) * Math.cos(view.pitch * D2R), Math.sin(view.pitch * D2R), Math.cos(view.yaw * D2R) * Math.cos(view.pitch * D2R))), view.dist));
+      mainView = makeView(eye, v(0, 0.78, 0), 38, W, H);
+      handles = [];
+      const vw = mainView;
+      const J = drawScene(ctx, vw, { depth: 14 });
+
+      if (state.tab === "camera") {
+        // azimuth ring on the floor plane at subject height
+        ctx.lineWidth = 5; ctx.strokeStyle = "rgba(41,231,170,.9)"; ctx.shadowColor = "rgba(41,231,170,.6)"; ctx.shadowBlur = 10;
+        poly(ctx, Array.from({ length: 73 }, (_, i) => vw.project(add(v(CENTER[0], 0.02, CENTER[2]), mul(v(-Math.sin(i * 5 * D2R), 0, Math.cos(i * 5 * D2R)), RING)))));
+        // elevation arc in the current azimuth plane
+        ctx.strokeStyle = "rgba(255,110,180,.9)"; ctx.shadowColor = "rgba(255,110,180,.6)";
+        poly(ctx, Array.from({ length: 31 }, (_, i) => vw.project(ringPoint(state.cam.az, -30 + i * 3))));
+        ctx.shadowBlur = 0;
+        // line from subject to camera
+        const cp = vw.project(camPoint()), cc = vw.project(CENTER);
+        if (cp && cc) { ctx.setLineDash([5, 5]); ctx.lineWidth = 1.5; ctx.strokeStyle = "rgba(255,170,90,.7)"; ctx.beginPath(); ctx.moveTo(cc.x, cc.y); ctx.lineTo(cp.x, cp.y); ctx.stroke(); ctx.setLineDash([]); }
+        const azP = vw.project(add(v(CENTER[0], 0.02, CENTER[2]), mul(v(-Math.sin(state.cam.az * D2R), 0, Math.cos(state.cam.az * D2R)), RING)));
+        const elP = vw.project(ringPoint(state.cam.az, state.cam.el));
+        handle(azP, "#29e7aa", "az"); handle(elP, "#ff6eb4", "el");
+        if (cp) { drawCamIcon(ctx, cp); handle(cp, "#ff9a3c", "dist", 9); }
+      } else {
+        // joint handles for picking body parts
+        const pts = { body: J.chest, head: J.head, lArm: J.lHand, rArm: J.rHand, lLeg: J.lAnkle, rLeg: J.rAnkle };
+        for (const [part, p] of Object.entries(pts)) {
+          const pp = vw.project(p);
+          handle(pp, part === state.part ? "#ffffff" : "#ff7eb6", "part:" + part, part === state.part ? 8 : 6, part === state.part);
+        }
+      }
+      renderInset();
+    }
+
+    function poly(g, pts) {
+      g.beginPath();
+      let started = false;
+      for (const p of pts) { if (!p) { started = false; continue; } if (started) g.lineTo(p.x, p.y); else { g.moveTo(p.x, p.y); started = true; } }
+      g.stroke();
+    }
+    function handle(p, col, id, r = 8, ring) {
+      if (!p) return;
+      ctx.fillStyle = col; ctx.shadowColor = col; ctx.shadowBlur = 12;
+      ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI * 2); ctx.fill(); ctx.shadowBlur = 0;
+      ctx.strokeStyle = ring ? "#ff7eb6" : "rgba(255,255,255,.85)"; ctx.lineWidth = ring ? 3 : 1.5; ctx.stroke();
+      handles.push({ id, x: p.x, y: p.y, r: r + 8 });
+    }
+    function drawCamIcon(g, p) {
+      g.save(); g.translate(p.x, p.y);
+      g.fillStyle = "rgba(255,154,60,.18)"; g.strokeStyle = "rgba(255,154,60,.9)"; g.lineWidth = 1.5;
+      g.beginPath(); g.roundRect(-16, -11, 22, 18, 4); g.fill(); g.stroke();
+      g.beginPath(); g.moveTo(6, -4); g.lineTo(16, -9); g.lineTo(16, 5); g.lineTo(6, 0); g.closePath(); g.fill(); g.stroke();
+      g.restore();
+    }
+
+    function renderInset() {
+      const w = inset.width / dpr, h = inset.height / dpr;
+      ictx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const grd = ictx.createLinearGradient(0, 0, 0, h);
+      grd.addColorStop(0, "#1d1a2e"); grd.addColorStop(1, "#0d0c14");
+      ictx.fillStyle = grd; ictx.fillRect(0, 0, w, h);
+      const J = skeleton(state.pose);
+      const sc = shotCamera(state.cam, J);
+      // Keep the vertical field of view for tall frames by scaling with the frame height.
+      const vw = makeView(sc.pos, sc.target, sc.fov * (h > w ? 1.25 : 1), w, h);
+      drawScene(ictx, vw, { depth: 20 });
+    }
+
+    /* --- interaction --- */
+    let drag = null;
+    const pt = e => { const r = main.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+    main.addEventListener("pointerdown", e => {
+      const p = pt(e);
+      const h = handles.slice().reverse().find(h => Math.hypot(h.x - p.x, h.y - p.y) <= h.r);
+      if (h && h.id.startsWith("part:")) { state.part = h.id.slice(5); renderPanel(); drag = { kind: "part", last: p }; }
+      else if (h) drag = { kind: h.id };
+      else drag = { kind: "orbit", last: p };
+      main.setPointerCapture(e.pointerId);
+      e.preventDefault();
+    });
+    main.addEventListener("pointermove", e => {
+      const p = pt(e);
+      if (!drag) {
+        const h = handles.find(h => Math.hypot(h.x - p.x, h.y - p.y) <= h.r);
+        main.style.cursor = h ? "grab" : "default";
+        return;
+      }
+      const vw = mainView;
+      if (drag.kind === "orbit") {
+        view.yaw -= (p.x - drag.last.x) * 0.4;
+        view.pitch = clamp(view.pitch + (p.y - drag.last.y) * 0.3, -5, 80);
+        drag.last = p;
+      } else if (drag.kind === "az") {
+        let best = 0, bd = 1e9;
+        for (let a = 0; a < 360; a += 1) {
+          const q = vw.project(add(v(CENTER[0], 0.02, CENTER[2]), mul(v(-Math.sin(a * D2R), 0, Math.cos(a * D2R)), RING)));
+          if (q) { const d = Math.hypot(q.x - p.x, q.y - p.y); if (d < bd) { bd = d; best = a; } }
+        }
+        state.cam.az = Math.round(best / 5) * 5 % 360;
+        changed();
+      } else if (drag.kind === "el") {
+        let best = 0, bd = 1e9;
+        for (let a = -30; a <= 60; a += 1) {
+          const q = vw.project(ringPoint(state.cam.az, a));
+          if (q) { const d = Math.hypot(q.x - p.x, q.y - p.y); if (d < bd) { bd = d; best = a; } }
+        }
+        state.cam.el = Math.round(best / 5) * 5;
+        changed();
+      } else if (drag.kind === "dist") {
+        let best = 1, bd = 1e9;
+        for (let d = 0.6; d <= 1.401; d += 0.02) {
+          const q = vw.project(ringPoint(state.cam.az, state.cam.el, RING * (0.55 + d * 0.6)));
+          if (q) { const dd = Math.hypot(q.x - p.x, q.y - p.y); if (dd < bd) { bd = dd; best = d; } }
+        }
+        state.cam.dist = Math.round(best * 20) / 20;
+        changed();
+      } else if (drag.kind === "part") {
+        const dx = p.x - drag.last.x, dy = p.y - drag.last.y;
+        drag.last = p;
+        nudge(state.part, dx, dy);
+        changed(true);
+      }
+      render();
+    });
+    const end = () => { drag = null; };
+    main.addEventListener("pointerup", end);
+    main.addEventListener("pointercancel", end);
+    main.addEventListener("wheel", e => { e.preventDefault(); view.dist = clamp(view.dist * (1 + Math.sign(e.deltaY) * 0.08), 3.2, 11); render(); }, { passive: false });
+
+    // Dragging a body part: horizontal and vertical movement map to its two main angles.
+    function nudge(part, dx, dy) {
+      const p = state.pose;
+      // Mirror horizontal drags when we look at the figure from behind.
+      const facing = Math.cos((view.yaw - p.yaw) * D2R) >= 0 ? 1 : -1;
+      const k = 0.6;
+      if (part === "body") { p.yaw = wrap(p.yaw + dx * k); p.lean = clamp(p.lean + dy * k * 0.5, -30, 60); }
+      else if (part === "head") { p.headYaw = clamp(p.headYaw + dx * k * facing, -80, 80); p.headPitch = clamp(p.headPitch + dy * k, -40, 45); }
+      else if (part === "lArm" || part === "rArm") {
+        const A = p[part], s = part === "lArm" ? 1 : -1;
+        A.a = clamp(A.a + dx * k * s * facing, -45, 180); A.b = clamp(A.b - dy * k, -60, 180);
+      } else {
+        const L = p[part], s = part === "lLeg" ? 1 : -1;
+        L.b = clamp(L.b + dx * k * 0.5 * s * facing, -10, 60); L.a = clamp(L.a - dy * k, -40, 110);
+      }
+    }
+    const wrap = a => ((((a + 180) % 360) + 360) % 360) - 180;
+
+    function changed(poseEdit) {
+      if (poseEdit) state.pose.preset = null;
+      updateOut();
+      syncSliders();
+      emit(poseEdit ? "pose" : "cam");
+    }
+
+    /* --- panel --- */
+    function sliderRow(key, label, min, max, val, hint, step = 1, unit = "°") {
+      return `<label class="cps-sl"><span class="cps-sl-top"><span>${label}</span><output>${fmt(val, unit)}</output></span>
+        <input type="range" min="${min}" max="${max}" step="${step}" value="${val}" data-sl="${key}">${hint ? `<small>${hint}</small>` : ""}</label>`;
+    }
+    const fmt = (x, unit) => unit === "°" ? `${Math.round(x)}°` : (+x).toFixed(2);
+
+    function renderPanel() {
+      const tx = T[lang];
+      root.querySelectorAll("[data-tab]").forEach(b => { b.textContent = tx[b.dataset.tab]; b.setAttribute("aria-selected", b.dataset.tab === state.tab); });
+      root.querySelector("[data-reset]").textContent = tx.reset;
+      root.querySelector(".cps-inset-label").textContent = tx.view;
+      root.querySelector(".cps-help").textContent = state.tab === "camera" ? tx.dragCam : tx.dragPose;
+      root.querySelector(".cps-out b").textContent = tx.output;
+      let html = "";
+      if (state.tab === "camera") {
+        html += `<div class="cps-chips"><span>${tx.camPresets}</span>${CAM_PRESETS.map((c, i) => `<button type="button" data-campreset="${i}">${c[lang]}</button>`).join("")}</div>`;
+        html += sliderRow("cam.az", tx.az, 0, 355, state.cam.az, tx.azHint, 5);
+        html += sliderRow("cam.el", tx.el, -30, 60, state.cam.el, tx.elHint, 5);
+        html += sliderRow("cam.dist", tx.dist, 0.6, 1.4, state.cam.dist, tx.distHint, 0.05, "");
+      } else {
+        html += `<div class="cps-chips"><span>${tx.presets}</span>${PRESETS.map(p => `<button type="button" data-preset="${p.id}" aria-pressed="${state.pose.preset === p.id}">${p[lang]}</button>`).join("")}</div>`;
+        html += `<div class="cps-parts">${Object.keys(PART_SLIDERS).map(k => `<button type="button" data-part="${k}" aria-pressed="${k === state.part}">${tx.parts[k]}</button>`).join("")}</div>`;
+        const target = state.part === "body" || state.part === "head" ? state.pose : state.pose[state.part];
+        html += PART_SLIDERS[state.part].map(([k, mn, mx]) => {
+          const key = k.replace(/^leg/, "").toLowerCase();
+          const prop = ["a", "b", "c", "d"].includes(key) ? key : k;
+          return sliderRow("pose." + prop, tx.sliders[k], mn, mx, target[prop], "", 1);
+        }).join("");
+        html += `<label class="cps-check"><input type="checkbox" data-seated ${state.pose.seated ? "checked" : ""}> ${tx.seated}</label>`;
+      }
+      panel.innerHTML = html;
+      updateOut();
+    }
+    function syncSliders() {
+      panel.querySelectorAll("[data-sl]").forEach(inp => {
+        const [grp, prop] = inp.dataset.sl.split(".");
+        const target = grp === "cam" ? state.cam : (state.part === "body" || state.part === "head" ? state.pose : state.pose[state.part]);
+        inp.value = target[prop];
+        inp.closest(".cps-sl").querySelector("output").textContent = fmt(target[prop], grp === "cam" && prop === "dist" ? "" : "°");
+      });
+      panel.querySelectorAll("[data-preset]").forEach(b => b.setAttribute("aria-pressed", state.pose.preset === b.dataset.preset));
+    }
+    function updateOut() {
+      root.querySelector(".cps-out-text").textContent = state.tab === "camera" ? describeCamera(state.cam, opts.plang ? opts.plang() : lang) : describePose(state.pose, state.cam, opts.plang ? opts.plang() : lang);
+    }
+
+    root.addEventListener("click", e => {
+      const tab = e.target.closest("[data-tab]");
+      if (tab) { state.tab = tab.dataset.tab; renderPanel(); render(); return; }
+      if (e.target.closest("[data-reset]")) {
+        if (state.tab === "camera") state.cam = { az: 45, el: 10, dist: 1 };
+        else state.pose = Object.assign(BASE(), { preset: "stand" });
+        renderPanel(); render(); emit(state.tab === "camera" ? "cam" : "pose"); return;
+      }
+      const cp = e.target.closest("[data-campreset]");
+      if (cp) { state.cam = { ...CAM_PRESETS[+cp.dataset.campreset].c }; syncSliders(); updateOut(); render(); emit("cam"); return; }
+      const pr = e.target.closest("[data-preset]");
+      if (pr) {
+        const preset = PRESETS.find(x => x.id === pr.dataset.preset);
+        state.pose = Object.assign(JSON.parse(JSON.stringify(preset.pose)), { preset: preset.id });
+        renderPanel(); render(); emit("pose"); return;
+      }
+      const part = e.target.closest("[data-part]");
+      if (part) { state.part = part.dataset.part; renderPanel(); render(); }
+    });
+    root.addEventListener("input", e => {
+      const sl = e.target.closest("[data-sl]");
+      if (sl) {
+        const [grp, prop] = sl.dataset.sl.split(".");
+        const target = grp === "cam" ? state.cam : (state.part === "body" || state.part === "head" ? state.pose : state.pose[state.part]);
+        target[prop] = +sl.value;
+        changed(grp === "pose");
+        render();
+      }
+      if (e.target.closest("[data-seated]")) { state.pose.seated = e.target.checked; changed(true); render(); }
+    });
+
+    const ro = new ResizeObserver(() => { size(); render(); });
+    ro.observe(main);
+    size(); renderPanel(); render();
+
+    return {
+      value,
+      set(val) { load(val || {}); renderPanel(); render(); },
+      setLang(l) { lang = l; renderPanel(); },
+      setRatio(r) { ratio = r; size(); render(); },
+      refresh() { size(); render(); updateOut(); },
+      describe: (l) => ({ camera: describeCamera(state.cam, l), pose: describePose(state.pose, state.cam, l) })
+    };
+  }
+
+  return { create, describeCamera, describePose, PRESETS };
+})();
+
+</script>
 <script>
 /* ================= 数据 ================= */
 const MAX_SHOTS = 12;
@@ -912,6 +1644,10 @@ const I18N = {
     size:"Shot size", move:"Camera move", action:"One main action (start with a verb)", vo:"Narration line",
     actionPh:"e.g. leans back and smiles", voPh:"e.g. Every morning, a new queue of alerts is waiting.",
     addShot:"Add a shot", shotCount:"{n} of {max} shots", removeShot:"Remove shot {id}", moveUp:"Move {id} up",
+    angleBtn:"3D angle & pose", angleEdit:"Edit", angleRemove:"Remove 3D", angleHint:"Set the exact camera angle and pose in 3D",
+    dlgTitle:"{id} · 3D camera & pose", dlgUse:"Use in this shot's prompts:", useCam:"Camera angle", usePose:"Pose", dlgDone:"Done",
+    dlgNote:"Drag to set the exact angle and the character's pose. The still-image prompt then uses this angle instead of the shot size, and describes the pose.",
+    poseLabel:"Pose",
     outTitle:"Your prompts", outSub:"Updates live as you type · every card has a Copy button",
     lgStyle:"Style", lgWho:"Who", lgLook:"Look", lgPose:"Pose & background", lgRules:"Rules",
     lgCam:"Camera", lgAct:"One action", lgLock:"Lock",
@@ -1014,6 +1750,10 @@ const I18N = {
     size:"景别", move:"镜头运动", action:"一个主要动作(动词开头,英文)", vo:"旁白(英文)",
     actionPh:"e.g. leans back and smiles", voPh:"e.g. Every morning, a new queue of alerts is waiting.",
     addShot:"加一个镜头", shotCount:"{n} / {max} 个镜头", removeShot:"删除镜头 {id}", moveUp:"把 {id} 上移",
+    angleBtn:"3D 角度与姿势", angleEdit:"编辑", angleRemove:"移除 3D", angleHint:"用 3D 精确设定镜头角度和人物姿势",
+    dlgTitle:"{id} · 3D 镜头与姿势", dlgUse:"用在这个镜头的提示词:", useCam:"镜头角度", usePose:"姿势", dlgDone:"完成",
+    dlgNote:"拖一拖就能定好角度和人物姿势。静帧提示词会用这个角度取代景别,并写进姿势描述(提示词是英文)。",
+    poseLabel:"姿势",
     outTitle:"你的提示词", outSub:"随输入实时更新 · 每张卡片都能一键复制",
     lgStyle:"风格", lgWho:"人物", lgLook:"造型", lgPose:"姿势与背景", lgRules:"规则",
     lgCam:"镜头", lgAct:"一个动作", lgLock:"锁定",
@@ -1184,6 +1924,7 @@ function renderShotForms() {
       <div class="field"><label for="${id("move")}">${t("move")}</label><select id="${id("move")}" data-f="move">${optionsHtml("move", s.move)}</select></div>
       <div class="field act"><label for="${id("action")}">${t("action")}</label><textarea id="${id("action")}" data-f="action" rows="2" placeholder="${t("actionPh")}">${escapeHtml(s.action)}</textarea></div>
       <div class="field vo"><label for="${id("vo")}">${t("vo")}</label><textarea id="${id("vo")}" data-f="vo" rows="2" placeholder="${escapeHtml(t("voPh"))}">${escapeHtml(s.vo)}</textarea></div>
+      <div class="shot-3d">${angleSummary(s, i)}</div>
     </div>`;
   }).join("");
   document.getElementById("shotCount").textContent = t("shotCount").replace("{n}", n).replace("{max}", MAX_SHOTS);
@@ -1222,7 +1963,59 @@ function reorderProgress(map) {
   Object.keys(progress).forEach(k => delete progress[k]);
   Object.assign(progress, next);
 }
+/* 3D 镜头与姿势(每个镜头可选) */
+const angleOn = a => a && (a.useCam || a.usePose);
+function angleWords(a) {
+  const d = { camera: CamPose.describeCamera(a.cam, "en"), pose: CamPose.describePose(a.pose, a.cam, "en") };
+  return { camera: a.useCam ? d.camera : "", pose: a.usePose ? d.pose : "" };
+}
+function angleSummary(s, i) {
+  if (!angleOn(s.angle)) return `<button type="button" data-angle="${i}" title="${escapeHtml(t("angleHint"))}">＋ ${t("angleBtn")}</button>`;
+  const w = angleWords(s.angle);
+  return `<span class="badge">3D</span><span class="val">${escapeHtml([w.camera, w.pose && t("poseLabel") + ": " + w.pose].filter(Boolean).join(" · "))}</span>
+    <button type="button" data-angle="${i}">${t("angleEdit")}</button>`;
+}
+const dlg = document.getElementById("studioDlg");
+let dlgShot = -1;
+const studio = CamPose.create(document.getElementById("studio"), {
+  lang, ratio: "16:9", plang: () => "en",
+  onChange(v, kind) {
+    const a = state.shots[dlgShot].angle;
+    if (kind === "cam") a.useCam = true;
+    if (kind === "pose") a.usePose = true;
+    a.cam = v.cam; a.pose = v.pose;
+    syncDlg(); saveStore(); render();
+  }
+});
+function syncDlg() {
+  const a = state.shots[dlgShot].angle;
+  document.getElementById("dlgCam").checked = !!a.useCam;
+  document.getElementById("dlgPose").checked = !!a.usePose;
+}
+function openAngle(i) {
+  dlgShot = i;
+  const sh = state.shots[i];
+  if (!sh.angle) { const v0 = studio.value(); sh.angle = { cam: v0.cam, pose: v0.pose, useCam: false, usePose: false }; }
+  document.getElementById("dlgTitle").textContent = t("dlgTitle").replace("{id}", shotId(i));
+  studio.setRatio(state.ratio || "16:9");
+  studio.set({ cam: sh.angle.cam, pose: sh.angle.pose });
+  syncDlg();
+  dlg.showModal();
+  studio.refresh();
+}
+function closeAngle() {
+  if (dlg.open) dlg.close();
+}
+dlg.addEventListener("close", () => { renderShotForms(); render(); });
+document.getElementById("dlgClose").addEventListener("click", closeAngle);
+document.getElementById("dlgDone").addEventListener("click", closeAngle);
+document.getElementById("dlgRemove").addEventListener("click", () => { state.shots[dlgShot].angle = null; saveStore(); closeAngle(); });
+document.getElementById("dlgCam").addEventListener("change", e => { state.shots[dlgShot].angle.useCam = e.target.checked; saveStore(); render(); });
+document.getElementById("dlgPose").addEventListener("change", e => { state.shots[dlgShot].angle.usePose = e.target.checked; saveStore(); render(); });
+
 shotForms.addEventListener("click", e => {
+  const ang = e.target.closest("[data-angle]");
+  if (ang) { openAngle(+ang.dataset.angle); return; }
   const rm = e.target.closest("[data-remove]");
   const up = e.target.closest("[data-up]");
   if (rm && state.shots.length > 1) {
@@ -1316,6 +2109,9 @@ function build() {
 
   const shots = state.shots.map((sh, i) => {
     const size = sh.size, move = sh.move;
+    const w3 = angleOn(sh.angle) ? angleWords(sh.angle) : { camera: "", pose: "" };
+    const camera = w3.camera ? w3.camera : sizeDesc(size, g, loc);
+    const poseExtra = w3.pose ? ` Body pose: ${w3.pose}.` : "";
     const action = clean(val(sh.action, "one simple action"));
     const vo = (sh.vo || "").trim();
     const close = CLOSE_SIZES.includes(size);
@@ -1328,13 +2124,13 @@ function build() {
     let still;
     if (i === 0) {
       still = `Create a new still image that places the same ${g.n} from the second uploaded image into the ${loc} from the first uploaded image. ` +
-        `Camera: ${sizeDesc(size, g, loc)}. Pose: ${g.S} ${action}. ` +
+        `Camera: ${camera}. Pose: ${g.S} ${action}.${poseExtra} ` +
         `Keep ${g.o} exactly like the second uploaded image: ${keepLook} ` +
         `Keep the room, furniture, colors and the soft light from the window on the ${light} exactly the same as the first uploaded image.` +
         closeExtra + tail;
     } else {
-      still = `Create a new still image of the same ${g.n} in the same ${loc} as the uploaded image, from a different camera angle: ${sizeDesc(size, g, loc)}. ` +
-        `Pose: ${g.S} ${action}. ` +
+      still = `Create a new still image of the same ${g.n} in the same ${loc} as the uploaded image, from a different camera angle: ${camera}. ` +
+        `Pose: ${g.S} ${action}.${poseExtra} ` +
         `Keep everything else exactly the same as the uploaded image: same ${loc}, same furniture, same colors, same soft light from the window on the ${light}. ` +
         `Keep ${g.o} exactly like the uploaded image: ${keepLook}` +
         closeExtra + tail;
@@ -1367,7 +2163,7 @@ function build() {
       /\b(button|screen|monitor)\b/i.test(rawAction) && !/\b(mouse|keyboard|trackpad)\b/i.test(rawAction);
 
     return {
-      id: shotId(i), size, move, action: clean(rawAction), vo, close, still, video, negative,
+      id: shotId(i), size: w3.camera || size, move, action: clean(rawAction), vo, close, still, video, negative,
       videoText: video.map(s => s[1]).join(" "), secs, clickWarn, longWarn: words > 0 && secs > 6
     };
   });
@@ -1777,6 +2573,7 @@ function applyLang() {
   document.querySelectorAll("[data-i18n-html]").forEach(el => { el.innerHTML = t(el.dataset.i18nHtml); });
   document.getElementById("tipsList").innerHTML = t("tips").map(x => `<li>${x}</li>`).join("");
   document.querySelectorAll("[data-lang-btn]").forEach(b => b.setAttribute("aria-pressed", b.dataset.langBtn === lang));
+  studio.setLang(lang);
   renderAll();
   if (tourIdx >= 0) showTourStep();
 }

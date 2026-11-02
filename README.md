@@ -20,6 +20,7 @@ Story → Character sheet → Style + master image → Director script → Still
 - **Six examples** (all fictional), each opening as a new project: a transaction monitoring analyst, helping a senior with mobile banking, spotting a scam call, a first day at work, a clean desk before going home, and a festive greeting. They cover five art styles and all three video shapes.
 - **Multiple projects**: one project per video. Create, duplicate, rename or delete them; opening an example never overwrites your work.
 - **Adjustable shots**: 1–12 shots, with add, remove and move-up.
+- **3D angle & pose per shot**: open "3D angle & pose" on any shot to set the exact camera angle and the character's pose on a 3D mannequin. The still-image prompt then uses that angle instead of the shot size and describes the pose, and the director script shows it too.
 - **Prompts adapted to your tool**: Any tool / Magnific / Grok / ChatGPT / Gemini / Kling / Veo / Runway / Higgsfield
   - Chat tools (Grok, ChatGPT, Gemini) get polite requests, with the video shape spelled out in words.
   - Kling, Runway and Higgsfield get shorter video prompts; Kling also gets a negative prompt.
