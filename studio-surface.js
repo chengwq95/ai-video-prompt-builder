@@ -133,6 +133,9 @@ const StudioSurface = (() => {
       joints.forEach((j, i) => {
         const p = J[j.joint], R = J[j.matrix]; bones[i].position.set(...p);
         rotation.set(R[0], R[1], R[2], 0, R[3], R[4], R[5], 0, R[6], R[7], R[8], 0, 0, 0, 0, 1); bones[i].quaternion.setFromRotationMatrix(rotation);
+        // Body type: overall height plus per-bone girth (bones are not nested, so scales never compound).
+        const h = J.scale || 1, g = ((M.BODY_TYPES && M.BODY_TYPES[pose.body]) || { girth: {} }).girth[j.name] || [1, 1, 1];
+        bones[i].scale.set(h * g[0], h * g[1], h * g[2]);
       });
       rig.updateMatrixWorld(true);
     }

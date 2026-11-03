@@ -28,8 +28,27 @@ const CamPoseModel = (() => {
   const BASE = () => ({
     yaw: 0, pelvisPitch: 0, pelvisRoll: 0, lean: 0, side: 0, twist: 0,
     neckYaw: 0, neckPitch: 0, neckTilt: 0, headYaw: 0, headPitch: 0, headTilt: 0, seated: false,
+    body: "male", x: 0, z: 0, props: [],
     lArm: arm(), rArm: arm(), lLeg: leg(), rLeg: leg()
   });
+
+  // Body types: overall height and how much each skinning bone widens (x, z) or thickens.
+  const BODY_TYPES = {
+    male: { zh: "成年男性", en: "Adult man", height: 1, girth: {} },
+    female: { zh: "成年女性", en: "Adult woman", height: 0.94, say: null, girth: { torso: [0.9, 1, 0.94], pelvis: [1.1, 1, 1.05], lUpper: [0.88, 1, 0.88], rUpper: [0.88, 1, 0.88], lFore: [0.88, 1, 0.88], rFore: [0.88, 1, 0.88], neck: [0.9, 1, 0.9] } },
+    slim: { zh: "纤瘦", en: "Slim", height: 1, say: ["身材纤瘦", "slim build"], girth: { torso: [0.88, 1, 0.86], pelvis: [0.9, 1, 0.88], lUpper: [0.8, 1, 0.8], rUpper: [0.8, 1, 0.8], lFore: [0.84, 1, 0.84], rFore: [0.84, 1, 0.84], lThigh: [0.84, 1, 0.84], rThigh: [0.84, 1, 0.84], lShin: [0.88, 1, 0.88], rShin: [0.88, 1, 0.88], neck: [0.9, 1, 0.9] } },
+    strong: { zh: "健壮", en: "Muscular", height: 1.02, say: ["身材健壮", "muscular build"], girth: { torso: [1.16, 1, 1.12], pelvis: [1.05, 1, 1.05], lUpper: [1.3, 1, 1.3], rUpper: [1.3, 1, 1.3], lFore: [1.2, 1, 1.2], rFore: [1.2, 1, 1.2], lThigh: [1.15, 1, 1.15], rThigh: [1.15, 1, 1.15], lShin: [1.12, 1, 1.12], rShin: [1.12, 1, 1.12], neck: [1.25, 1, 1.25] } },
+    child: { zh: "小孩", en: "Child", height: 0.62, say: ["小孩", "a child"], girth: { head: [1.32, 1.32, 1.32], neck: [1.05, 1, 1.05], torso: [1.04, 1, 1.06] } }
+  };
+  // Hand props and furniture; hand props sit in the right hand.
+  const PROPS = {
+    phone: { zh: "手机", en: "Phone", hand: true, say: ["右手拿着手机", "holding a phone in the right hand"] },
+    cup: { zh: "杯子", en: "Cup", hand: true, say: ["右手拿着一个杯子", "holding a cup in the right hand"] },
+    umbrella: { zh: "雨伞", en: "Umbrella", hand: true, say: ["右手撑着一把伞", "holding an open umbrella in the right hand"] },
+    book: { zh: "书", en: "Book", hand: true, say: ["右手拿着一本书", "holding a book in the right hand"] },
+    chair: { zh: "椅子", en: "Chair", say: ["旁边有一把椅子", "a chair beside them"], seatSay: ["坐在椅子上", "sitting on a chair"] },
+    table: { zh: "桌子", en: "Table", say: ["面前有一张桌子", "a table in front of them"] }
+  };
   const arm = () => ({ ...limb(8, 0, 10), e: 0, wristPitch: 0, wristYaw: 0, wristRoll: 0, thumb: 12, index: 8, middle: 12, ring: 16, pinky: 20, spread: 5 });
   const leg = () => ({ ...limb(0, 4, 0), anklePitch: 0, ankleRoll: 0, toe: 0 });
   const P = o => {
@@ -109,7 +128,13 @@ const CamPoseModel = (() => {
       }
       lift = -Math.min(...sole) + 0.006;
     }
-    for (const k in J) if (Array.isArray(J[k]) && J[k].length === 3) J[k] = add(J[k], v(0, lift, 0));
+    // Shorter body types scale every joint from the floor; x / z place a second person.
+    const h = (BODY_TYPES[p.body] || BODY_TYPES.male).height;
+    for (const k in J) if (Array.isArray(J[k]) && J[k].length === 3) {
+      const q = add(J[k], v(0, lift, 0));
+      J[k] = [q[0] * h + (p.x || 0), q[1] * h, q[2] * h + (p.z || 0)];
+    }
+    J.scale = h;
     J.forward = mv(body, v(0, 0, 1));
     J.ubM = upperBody; J.bodyM = body; J.neckM = neckM;
     J.headForward = mv(headM, v(0, 0, 1));
@@ -233,10 +258,22 @@ const CamPoseModel = (() => {
     }
     return ["局部特写", "close-up of part of the body, the head out of frame"];
   }
-  function describeCamera(cam, lang, yaw = 0, J = skeleton(BASE()), aspect = 1) {
+  function describeCamera(cam, lang, yaw = 0, J = skeleton(BASE()), aspect = 1, J2 = null) {
     const c = constrainCamera(cam, J), i = lang === 'zh' ? 0 : 1, rel = c.az - yaw;
     const az = AZ[Math.round((((rel % 360) + 360) % 360) / 45) % 8][i];
-    return [az, elWords(c.el)[i], shotWords(c, J, aspect)[i]].join(lang === 'zh' ? ',' : ', ');
+    const words = [az, elWords(c.el)[i], shotWords(c, J, aspect)[i]];
+    if (J2) { const two = pairWords(c, J, J2, aspect); if (two) words.push(two[i]); }
+    return words.join(lang === 'zh' ? ',' : ', ');
+  }
+  // With a second person: a two-shot, or an over-the-shoulder shot when they are much closer to the lens.
+  function pairWords(cam, J, J2, aspect) {
+    const spec = shotCamera(cam, J), W = 100 * aspect, view = makeView(spec.pos, spec.target, spec.fov, W, 100);
+    const q = view.project(J2.head) || view.project(J2.chest);
+    const near = p => !!p && p.x > -15 && p.x < W + 15 && p.y > -25 && p.y < 125;
+    if (!near(q) && !near(view.project(J2.chest))) return null;
+    const dA = Math.hypot(...sub(J.head, spec.pos)), dB = Math.hypot(...sub(J2.head, spec.pos));
+    if (dB < dA * 0.55) return ["过肩镜头,从另一个人的肩后拍", "over-the-shoulder shot from behind the other person"];
+    return ["双人镜头,两个人都在画面里", "two-shot, both people in frame"];
   }
 
   // [zh one arm, en one arm, zh both arms, en both arms]
@@ -256,7 +293,9 @@ const CamPoseModel = (() => {
     const zh = lang === "zh";
     const i = zh ? 0 : 1;
     const parts = [];
-    const preset = p.preset && PRESETS.find(x => x.id === p.preset);
+    // A held prop changes what the hands do, so presets that describe both hands step aside.
+    const holding = (p.props || []).some(k => PROPS[k] && PROPS[k].hand);
+    const preset = p.preset && !(holding && ["stand", "sit", "hips", "cross", "lookphone", "cheer"].includes(p.preset)) && PRESETS.find(x => x.id === p.preset);
     if (preset) {
       // A preset names an action; its facing must still follow the current camera.
       const rel = cam ? Math.abs((((p.yaw - cam.az) % 360) + 540) % 360 - 180) : 180;
@@ -312,7 +351,16 @@ const CamPoseModel = (() => {
         : ["背对镜头", "back to the camera"];
       if (!(preset && preset.id === "lookback" && a >= 110)) parts.push(facing[i]);
     }
-    return parts.join(zh ? "," : ", ");
+    const bodySay = (BODY_TYPES[p.body] || {}).say;
+    if (bodySay) parts.unshift(bodySay[i]);
+    for (const k of p.props || []) {
+      const prop = PROPS[k];
+      if (k === "chair" && p.seated) continue;
+      parts.push(prop.say[i]);
+    }
+    let text = parts.join(zh ? "," : ", ");
+    if ((p.props || []).includes("chair") && p.seated) text = text.replace(/凳子/g, "椅子").replace(/stool/g, "chair").replace(/^(身材\S+?,|小孩,)?坐着/, "$1坐在椅子上").replace(/(^|, )sitting(?! on)/, "$1sitting on a chair");
+    return text;
   }
 
   /* ---------- text ---------- */
@@ -370,8 +418,84 @@ const CamPoseModel = (() => {
     }
     p.seated = raw.seated === true;
     p.preset = PRESETS.some(x => x.id === raw.preset) ? raw.preset : null;
+    p.body = BODY_TYPES[raw.body] ? raw.body : "male";
+    p.x = clamp(finite(raw.x, 0), -3, 3); p.z = clamp(finite(raw.z, 0), -3, 3);
+    p.props = Array.isArray(raw.props) ? [...new Set(raw.props.filter(k => PROPS[k]))] : [];
     return p;
   }
+
+  /* ---------- reaching: move a hand or foot to a point (inverse kinematics) ---------- */
+  // Solves the limb's main angles (raise, forward, bend) so `joint` lands on `target`,
+  // measured from the pelvis so standing / lifting never fights the solve.
+  const IK = {
+    Arm: { keys: ["a", "b", "c"], min: [-35, -60, 0], max: [180, 180, 150] },
+    Leg: { keys: ["a", "b", "c"], min: [-40, -10, 0], max: [120, 65, 145] }
+  };
+  function reach(pose, side, kind, joint, target, { quick = false, iterations = 40 } = {}) {
+    const limbKey = side + kind, spec = IK[kind];
+    const rel = q => { const J = skeleton(q); return sub(J[joint], J.pelvis); };
+    const goal = sub(target, skeleton(pose).pelvis);
+    const start = spec.keys.map(k => pose[limbKey][k]);
+    function solveFrom(seed) {
+      const p = JSON.parse(JSON.stringify(pose));
+      spec.keys.forEach((k, i) => { p[limbKey][k] = clamp(seed[i], spec.min[i], spec.max[i]); });
+      for (let it = 0; it < iterations; it++) {
+        const now = rel(p), err = sub(now, goal);
+        if (Math.hypot(...err) < 0.003) break;
+        // Numerical Jacobian (metres per degree) and a damped least-squares step.
+        const cols = spec.keys.map(k => { const q = JSON.parse(JSON.stringify(p)); q[limbKey][k] += 1; return sub(rel(q), now); });
+        const A = [0, 1, 2].map(r => [0, 1, 2].map(c => cols.reduce((sum, col) => sum + col[r] * col[c], 0) + (r === c ? 4e-5 : 0)));
+        const y = solve3(A, mul(err, -1));
+        spec.keys.forEach((k, i) => { p[limbKey][k] = clamp(p[limbKey][k] + clamp(dot(cols[i], y), -20, 20), spec.min[i], spec.max[i]); });
+      }
+      const miss = Math.hypot(...sub(rel(p), goal));
+      // Prefer reaching the point, then staying close to the current pose (no sudden flips).
+      const change = spec.keys.reduce((sum, k, i) => sum + Math.abs(p[limbKey][k] - start[i]), 0);
+      return { p, miss, cost: miss + change * 0.0001 };
+    }
+    // While dragging, continue from the current pose; only search more starts when stuck.
+    if (quick) { const r = solveFrom(start); if (r.miss < 0.03) return r.p; }
+    // A straight limb is a singular start (it cannot tell which way to swing), so try a few.
+    const seeds = [start, [start[0], start[1] + 45, start[2] + 20], [start[0] + 45, start[1], start[2] + 20], [start[0], start[1], start[2] + 60],
+      ...(kind === "Arm" ? [[15, 80, 15], [90, 10, 20], [50, 50, 60], [10, 30, 110], [150, 20, 20]] : [[40, 5, 40], [90, 5, 90], [-20, 5, 20]])];
+    return seeds.map(solveFrom).sort((a, b) => a.cost - b.cost)[0].p;
+  }
+  function solve3(A, b) {
+    const det = m => m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1]) - m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0]) + m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0]);
+    const d = det(A) || 1e-12;
+    return [0, 1, 2].map(i => det(A.map((row, r) => row.map((x, c) => (c === i ? b[r] : x)))) / d);
+  }
+
+  /* ---------- key light ---------- */
+  // az / el like the camera (world azimuth); soft or hard shadows.
+  function normalizeLight(raw = {}) {
+    if (!raw || typeof raw !== "object") raw = {};
+    return { az: wrap360(finite(raw.az, 315)), el: clamp(finite(raw.el, 40), -20, 89), soft: raw.soft !== false };
+  }
+  const lightDir = l => camDir(l);
+  // Words from where the light sits relative to the camera, so they describe the photo.
+  function describeLight(light, cam, lang) {
+    const l = normalizeLight(light), c = normalizeCamera(cam), zh = lang === "zh", i = zh ? 0 : 1;
+    const words = [];
+    if (l.el > 68) words.push(["顶光,光从正上方打下", "top lighting from directly above"][i]);
+    else if (l.el < -5) words.push(["底光,光从下方往上照", "lighting from below"][i]);
+    else {
+      const rel = ((((l.az - c.az) % 360) + 540) % 360) - 180, a = Math.abs(rel);
+      // From the camera's point of view, positive rel means the light is on the frame's left.
+      const sideWord = rel > 0 ? ["左", "left"] : ["右", "right"];
+      if (a < 35) words.push(["顺光,光从镜头方向照来", "front lighting from the camera direction"][i]);
+      else if (a < 70) words.push(zh ? `${sideWord[0]}前方的斜侧光,伦勃朗光` : `Rembrandt lighting from the front ${sideWord[1]}`);
+      else if (a < 125) words.push(zh ? `${sideWord[0]}侧光,一半脸在阴影里` : `side lighting from the ${sideWord[1]}, half the face in shadow`);
+      else words.push(["逆光,人物边缘有一圈轮廓光", "backlit, with a rim light around the subject"][i]);
+    }
+    words.push(l.soft ? ["柔光,阴影柔和", "soft light with gentle shadows"][i] : ["硬光,阴影清晰", "hard light with crisp shadows"][i]);
+    return words.join(zh ? "," : ", ");
+  }
+  const LIGHT_PRESETS = [
+    { zh: "顺光", en: "Front", rel: 0, el: 25 }, { zh: "伦勃朗光", en: "Rembrandt", rel: 50, el: 40 },
+    { zh: "左侧光", en: "Left side", rel: 90, el: 15 }, { zh: "右侧光", en: "Right side", rel: -90, el: 15 },
+    { zh: "逆光", en: "Backlight", rel: 180, el: 25 }, { zh: "顶光", en: "Top", rel: 0, el: 80 }
+  ];
   function normalizeCamera(raw = {}) {
     if (!raw || typeof raw !== 'object') raw = {};
     const old = clamp(finite(raw.dist, 1), 0.6, 1.4);
@@ -379,5 +503,20 @@ const CamPoseModel = (() => {
     return { version: 2, az: wrap360(finite(raw.az, 45)), el: clamp(finite(raw.el, 10), -60, 85), distance: clamp(finite(raw.distance, legacy), CAMERA.minDistance, CAMERA.maxDistance), focus: ['head', 'chest', 'whole'].includes(raw.focus) ? raw.focus : 'chest' };
   }
 
-  return { D2R, clamp, v, add, sub, mul, dot, cross, norm, rx, ry, rz, mv, chain, BASE, P, PRESETS, B, skeleton, CAMERA, camDir, shotCamera, framedCamera, cameraTarget, cameraBounds, constrainCamera, minCameraElevation, fitCameraDistance, cameraControlPoint, dragCameraControl, makeView, describeCamera, describePose, T, CAM_PRESETS, PARTS, get, put, wrap360, normalizePose, normalizeCamera };
+  /** Everything a host needs from a saved studio value: camera, pose and light words. */
+  function describeScene(value = {}, lang = "en", aspect = 1) {
+    const pose = normalizePose(value.pose), cam = normalizeCamera(value.cam), J = skeleton(pose);
+    const two = value.second && value.pose2 ? normalizePose(value.pose2) : null, J2 = two ? skeleton(two) : null;
+    let poseText = describePose(pose, cam, lang);
+    if (two) {
+      // Name the two people by where they appear in the frame.
+      const spec = shotCamera(cam, J), view = makeView(spec.pos, spec.target, spec.fov, 100 * aspect, 100);
+      const xa = (view.project(J.chest) || { x: 0 }).x, xb = (view.project(J2.chest) || { x: 0 }).x, aLeft = xa <= xb, zh = lang === "zh";
+      const label = left => zh ? (left ? "左边的人:" : "右边的人:") : (left ? "person on the left: " : "person on the right: ");
+      poseText = `${label(aLeft)}${poseText}${zh ? ";" : "; "}${label(!aLeft)}${describePose(two, cam, lang)}`;
+    }
+    return { camera: describeCamera(cam, lang, pose.yaw, J, aspect, J2), pose: poseText, light: describeLight(value.light, cam, lang) };
+  }
+
+  return { describeScene, BODY_TYPES, PROPS, reach, normalizeLight, lightDir, describeLight, LIGHT_PRESETS, D2R, clamp, v, add, sub, mul, dot, cross, norm, rx, ry, rz, mv, chain, BASE, P, PRESETS, B, skeleton, CAMERA, camDir, shotCamera, framedCamera, cameraTarget, cameraBounds, constrainCamera, minCameraElevation, fitCameraDistance, cameraControlPoint, dragCameraControl, makeView, describeCamera, describePose, T, CAM_PRESETS, PARTS, get, put, wrap360, normalizePose, normalizeCamera };
 })();

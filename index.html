@@ -476,6 +476,9 @@ footer a:hover{border-color:var(--text)}
 .cps-out b{flex:none;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .cps-out-text{font-family:var(--mono);font-size:12.5px;line-height:1.6}
 .cps-panel{display:grid;gap:12px}
+.cps-view-tools .cps-download{margin-left:auto;background:var(--text);color:var(--on-text);border-color:var(--text);font-weight:600;padding:5px 10px}
+.cps-view-tools .cps-download:hover{opacity:.88}
+.cps-people{padding-bottom:10px;border-bottom:1px solid var(--line)}
 .cps-focus{display:flex;gap:7px;align-items:center;flex-wrap:wrap;font-size:12px}
 .cps-focus>span{color:var(--muted);margin-right:3px}
 .cps-focus button{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:6px 12px;cursor:pointer}
@@ -691,6 +694,7 @@ footer a:hover{border-color:var(--text)}
     <div class="dlg-use"><span data-i18n="dlgUse"></span>
       <label><input type="checkbox" id="dlgCam"> <span data-i18n="useCam"></span></label>
       <label><input type="checkbox" id="dlgPose"> <span data-i18n="usePose"></span></label>
+      <label><input type="checkbox" id="dlgLight"> <span data-i18n="useLight"></span></label>
     </div>
     <div id="studio"></div>
   </div>
@@ -1003,7 +1007,7 @@ const I18N = {
     actionPh:"e.g. leans back and smiles", voPh:"e.g. Every morning, a new queue of alerts is waiting.",
     addShot:"Add a shot", shotCount:"{n} of {max} shots", removeShot:"Remove shot {id}", moveUp:"Move {id} up",
     angleBtn:"3D angle & pose", angleEdit:"Edit", angleRemove:"Remove 3D", angleHint:"Set the exact camera angle and pose in 3D",
-    dlgTitle:"{id} · 3D camera & pose", dlgUse:"Use in this shot's prompts:", useCam:"Camera angle", usePose:"Pose", dlgDone:"Done",
+    dlgTitle:"{id} · 3D camera & pose", dlgUse:"Use in this shot's prompts:", useCam:"Camera angle", usePose:"Pose", useLight:"Lighting", dlgDone:"Done",
     dlgNote:"Drag to set the exact angle and the character's pose. The still-image prompt then uses this angle instead of the shot size, and describes the pose.",
     poseLabel:"Pose",
     outTitle:"Your prompts", outSub:"Updates live as you type · every card has a Copy button",
@@ -1109,7 +1113,7 @@ const I18N = {
     actionPh:"e.g. leans back and smiles", voPh:"e.g. Every morning, a new queue of alerts is waiting.",
     addShot:"加一个镜头", shotCount:"{n} / {max} 个镜头", removeShot:"删除镜头 {id}", moveUp:"把 {id} 上移",
     angleBtn:"3D 角度与姿势", angleEdit:"编辑", angleRemove:"移除 3D", angleHint:"用 3D 精确设定镜头角度和人物姿势",
-    dlgTitle:"{id} · 3D 镜头与姿势", dlgUse:"用在这个镜头的提示词:", useCam:"镜头角度", usePose:"姿势", dlgDone:"完成",
+    dlgTitle:"{id} · 3D 镜头与姿势", dlgUse:"用在这个镜头的提示词:", useCam:"镜头角度", usePose:"姿势", useLight:"光线", dlgDone:"完成",
     dlgNote:"拖一拖就能定好角度和人物姿势。静帧提示词会用这个角度取代景别,并写进姿势描述(提示词是英文)。",
     poseLabel:"姿势",
     outTitle:"你的提示词", outSub:"随输入实时更新 · 每张卡片都能一键复制",
@@ -1322,17 +1326,16 @@ function reorderProgress(map) {
   Object.assign(progress, next);
 }
 /* 3D 镜头与姿势(每个镜头可选) */
-const angleOn = a => a && (a.useCam || a.usePose);
+const angleOn = a => a && (a.useCam || a.usePose || a.useLight);
 function angleWords(a) {
   const [rw, rh] = (state.ratio || "16:9").split(":").map(Number);
-  const pose = CamPoseModel.normalizePose(a.pose || {});
-  const d = { camera: CamPose.describeCamera(a.cam, "en", pose.yaw, CamPoseModel.skeleton(pose), rw / rh || 16 / 9), pose: CamPose.describePose(pose, CamPoseModel.normalizeCamera(a.cam), "en") };
-  return { camera: a.useCam ? d.camera : "", pose: a.usePose ? d.pose : "" };
+  const d = CamPose.describeScene(a, "en", rw / rh || 16 / 9);
+  return { camera: a.useCam ? d.camera : "", pose: a.usePose ? d.pose : "", light: a.useLight ? d.light : "" };
 }
 function angleSummary(s, i) {
   if (!angleOn(s.angle)) return `<button type="button" data-angle="${i}" title="${escapeHtml(t("angleHint"))}">＋ ${t("angleBtn")}</button>`;
   const w = angleWords(s.angle);
-  return `<span class="badge">3D</span><span class="val">${escapeHtml([w.camera, w.pose && t("poseLabel") + ": " + w.pose].filter(Boolean).join(" · "))}</span>
+  return `<span class="badge">3D</span><span class="val">${escapeHtml([w.camera, w.pose && t("poseLabel") + ": " + w.pose, w.light && t("useLight") + ": " + w.light].filter(Boolean).join(" · "))}</span>
     <button type="button" data-angle="${i}">${t("angleEdit")}</button>`;
 }
 const dlg = document.getElementById("studioDlg");
@@ -1343,7 +1346,8 @@ const studio = CamPose.create(document.getElementById("studio"), {
     const a = state.shots[dlgShot].angle;
     if (kind === "cam") a.useCam = true;
     if (kind === "pose") a.usePose = true;
-    a.cam = v.cam; a.pose = v.pose;
+    if (kind === "light") a.useLight = true;
+    Object.assign(a, { cam: v.cam, pose: v.pose, pose2: v.pose2, second: v.second, light: v.light });
     syncDlg(); saveStore(); render();
   }
 });
@@ -1351,14 +1355,15 @@ function syncDlg() {
   const a = state.shots[dlgShot].angle;
   document.getElementById("dlgCam").checked = !!a.useCam;
   document.getElementById("dlgPose").checked = !!a.usePose;
+  document.getElementById("dlgLight").checked = !!a.useLight;
 }
 function openAngle(i) {
   dlgShot = i;
   const sh = state.shots[i];
-  if (!sh.angle) { const v0 = studio.value(); sh.angle = { cam: v0.cam, pose: v0.pose, useCam: false, usePose: false }; }
+  if (!sh.angle) { const v0 = studio.value(); sh.angle = { ...v0, useCam: false, usePose: false, useLight: false }; }
   document.getElementById("dlgTitle").textContent = t("dlgTitle").replace("{id}", shotId(i));
   studio.setRatio(state.ratio || "16:9");
-  studio.set({ cam: sh.angle.cam, pose: sh.angle.pose });
+  studio.set(sh.angle);
   syncDlg();
   dlg.showModal();
   studio.refresh();
@@ -1372,6 +1377,7 @@ document.getElementById("dlgDone").addEventListener("click", closeAngle);
 document.getElementById("dlgRemove").addEventListener("click", () => { state.shots[dlgShot].angle = null; saveStore(); closeAngle(); });
 document.getElementById("dlgCam").addEventListener("change", e => { state.shots[dlgShot].angle.useCam = e.target.checked; saveStore(); render(); });
 document.getElementById("dlgPose").addEventListener("change", e => { state.shots[dlgShot].angle.usePose = e.target.checked; saveStore(); render(); });
+document.getElementById("dlgLight").addEventListener("change", e => { state.shots[dlgShot].angle.useLight = e.target.checked; saveStore(); render(); });
 
 shotForms.addEventListener("click", e => {
   const ang = e.target.closest("[data-angle]");
@@ -1469,9 +1475,9 @@ function build() {
 
   const shots = state.shots.map((sh, i) => {
     const size = sh.size, move = sh.move;
-    const w3 = angleOn(sh.angle) ? angleWords(sh.angle) : { camera: "", pose: "" };
+    const w3 = angleOn(sh.angle) ? angleWords(sh.angle) : { camera: "", pose: "", light: "" };
     const camera = w3.camera ? w3.camera : sizeDesc(size, g, loc);
-    const poseExtra = w3.pose ? ` Body pose: ${w3.pose}.` : "";
+    const poseExtra = (w3.pose ? ` Body pose: ${w3.pose}.` : "") + (w3.light ? ` Lighting: ${w3.light}.` : "");
     const action = clean(val(sh.action, "one simple action"));
     const vo = (sh.vo || "").trim();
     const close = CLOSE_SIZES.includes(size);

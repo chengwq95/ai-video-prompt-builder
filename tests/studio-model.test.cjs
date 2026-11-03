@@ -107,3 +107,45 @@ test('shot size words follow what the camera actually frames', () => {
   assert.match(words(7, 'whole'), /wide shot/);
   assert.match(words(0.4, 'chest'), /head out of frame/);
 });
+
+test('reaching moves a hand or foot onto the target point', () => {
+  const pose = M.normalizePose({ preset: 'stand' }), J = M.skeleton(pose);
+  for (const offset of [[0.05, 0.3, 0.35], [-0.2, 0.9, 0.1], [0.3, 0.6, 0.36]]) {
+    const target = M.add(J.rWrist, offset), solved = M.reach(pose, 'r', 'Arm', 'rWrist', target);
+    assert.ok(Math.hypot(...M.sub(M.skeleton(solved).rWrist, target)) < 0.03, `arm misses ${offset}`);
+  }
+  const foot = M.add(J.lAnkle, [0, 0.25, 0.3]), leg = M.reach(pose, 'l', 'Leg', 'lAnkle', foot), K = M.skeleton(leg);
+  assert.ok(Math.hypot(...M.sub(M.sub(K.lAnkle, K.pelvis), M.sub(foot, J.pelvis))) < 0.03);
+});
+
+test('body types change height and are named in the pose words', () => {
+  const height = body => M.skeleton(M.normalizePose({ body })).head[1];
+  assert.ok(height('child') < height('female') && height('female') < height('male'));
+  assert.equal(M.normalizePose({ body: 'giant' }).body, 'male');
+  assert.match(M.describePose(M.normalizePose({ body: 'strong' }), null, 'en'), /muscular build/);
+});
+
+test('props are kept, one hand item at a time is up to the UI, and they appear in the words', () => {
+  const p = M.normalizePose({ props: ['phone', 'table', 'nonsense'] });
+  assert.equal(p.props.join(','), 'phone,table');
+  const words = M.describePose(p, { az: 0 }, 'en');
+  assert.match(words, /holding a phone/); assert.match(words, /a table in front/);
+  assert.match(M.describePose(M.normalizePose({ preset: 'sit', seated: true, props: ['chair'] }), { az: 0 }, 'en'), /sitting on a chair/);
+});
+
+test('light words follow where the light is seen from the camera', () => {
+  const cam = { az: 0 };
+  assert.match(M.describeLight({ az: 0, el: 30 }, cam, 'en'), /front lighting/);
+  assert.match(M.describeLight({ az: 90, el: 15 }, cam, 'en'), /side lighting from the left/);
+  assert.match(M.describeLight({ az: 270, el: 15 }, cam, 'en'), /side lighting from the right/);
+  assert.match(M.describeLight({ az: 180, el: 20, soft: false }, cam, 'en'), /backlit.*hard light/);
+  assert.match(M.describeLight({ az: 0, el: 80 }, cam, 'zh'), /顶光/);
+});
+
+test('a second person makes a two-shot and is named by frame side', () => {
+  const scene = M.describeScene({ cam: { az: 0, el: 5, distance: 3.6 }, pose: {}, second: true, pose2: { x: 0.9, yaw: 60 } }, 'en', 16 / 9);
+  assert.match(scene.camera, /two-shot/);
+  assert.match(scene.pose, /person on the left: .*; person on the right: /);
+  const solo = M.describeScene({ cam: { az: 0, el: 5, distance: 3.6 }, pose: {} }, 'en', 16 / 9);
+  assert.doesNotMatch(solo.camera, /two-shot/);
+});
