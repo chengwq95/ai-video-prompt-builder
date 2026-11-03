@@ -20,7 +20,7 @@ Story → Character sheet → Style + master image → Director script → Still
 - **Six examples** (all fictional), each opening as a new project: a transaction monitoring analyst, helping a senior with mobile banking, spotting a scam call, a first day at work, a clean desk before going home, and a festive greeting. They cover five art styles and all three video shapes.
 - **Multiple projects**: one project per video. Create, duplicate, rename or delete them; opening an example never overwrites your work.
 - **Adjustable shots**: 1–12 shots, with add, remove and move-up.
-- **3D angle & pose per shot**: open "3D angle & pose" on any shot to set the exact camera angle and the character's pose on a 3D mannequin. The still-image prompt then uses that angle instead of the shot size and describes the pose, and the director script shows it too.
+- **3D angle & pose per shot**: open "3D angle & pose" on any shot to set the exact camera angle and the character's pose on a real 3D mannequin (smooth skinned body, articulated hands, 13 poses and 54 angle controls), with a live camera view in the video's shape. The still-image prompt then uses that angle instead of the shot size and describes the pose, and the director script shows it too. The shot size is named from what the camera actually frames (full body, knees up, waist up, chest up, face).
 - **Prompts adapted to your tool**: Any tool / Magnific / Grok / ChatGPT / Gemini / Kling / Veo / Runway / Higgsfield
   - Chat tools (Grok, ChatGPT, Gemini) get polite requests, with the video shape spelled out in words.
   - Kling, Runway and Higgsfield get shorter video prompts; Kling also gets a negative prompt.
@@ -50,7 +50,7 @@ Story → Character sheet → Style + master image → Director script → Still
 
 ## How to use
 
-No install, no build step. It's a single HTML file: open `index.html` in any browser, on desktop or phone.
+No install, no build step. Open `index.html` in any modern browser, on desktop or phone. Keep `studio.js`, `studio-model.js`, `studio-surface.js`, `studio-body-data.js` and `vendor/` next to `index.html` when copying or deploying; they power the 3D studio (Three.js is bundled locally, no CDN or model download). Run `node --test tests/*.test.cjs` for the 3D studio checks.
 
 ## Deploy to GitHub Pages
 
