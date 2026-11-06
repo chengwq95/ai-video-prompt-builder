@@ -6,6 +6,16 @@ A single-page tool that goes with the AI short-video tutorial. Fill in your char
 
 Companion tool: [AI Image Prompt Builder](https://ai-image-prompt-builder.pages.dev/) — build AI image prompts from four blocks.
 
+## Preview
+
+| Shots | Prompts + progress |
+|---|---|
+| ![Shot list with a 3D angle on shot 1](docs/video-shots.png) | ![Generated prompts and the progress bar](docs/video-prompts.png) |
+
+**3D camera & pose for a shot** (the same studio as the image builder — see its [posing demo](https://github.com/chengwq95/ai-image-prompt-builder#preview)):
+
+![3D camera & pose dialog](docs/studio-dialog.png)
+
 ---
 
 ## Workflow
@@ -20,7 +30,7 @@ Story → Character sheet → Style + master image → Director script → Still
 - **Six examples** (all fictional), each opening as a new project: a transaction monitoring analyst, helping a senior with mobile banking, spotting a scam call, a first day at work, a clean desk before going home, and a festive greeting. They cover five art styles and all three video shapes.
 - **Multiple projects**: one project per video. Create, duplicate, rename or delete them; opening an example never overwrites your work.
 - **Adjustable shots**: 1–12 shots, with add, remove and move-up.
-- **3D angle & pose per shot**: open "3D angle & pose" on any shot to set the exact camera angle and the character's pose on a real 3D mannequin (smooth skinned body, articulated hands, 13 poses and 54 angle controls), with a live camera view in the video's shape. Drag a hand or foot and the limb follows, pick a body type (man, woman, slim, muscular, child), add props (phone, cup, umbrella, book, chair, table), a second person for two-shots and over-the-shoulder shots, and a key light (front, Rembrandt, side, back, top; soft or hard). Download the camera view as a PNG reference. The still-image prompt then uses that angle instead of the shot size and describes the pose, and the director script shows it too. The shot size is named from what the camera actually frames (full body, knees up, waist up, chest up, face).
+- **3D angle & pose per shot**: open "3D angle & pose" on any shot to set the exact camera angle and the character's pose on a real 3D mannequin (smooth skinned body, articulated hands, 13 poses and 54 angle controls), with a live camera view in the video's shape. Drag a hand or foot and the limb follows, pick a body type (man, woman, slim, muscular, child) and a clay, wood or skin finish, set the gaze and lens, add a second person for two-shots and over-the-shoulder shots, and a key light (front, Rembrandt, side, back, top; soft or hard). Download the camera view as a PNG reference. **? How to use** opens a short studio tour; on phones there is a landscape hint, pinch zoom and a **Simple** mode. The still-image prompt then uses that angle instead of the shot size and describes the pose, and the director script shows it too. The shot size is named from what the camera actually frames (full body, knees up, waist up, chest up, face).
 - **Prompts adapted to your tool**: Any tool / Magnific / Grok / ChatGPT / Gemini / Kling / Veo / Runway / Higgsfield
   - Chat tools (Grok, ChatGPT, Gemini) get polite requests, with the video shape spelled out in words.
   - Kling, Runway and Higgsfield get shorter video prompts; Kling also gets a negative prompt.
@@ -28,6 +38,7 @@ Story → Character sheet → Style + master image → Director script → Still
 - **Progress tracking**: mark each prompt as done; the progress bar shows the next step and jumps to it.
 - **EN / 中文** interface switch (English by default) and **Morning / Night** themes (follows your system until you choose).
 - Everything is saved in your browser (`localStorage`), so a refresh doesn't lose your work.
+- **Project file**: **Project → Export** saves all projects (shots, 3D scenes, progress) as a JSON file; **Import** adds them back on any browser or computer, never overwriting what is there.
 
 ## Outputs
 
