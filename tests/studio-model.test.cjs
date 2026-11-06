@@ -34,7 +34,7 @@ test('the editor exposes 18 parts and 54 distinct bounded angle controls', () =>
 test('legacy saved poses receive defaults for new joints without losing old angles', () => {
   const p = M.normalizePose({ yaw: 60, lArm: { a: 72, b: 35, c: 95, d: 30 }, lLeg: { a: 45, b: 4, c: 60 } });
   assert.equal(p.lArm.a, 72); assert.equal(p.lArm.c, 95); assert.equal(p.lLeg.c, 60);
-  assert.equal(p.lArm.wristPitch, 0); assert.equal(p.lArm.index, 8); assert.equal(p.lLeg.anklePitch, 0);
+  assert.equal(p.lArm.wristPitch, 0); assert.equal(p.lArm.index, 14); assert.equal(p.lArm.e, 75); assert.equal(p.lLeg.anklePitch, 0);
   assert.equal(p.twist, 0); assert.equal(p.rArm.a, 8);
   for (const x of Object.values(M.skeleton(p)).flat()) assert.ok(Number.isFinite(x));
 });
@@ -148,4 +148,157 @@ test('a second person makes a two-shot and is named by frame side', () => {
   assert.match(scene.pose, /person on the left: .*; person on the right: /);
   const solo = M.describeScene({ cam: { az: 0, el: 5, distance: 3.6 }, pose: {} }, 'en', 16 / 9);
   assert.doesNotMatch(solo.camera, /two-shot/);
+});
+
+test('children have shorter relative limbs and a larger head-to-height ratio', () => {
+  const adult = M.skeleton(M.normalizePose({ body: 'male' })), child = M.skeleton(M.normalizePose({ body: 'child' }));
+  const length = (J, a, b) => Math.hypot(...M.sub(J[a], J[b]));
+  assert.ok(length(child, 'lHip', 'lKnee') / child.headSize < length(adult, 'lHip', 'lKnee') / adult.headSize * 0.7);
+  assert.ok(length(child, 'lShoulder', 'lElbow') / child.headSize < length(adult, 'lShoulder', 'lElbow') / adult.headSize * 0.75);
+  const heads = J => (J.head[1] + 0.12 * J.headSize) / (0.24 * J.headSize);
+  assert.ok(heads(child) > 5 && heads(child) < 6);
+  assert.ok(heads(adult) > 7 && heads(adult) < 8);
+  assert.ok(M.measurements('female').shoulder < M.B.shoulder && M.measurements('female').hip > M.B.hip);
+  assert.ok(M.measurements('strong').shoulder > M.B.shoulder);
+});
+
+test('camera head focus and reaching follow each body type at either model position', () => {
+  for (const body of Object.keys(M.BODY_TYPES)) {
+    const p = M.normalizePose({ body, x: 0.85, z: 0.2 }), J = M.skeleton(p);
+    const target = M.cameraTarget({ focus: 'head' }, J);
+    assert.ok(target[1] > J.neck[1] && target[2] > J.head[2]);
+    const goal = M.add(J.rWrist, [0, 0.15 * J.scale, 0.2 * J.scale]);
+    const next = M.reach(p, 'r', 'Arm', 'rWrist', goal), K = M.skeleton(next);
+    assert.ok(Math.hypot(...M.sub(K.rWrist, goal)) < 0.03, body);
+  }
+});
+
+test('spacing sets the horizontal distance, preserves poses and stays inside placement limits', () => {
+  const a = M.normalizePose({ ...M.PRESETS.find(x => x.id === 'run').pose, body: 'female', x: -0.4, z: 0.2 });
+  const b = M.normalizePose({ body: 'child', x: 0.8, z: 0.6 });
+  for (const distance of [0.2, 0.8, 1.5, 4]) {
+    const [A, B] = M.spaceModels(a, b, distance);
+    assert.ok(Math.abs(M.modelDistance(A, B) - distance) < 1e-10);
+    assert.equal(A.preset, a.preset); assert.deepEqual(A.lLeg, a.lLeg); assert.equal(B.body, 'child');
+    assert.ok(Math.abs((A.x + B.x) / 2 - 0.2) < 1e-10);
+    for (const p of [A, B]) assert.ok(Math.abs(p.x) <= 3 && Math.abs(p.z) <= 3);
+  }
+  const [A, B] = M.spaceModels({ x: 3, z: 3 }, { x: 3, z: 3 }, 4);
+  assert.equal(M.modelDistance(A, B), 4);
+  for (const p of [A, B]) assert.ok(Math.abs(p.x) <= 3 && Math.abs(p.z) <= 3);
+});
+
+test('holding a cup keeps it upright across the pose presets without replacing the arm action', () => {
+  for (const preset of M.PRESETS) {
+    const original = M.normalizePose({ ...preset.pose, body: 'female' }), p = M.holdProp(original, 'cup');
+    const up = M.mv(M.propFrame(p, 'cup').matrix, [0, 1, 0]);
+    assert.ok(up[1] > 0.99, `${preset.id}: cup tilts ${up[1]}`);
+    assert.deepEqual(p.lLeg, original.lLeg); assert.deepEqual(p.rLeg, original.rLeg);
+    if (preset.id !== 'stand' && preset.id !== 'lookback') {
+      for (const key of ['a', 'b', 'c', 'd']) assert.equal(p.rArm[key], original.rArm[key], `${preset.id}: arm ${key} changed`);
+    }
+  }
+});
+
+test('props share the skin hand frame through body, arm and wrist rotations', () => {
+  for (const body of Object.keys(M.BODY_TYPES)) for (const prop of Object.keys(M.PROP_ATTACHMENTS)) {
+    const p = M.holdProp(M.normalizePose({ body, yaw: 60, x: 0.8, z: -0.4 }), prop);
+    p.rArm.wristPitch += 10;
+    const J = M.skeleton(p), F = M.propFrame(p, prop, J), R = J.rHandM;
+    const transpose = [R[0], R[3], R[6], R[1], R[4], R[7], R[2], R[5], R[8]];
+    const local = M.mul(M.mv(transpose, M.sub(F.position, J.rWrist)), 1 / J.handSize);
+    local.forEach((n, i) => assert.ok(Math.abs(n - M.PROP_ATTACHMENTS[prop].position[i]) < 1e-10));
+    assert.ok(F.matrix.every(Number.isFinite));
+    assert.deepEqual(M.skinFrames(p, J).rHand.matrix, J.rHandM);
+  }
+});
+
+test('the phone lies in the palm with the fingers round its edge, and the hand closes round the umbrella', () => {
+  const localTips = prop => {
+    const p = M.holdProp(M.normalizePose({}), prop), J = M.skeleton(p), F = M.propFrame(p, prop, J), R = F.matrix;
+    const T = [R[0], R[3], R[6], R[1], R[4], R[7], R[2], R[5], R[8]], H = M.handRig(p, 'r', J);
+    return ['thumb', 'index', 'middle', 'ring', 'pinky'].map(k => M.mul(M.mv(T, M.sub(H['r' + k + 'Tip'], F.position)), 1 / F.scale));
+  };
+  // Phone across the palm: fingers come round the far edge onto the screen side, thumb on the near edge.
+  const phone = localTips('phone');
+  for (const p of phone.slice(1, 4)) assert.ok(p[2] < 0.002 && p[0] < -0.012, `finger tip not round the far edge (${p})`);
+  assert.ok(phone[0][2] < 0 && Math.abs(phone[0][1]) < 0.1, 'thumb should rest on the screen side of the phone');
+  for (const p of localTips('umbrella').slice(1)) assert.ok(Math.abs(Math.hypot(p[0], p[2]) - 0.016) < 0.01, 'fingers should close round the umbrella handle');
+});
+
+test('legacy held props migrate once and later finger edits survive a reload', () => {
+  const old = M.normalizePose({ props: ['phone'], body: 'child' }), migrated = M.migratePose(old);
+  assert.equal(migrated.gripVersion, 1); assert.ok(migrated.rArm.b > 15);
+  migrated.rArm.index = 17; migrated.rArm.wristPitch = 12;
+  const again = M.migratePose(migrated);
+  assert.equal(again.rArm.index, 17); assert.equal(again.rArm.wristPitch, 12);
+  assert.equal(again.body, 'child');
+});
+
+test('a held cup is described as holding rather than an empty fist', () => {
+  const p = M.holdProp(M.normalizePose({}), 'cup'); p.preset = null;
+  assert.match(M.describePose(p, null, 'en'), /holding a cup/);
+  assert.doesNotMatch(M.describePose(p, null, 'en'), /right hand in a fist/);
+  assert.doesNotMatch(M.describePose(p, null, 'zh'), /右手握拳/);
+});
+
+test('side controls still spread a forward-raised arm and a seated thigh', () => {
+  const leg = M.normalizePose({ seated: true, lLeg: { a: 90, b: 45 } }), L = M.skeleton(leg);
+  assert.ok(L.lKnee[0] - L.lHip[0] > 0.3, 'a seated knee must move outwards');
+  const arm = M.normalizePose({ rArm: { a: 40, b: 90, c: 0 } }), A = M.skeleton(arm);
+  assert.ok(A.rShoulder[0] - A.rElbow[0] > 0.15, 'a forward arm must still move sideways');
+});
+
+test('an arm that would cut through the torso is moved just clear of it', () => {
+  for (const body of Object.keys(M.BODY_TYPES)) {
+    const p = M.normalizePose({ body, rArm: { a: -30, b: 10, c: 120 } });
+    assert.ok(M.armPenetration(p, 'r') > 0.5, `${body}: test pose should clip`);
+    M.resolveArms(p);
+    assert.equal(M.armPenetration(p, 'r'), 0, `${body}: arm still inside the body`);
+    assert.ok(p.rArm.a - -30 <= 80 && Math.abs(p.rArm.b - 10) <= 70);
+  }
+  const relaxed = M.normalizePose({ lArm: { a: 75, c: 25 }, rArm: { a: 75, c: 25 } }), before = JSON.stringify(relaxed);
+  M.resolveArms(relaxed); assert.equal(JSON.stringify(relaxed), before, 'a clear pose is left alone');
+});
+
+test('sitting switches the legs while preserving the current arms, props and placement', () => {
+  const original = M.holdProp(M.normalizePose({ ...M.PRESETS.find(p => p.id === 'run').pose, body: 'female', x: 0.4, z: -0.2 }), 'phone');
+  const p = M.setSeated(original, true), sitting = M.PRESETS.find(x => x.id === 'sit').pose;
+  assert.equal(p.seated, true); assert.deepEqual(p.lLeg, sitting.lLeg); assert.deepEqual(p.rLeg, sitting.rLeg);
+  assert.deepEqual(p.lArm, original.lArm); assert.deepEqual(p.rArm, original.rArm); assert.deepEqual(p.props, original.props);
+  assert.equal(p.body, 'female'); assert.equal(p.x, 0.4); assert.equal(p.z, -0.2);
+  const stand = M.setSeated(p, false); assert.equal(stand.seated, false); assert.deepEqual(stand.lLeg, M.BASE().lLeg);
+});
+
+test('small joint edits stop at the last clear angle without jumping other joints', () => {
+  const previous = M.resolveArms(M.normalizePose({ rArm: { a: -30, b: 10, c: 120 } }));
+  let requested = null;
+  for (const key of ['a', 'b', 'c', 'd']) for (const delta of [-10, 10]) {
+    const p = M.normalizePose(previous); p.rArm[key] += delta;
+    if (M.armPenetration(p, 'r') > 0 && !requested) requested = p;
+  }
+  assert.ok(requested, 'regression needs an edit into the body');
+  const before = { ...requested.rArm }; M.resolveArms(requested, { previous });
+  assert.equal(M.armPenetration(requested, 'r'), 0); assert.deepEqual(requested.lArm, previous.lArm);
+  for (const key of Object.keys(before)) assert.ok(requested.rArm[key] >= Math.min(before[key], previous.rArm[key]) - 1e-9 && requested.rArm[key] <= Math.max(before[key], previous.rArm[key]) + 1e-9, key);
+});
+
+test('gaze points the face at a target and stays in a natural range', () => {
+  for (const target of [[1, 1.6, 2], [-1, 1.6, 2], [0, 0, 1], [0, 3, 1], [0, 1.6, -3]]) {
+    const p = M.lookAt(M.normalizePose({}), target), J = M.skeleton(p);
+    assert.ok(Math.abs(p.neckYaw - p.headYaw) <= 75.5 && Math.abs(p.neckPitch + p.headPitch) <= 35.5, `gaze too far for ${target}`);
+    assert.equal(p.neckTilt, 0); assert.equal(p.headTilt, 0);
+    const reachable = target[2] > 0 && Math.abs(target[1] - J.head[1]) < 1;
+    if (reachable) assert.ok(M.dot(J.headForward, M.norm(M.sub(target, J.head))) > 0.95, `not facing ${target}`);
+    // Too steep (the floor right in front, or far overhead): the head stops at the comfortable limit.
+    else if (target[2] > 0) assert.ok(Math.abs(Math.abs(p.neckPitch + p.headPitch) - 35) <= 1, `should stop at the pitch limit for ${target}`);
+  }
+});
+
+test('lens choice narrows the view and names the lens in the prompt', () => {
+  assert.equal(M.normalizeCamera({ lens: 85 }).lens, 85);
+  assert.equal(M.normalizeCamera({ lens: 77 }).lens, 0);
+  assert.ok(M.camFov({ lens: 135 }) < M.camFov({ lens: 50 }) && M.camFov({ lens: 50 }) < M.camFov({ lens: 24 }));
+  assert.match(M.describeCamera({ az: 0, el: 0, distance: 8, lens: 85 }, 'en'), /85mm portrait lens/);
+  assert.doesNotMatch(M.describeCamera({ az: 0, el: 0, distance: 3 }, 'en'), /mm/);
 });

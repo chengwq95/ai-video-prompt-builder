@@ -1,0 +1,77 @@
+{
+  "revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+  "files": [
+    {
+      "path": "LICENSE.ASSETS.md",
+      "sha256": "f6089cba01cb570a24712b41ab8a586ccd3cc5ef53dc266ca50b95c288956d2c"
+    },
+    {
+      "path": "makehuman/data/3dobjs/base.obj",
+      "sha256": "8e761e6624b8f54536409135d1636da63b32486a90d4897f84e121d144f6fb4c"
+    },
+    {
+      "path": "makehuman/data/rigs/default.mhskel",
+      "sha256": "99f179bce0aa850b45d4191a1d0d234c5851f881c057439470ded3bddf729a24"
+    },
+    {
+      "path": "makehuman/data/rigs/default_weights.mhw",
+      "sha256": "0f3641d651ae3d00ad6b4ccee43142edb109d3bd909d27d9e4139ef1beed8625"
+    },
+    {
+      "path": "makehuman/data/targets/macrodetails/african-male-young.target",
+      "sha256": "894abc1fbb3d28543a51fef16f89d5d4bdf9aa2e1534413339811a3d47818b7d"
+    },
+    {
+      "path": "makehuman/data/targets/macrodetails/african-female-young.target",
+      "sha256": "92d61eeb3c164b421fd5a7c3537ee45e7e1a51de4d49bf312e19c3df2be1d8fc"
+    },
+    {
+      "path": "makehuman/data/targets/macrodetails/african-male-child.target",
+      "sha256": "5b89c85ed7ba9984b5e57a5844b10eb74ab7fcfa79f77a5a3ec697dd860969ed"
+    },
+    {
+      "path": "makehuman/data/targets/macrodetails/african-female-child.target",
+      "sha256": "f88b8f252df8a9a3f35f78e1664983e9a30756bca1e454afce39438296eb7b41"
+    },
+    {
+      "path": "makehuman/data/targets/macrodetails/asian-male-young.target",
+      "sha256": "ed2e8c191cb6b87b4a2d97c80486acb2604fa549316c7aa2a738a5d5a14334dc"
+    },
+    {
+      "path": "makehuman/data/targets/macrodetails/asian-female-young.target",
+      "sha256": "095fe79694fa19e1fe98d93009ec116199bd524e081c640351a10eccf2cca1eb"
+    },
+    {
+      "path": "makehuman/data/targets/macrodetails/asian-male-child.target",
+      "sha256": "c1b56e9cc549cd7c463f407557d7adceaa217b528c600d34c19df98bc3d6472e"
+    },
+    {
+      "path": "makehuman/data/targets/macrodetails/asian-female-child.target",
+      "sha256": "a4fffea45a475a24a0a7332dac28a07dfd60a9af9eb50b61ed5abd1178197f75"
+    },
+    {
+      "path": "makehuman/data/targets/macrodetails/caucasian-male-young.target",
+      "sha256": "70e228ba7164737dae664454394536fc5935fa48d333c1a97d77e2dc6eacc5f5"
+    },
+    {
+      "path": "makehuman/data/targets/macrodetails/caucasian-female-young.target",
+      "sha256": "118379f6e8ba9266247fdb8788a20e1df40a239f97ced0b9905bcbcc74f6e820"
+    },
+    {
+      "path": "makehuman/data/targets/macrodetails/caucasian-male-child.target",
+      "sha256": "401b9b0349c88dc7aacb81e71f67daf747fecde0f7fd7f3f6e10fb2ce5586d1e"
+    },
+    {
+      "path": "makehuman/data/targets/macrodetails/caucasian-female-child.target",
+      "sha256": "17fc408839c0a407bf4efd96d9af7eebcdf20d74698659f3597b0647ed6b147e"
+    },
+    {
+      "path": "makehuman/data/targets/macrodetails/universal-male-young-maxmuscle-averageweight.target",
+      "sha256": "c171ff9cc95e96273beb3e3b1969a01988c2d4982ebc6fe04bf81cf72ee3b295"
+    },
+    {
+      "path": "makehuman/data/targets/macrodetails/universal-male-young-minmuscle-minweight.target",
+      "sha256": "3af713db636eb41f32af5010981bad30efe743a3ab1d4a61c619c664b610a51a"
+    }
+  ]
+}

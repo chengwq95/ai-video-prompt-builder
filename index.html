@@ -445,7 +445,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 40px;font-size:12.5px;col
 footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 footer a{color:var(--text);text-decoration:none;border-bottom:1px solid var(--line-strong)}
 footer a:hover{border-color:var(--text)}
-/* ---------- 3D 镜头与姿势 ---------- */
+/* ---------- 3D 镜头与姿势 (shared with the image builder) ---------- */
 .cps{display:grid;gap:12px}
 .cps-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .cps-tabs{display:inline-flex;padding:3px;border:1px solid var(--line);border-radius:99px;background:var(--surface)}
@@ -459,18 +459,20 @@ footer a:hover{border-color:var(--text)}
 .cps-main{position:absolute;inset:0;width:100%;height:100%;touch-action:none;display:block}
 .cps-overlay{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .cps-view-tools{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;color:var(--muted);font-size:11px}
-.cps-view-tools>div{display:flex;gap:4px;flex-wrap:wrap;pointer-events:auto}
+.cps-view-tools>div{display:flex;gap:4px;flex-wrap:nowrap;pointer-events:auto}
 .cps-view-tools button{border:1px solid var(--line);background:var(--surface-2);border-radius:6px;padding:4px 8px;font-size:11px;color:var(--text);cursor:pointer}
 .cps-view-tools button:hover{border-color:var(--muted)}
 .cps-view-tools button[aria-pressed="true"]{background:#dae1ed;color:#192333;border-color:#dae1ed}
 .cps[data-render="drawing"] .cps-help{color:#535d69}
 .cps-joint-heading button:disabled{opacity:.4;cursor:default}
-.cps-inset-preview{display:block}
+.cps-inset-preview{display:block;max-width:100%;border-radius:7px}
 .cps-status{position:absolute;left:15px;right:15px;top:100px;padding:14px;background:#202a3bea;color:#e9edf5;border:1px solid #687c97;border-radius:10px;font-size:13px}
-.cps-inset{position:absolute;right:12px;top:12px;padding:6px 6px 4px;border-radius:12px;background:transparent;
-  box-shadow:0 0 0 1px rgba(255,255,255,.18),0 8px 24px rgba(0,0,0,.25);pointer-events:none}
-.cps-inset canvas{display:block;border-radius:7px;box-shadow:0 0 0 1px rgba(255,154,60,.55)}
-.cps-inset-label{display:block;margin-top:4px;font-size:10.5px;letter-spacing:.06em;color:rgba(255,255,255,.8);text-align:center;background:#141823;border-radius:0 0 6px 6px}
+.cps-preview{border:1px solid var(--line);border-radius:12px;background:var(--surface-2);overflow:hidden}
+.cps-preview summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 12px;cursor:pointer;list-style:none;font-size:11px;letter-spacing:.06em;color:var(--muted)}
+.cps-preview summary::-webkit-details-marker{display:none}
+.cps-preview-chevron{font-size:16px;line-height:1;transition:transform .15s}
+.cps-preview:not([open]) .cps-preview-chevron{transform:rotate(-90deg)}
+.cps-preview-body{display:flex;justify-content:center;background:#141823;padding:4px 8px 8px}
 .cps-help{position:absolute;left:12px;bottom:10px;right:12px;font-size:11.5px;line-height:1.45;color:rgba(255,255,255,.55);pointer-events:none}
 .cps-out{display:flex;gap:10px;align-items:baseline;padding:10px 14px;border-radius:12px;background:var(--surface-2);border:1px solid var(--line);font-size:13px}
 .cps-out b{flex:none;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
@@ -478,7 +480,8 @@ footer a:hover{border-color:var(--text)}
 .cps-panel{display:grid;gap:12px}
 .cps-view-tools .cps-download{margin-left:auto;background:var(--text);color:var(--on-text);border-color:var(--text);font-weight:600;padding:5px 10px}
 .cps-view-tools .cps-download:hover{opacity:.88}
-.cps-people{padding-bottom:10px;border-bottom:1px solid var(--line)}
+.cps-people{padding-bottom:4px}
+.cps-gaze{padding-bottom:10px;border-bottom:1px solid var(--line)}
 .cps-focus{display:flex;gap:7px;align-items:center;flex-wrap:wrap;font-size:12px}
 .cps-focus>span{color:var(--muted);margin-right:3px}
 .cps-focus button{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:6px 12px;cursor:pointer}
@@ -499,9 +502,165 @@ footer a:hover{border-color:var(--text)}
 .cps-sl output{font-family:var(--mono);color:var(--text)}
 .cps-sl input{width:100%;accent-color:var(--accent)}
 .cps-sl small{font-size:11.5px;color:var(--faint)}
+.cps-panel button[data-regrip]{justify-self:start;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 12px;font-size:12px;color:var(--text);cursor:pointer}
+.cps-panel button[data-regrip]:hover{border-color:var(--line-strong)}
+.cps-subtabs{display:grid;grid-template-columns:repeat(3,1fr);padding:3px;border-radius:10px;background:var(--surface-2);border:1px solid var(--line)}
+.cps-subtabs button{border:none;background:transparent;border-radius:7px;padding:7px 6px;font-size:12.5px;color:var(--muted);cursor:pointer}
+.cps-subtabs button[aria-selected="true"]{background:var(--surface);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.12);font-weight:600}
+.cps-joints{display:grid;grid-template-columns:118px minmax(0,1fr);gap:14px;align-items:start}
+.cps-map{position:relative;width:118px;aspect-ratio:1/2;color:color-mix(in srgb,var(--muted) 35%,transparent)}
+.cps-map canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.cps-map button{position:absolute;width:24px;height:24px;margin:-12px 0 0 -12px;border-radius:50%;border:0;background:transparent;cursor:pointer;padding:0}
+.cps-map button::after{content:"";position:absolute;inset:7px;border-radius:50%;border:1.5px solid #252b35;background:#c2ccd4;box-shadow:0 0 0 1px #ffffff40;transition:transform .15s,background .15s;pointer-events:none}
+.cps-map button:hover::after{transform:scale(1.25);background:#eef3f7}
+.cps-map button[aria-pressed="true"]::after{background:#ff9a3c;transform:scale(1.35);box-shadow:0 0 0 2px #ff9a3c66}
+.cps-map-side{position:absolute;bottom:0;font-size:10.5px;color:var(--faint)}
+.cps-joint-edit{display:grid;gap:10px;min-width:0}
+.cps-joint-edit .cps-sliders{grid-template-columns:1fr;gap:12px;padding:12px}
+.cps-joint-tools{display:flex;gap:6px;flex-wrap:wrap}
+.cps-joint-tools button{background:var(--surface);border:1px solid var(--line);border-radius:7px;padding:5px 9px;cursor:pointer;font-size:12px;color:var(--text)}
+.cps-joint-tools button:disabled{opacity:.4;cursor:default}
+/* Compact segmented groups (gaze, facing) and a tidy preset grid, so the Poses page fits without scrolling. */
+.cps-seg{display:inline-flex;flex-wrap:nowrap;padding:2px;border:1px solid var(--line);border-radius:99px;background:var(--surface-2);min-width:0}
+.cps-seg button{border:none;background:transparent;border-radius:99px;padding:5px 10px;font-size:12px;color:var(--text);cursor:pointer;white-space:nowrap}
+.cps-seg button:hover{background:color-mix(in srgb,var(--text) 8%,transparent)}
+.cps-seg button[aria-pressed="true"]{background:var(--text);color:var(--on-text)}
+.cps-gaze{flex-wrap:nowrap}
+.cps-turn{gap:6px;padding:10px 12px;position:relative}
+.cps-turn .cps-seg{position:absolute;top:8px;left:10px;z-index:1}
+.cps-turn .cps-sl-top{min-height:32px;align-items:center}
+.cps-turn .cps-sl-top>span{visibility:hidden}
+.cps-right .cps-panel{gap:10px}
+.cps-right .cps-subtabs button{padding:6px}
+.cps-turn .cps-seg{justify-self:start}
+.cps-presets{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+.cps-presets .cps-stool{justify-content:center;font-size:12px;border:1px dashed var(--line);border-radius:99px;padding:4px 6px}
+.cps-presets button{padding:5px 6px;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
 .cps-check{display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer}
 .cps-check input{accent-color:var(--accent)}
+/* Narrow screens: one column in reading order. Wide screens: the stage stays pinned on the left
+   while the tabs and every control sit beside it, so nothing needs scrolling back and forth. */
+.cps-left,.cps-right{display:contents}
+.cps-top{order:-1}
+@media(min-width:900px){
+  .cps{grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr);align-items:start;gap:16px}
+  .cps-left,.cps-right{display:grid;gap:12px;position:sticky;top:72px;min-width:0}
+  .cps-top{order:0}
+  .cps-right{align-content:start;max-height:calc(100vh - 140px);overflow-y:auto;overscroll-behavior:contain;padding-right:4px;scrollbar-width:thin}
+  .cps-stage{height:clamp(380px,calc(100vh - 260px),580px)}
+  .cps-right .cps-sliders{grid-template-columns:1fr;gap:14px;padding:14px}
+  .cps-right .cps-top{position:sticky;top:0;z-index:2;background:var(--surface);padding-bottom:4px}
+  .cps-view-tools{flex-wrap:wrap;gap:8px}.cps-view-tools>.cps-editor-label{display:none}.cps-view-tools .cps-download{white-space:nowrap}
+}
 @media(max-width:640px){.cps-stage{height:410px}.cps-sliders{grid-template-columns:1fr;gap:14px}.cps-view-tools>span{flex-basis:100%}.cps-view-tools button{padding:4px 6px}.cps-help{font-size:10.5px}.cps-joint-heading{align-items:flex-start;flex-wrap:wrap}}
+
+/* ---------- polish: one button language, quieter hints, light / dark studio ---------- */
+.cps-view-tools button,.cps-focus button,.cps-joint-heading button,.cps-joint-tools button,.cps-panel button[data-regrip]{border-radius:99px}
+.cps-view-tools button{background:var(--surface);padding:5px 11px;font-size:11.5px}
+.cps-view-tools button[aria-pressed="true"],.cps-focus button[aria-pressed="true"]{background:var(--text);color:var(--on-text);border-color:var(--text)}
+.cps-view-tools .cps-render-modes{display:inline-flex;flex-wrap:nowrap;white-space:nowrap;gap:0;padding:2px;border:1px solid var(--line);border-radius:99px;background:var(--surface-2)}
+.cps-view-tools .cps-render-modes button{border:none;background:transparent;padding:4px 10px}
+.cps-view-tools .cps-render-modes button[aria-pressed="true"]{background:var(--text);color:var(--on-text)}
+/* Hints appear when they are useful: over the stage while pointing at it (and briefly on first view);
+   slider notes while that slider is in use. */
+.cps-help{opacity:0;transition:opacity .35s}
+.cps-stage:hover .cps-help,.cps-stage.fresh .cps-help{opacity:1}
+.cps[data-studio="light"] .cps-preview-body{background:#e7e4df}
+.cps[data-studio="light"] .cps-help{color:rgba(28,30,38,.62)}
+.cps-sl small{display:none}
+.cps-sl:focus-within small{display:block}
+/* Gentle motion when switching tabs and pages. */
+.cps-panel.cps-enter>*{animation:cpsIn .2s ease both}
+@keyframes cpsIn{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.cps-panel.cps-enter>*{animation:none}}
+.cps-right{scrollbar-gutter:stable}
+.cps-share{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12px}
+.cps-share>span{color:var(--muted);margin-right:3px}
+.cps-share button{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:5px 11px;font-size:12px;color:var(--text);cursor:pointer}
+.cps-share button:hover{border-color:var(--line-strong)}
+.cps-share .cps-saved{display:inline-flex;align-items:center;gap:2px}
+.cps-share .cps-saved button:last-child{padding:5px 8px;color:var(--faint)}
+#studioHead{scroll-margin-top:76px}
+.hero-3d{display:inline-flex;align-items:center;gap:8px;margin-top:18px;padding:8px 14px 8px 10px;border-radius:99px;border:1px solid var(--line);background:var(--surface);color:var(--text);text-decoration:none;font-size:13px;box-shadow:var(--shadow)}
+.hero-3d b{font-size:10.5px;letter-spacing:.08em;padding:3px 7px;border-radius:99px;background:var(--text);color:var(--on-text)}
+.hero-3d:hover{border-color:var(--line-strong)}
+
+/* ================= 3D studio design system =================
+   One control size, one selected state, one label column, one spacing rhythm. */
+:root{--ctl:30px;--ctl-fs:12.5px}
+.cps{--label:86px}
+/* Rows: a fixed label column and wrapping options, aligned on every page. */
+.cps .cps-row{display:grid;grid-template-columns:var(--label) minmax(0,1fr);gap:8px;align-items:start}
+.cps .cps-row>span{margin:0;font-size:12px;line-height:var(--ctl);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cps .cps-opts{display:flex;flex-wrap:wrap;gap:6px;min-width:0}
+/* Buttons: every option, tool and action in the studio shares one shape. */
+.cps .cps-opts>button,.cps .cps-presets>button,.cps .cps-joint-tools button,.cps .cps-joint-heading button,.cps .cps-reset,.cps .cps-view-tools>div:not(.cps-render-modes)>button,.cps .cps-view-tools .cps-download,#sceneBar button{
+  height:var(--ctl);padding:0 12px;display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  border:1px solid var(--line);border-radius:99px;background:var(--surface);color:var(--text);
+  font-size:var(--ctl-fs);font-weight:500;line-height:1;white-space:nowrap;cursor:pointer;transition:background .15s,border-color .15s,color .15s}
+.cps .cps-opts>button:hover,.cps .cps-presets>button:hover,.cps .cps-joint-tools button:hover,.cps .cps-joint-heading button:hover,.cps .cps-reset:hover,.cps .cps-view-tools>div>button:hover,#sceneBar button:hover{border-color:var(--line-strong)}
+.cps .cps-opts>button[aria-pressed="true"],.cps .cps-presets>button[aria-pressed="true"],.cps .cps-view-tools>div>button[aria-pressed="true"]{background:var(--text);color:var(--on-text);border-color:var(--text)}
+.cps .cps-joint-tools button:disabled,.cps .cps-joint-heading button:disabled{opacity:.4;cursor:default}
+.cps .cps-view-tools .cps-download{background:var(--text);color:var(--on-text);border-color:var(--text);font-weight:600}
+/* Segmented groups (render mode, finish, gaze, facing): same outer height as a button. */
+.cps .cps-seg,.cps .cps-view-tools .cps-render-modes{height:var(--ctl);box-sizing:border-box;display:inline-flex;align-items:center;gap:0;padding:2px;border:1px solid var(--line);border-radius:99px;background:var(--surface-2)}
+.cps .cps-seg button,.cps .cps-view-tools .cps-render-modes button{height:calc(var(--ctl) - 6px);padding:0 11px;border:none;border-radius:99px;background:transparent;color:var(--text);font-size:12px;line-height:1;white-space:nowrap;cursor:pointer}
+.cps .cps-seg button[aria-pressed="true"],.cps .cps-view-tools .cps-render-modes button[aria-pressed="true"]{background:var(--text);color:var(--on-text)}
+/* Tabs and pages. */
+.cps .cps-tabs button{height:32px;padding:0 16px}
+.cps .cps-subtabs{border-radius:99px;padding:3px}
+.cps .cps-subtabs button{height:28px;padding:0 6px;border-radius:99px}
+/* Panel rhythm: 14px between blocks; the header (models + gaze) is set off by one rule. */
+.cps .cps-panel{gap:14px}
+.cps .cps-people{padding:0;border:0}
+.cps .cps-gaze{padding-bottom:14px;border-bottom:1px solid var(--line)}
+/* Slider boxes. */
+.cps .cps-sliders{padding:14px;gap:14px;border-radius:14px}
+.cps .cps-turn{padding:12px 14px;gap:8px}
+.cps .cps-turn .cps-seg{top:12px;left:14px}
+.cps .cps-turn .cps-sl-top{min-height:var(--ctl)}
+/* Pose presets: an even grid of the same buttons. */
+.cps .cps-presets{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.cps .cps-presets>button{padding:0 8px;overflow:hidden;text-overflow:ellipsis}
+.cps .cps-presets .cps-stool{height:var(--ctl);box-sizing:border-box;justify-content:center;gap:6px;margin:0;border:1px dashed var(--line-strong);border-radius:99px;font-size:var(--ctl-fs);color:var(--muted)}
+/* Joints page. */
+.cps .cps-joint-heading strong{font-size:13.5px;font-weight:600}
+.cps .cps-joint-edit{gap:12px}
+/* Prompt box and scene bar: breathing room inside the card. */
+.cps .cps-out{padding:12px 16px;border-radius:14px}
+#sceneBar{margin-top:16px;padding-top:14px;border-top:1px solid var(--line);gap:8px}
+#sceneBar>span{font-size:12px;color:var(--muted);margin-right:4px}
+#sceneBar .cps-saved{display:inline-flex;align-items:center;height:var(--ctl);box-sizing:border-box;border:1px solid var(--line);border-radius:99px;background:var(--surface);overflow:hidden}
+#sceneBar .cps-saved button{height:100%;border:0;border-radius:0;background:transparent}
+#sceneBar .cps-saved button:first-child{padding:0 6px 0 12px}
+#sceneBar .cps-saved button:last-child{padding:0 10px 0 6px;color:var(--faint);font-size:14px}
+#sceneBar .cps-saved button:last-child:hover{color:var(--text)}
+#sceneBar .cps-saved:hover{border-color:var(--line-strong)}
+.studio-card{padding:20px 20px 22px}
+.cps .cps-opts:has(> [data-campreset]){display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+.cps .cps-opts:has(> [data-lightpreset]){display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+.cps .cps-opts:has(> [data-campreset])>button,.cps .cps-opts:has(> [data-lightpreset])>button{padding:0 8px;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:640px){.studio-card{padding:14px 14px 16px}.cps{--label:64px}}
+
+/* ---- Rails: one segmented row per choice, sliding sideways with ‹ › when it does not fit ---- */
+.cps .cps-rail-holder{display:grid;gap:8px;min-width:0}
+.cps .cps-rail{position:relative;display:flex;align-items:center;min-width:0}
+.cps .cps-rail-track{flex:0 1 auto;width:max-content;min-width:0;max-width:100%;overflow-x:auto;scrollbar-width:none;scroll-behavior:smooth;justify-content:flex-start}
+.cps .cps-rail-track::-webkit-scrollbar{display:none}
+.cps .cps-rail-track>button{flex:0 0 auto}
+.cps .cps-rail.over .cps-rail-track{mask-image:linear-gradient(90deg,#000,#000);-webkit-mask-image:linear-gradient(90deg,#000,#000)}
+.cps .cps-rail.fade-end .cps-rail-track{mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}
+.cps .cps-rail.fade-start .cps-rail-track{mask-image:linear-gradient(90deg,transparent,#000 28px);-webkit-mask-image:linear-gradient(90deg,transparent,#000 28px)}
+.cps .cps-rail.fade-start.fade-end .cps-rail-track{mask-image:linear-gradient(90deg,transparent,#000 28px,#000 calc(100% - 28px),transparent);-webkit-mask-image:linear-gradient(90deg,transparent,#000 28px,#000 calc(100% - 28px),transparent)}
+.cps .cps-rail-btn{display:none;flex:0 0 auto;width:24px;height:24px;margin:0 2px;padding:0;border:1px solid var(--line);border-radius:50%;background:var(--surface);color:var(--text);font-size:15px;line-height:1;cursor:pointer;align-items:center;justify-content:center}
+.cps .cps-rail.over .cps-rail-btn{display:inline-flex}
+.cps .cps-rail-btn:disabled{opacity:.3;cursor:default}
+.cps .cps-rail-btn:not(:disabled):hover{border-color:var(--line-strong)}
+.cps .cps-rail-holder .cps-stool{justify-self:start}
+/* The studio lives in a dialog here: pin its columns to the dialog, not the page's top bar. */
+@media(min-width:900px){
+  .studio-dlg .cps-left,.studio-dlg .cps-right{top:0}
+}
 .shot-3d{grid-column:2/5;display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:12.5px;color:var(--muted)}
 .shot-3d .val{font-family:var(--mono);font-size:12px;color:var(--text)}
 .shot-3d button{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:4px 11px;font-size:12px;cursor:pointer;color:var(--text)}
@@ -509,7 +668,7 @@ footer a:hover{border-color:var(--text)}
 .shot-3d .badge{font-family:var(--mono);font-size:11px;font-weight:600;padding:1px 7px;border-radius:6px;background:var(--text);color:var(--on-text)}
 @media(max-width:900px){.shot-3d{grid-column:2/4}}
 @media(max-width:560px){.shot-3d{grid-column:1/-1}}
-.studio-dlg{width:min(880px,calc(100% - 24px));max-height:calc(100% - 24px);margin:auto;border:1px solid var(--line);border-radius:18px;background:var(--surface);color:var(--text);padding:0;box-shadow:0 30px 80px -20px rgba(0,0,0,.5)}
+.studio-dlg{width:min(1180px,calc(100% - 24px));max-height:calc(100% - 24px);margin:auto;border:1px solid var(--line);border-radius:18px;background:var(--surface);color:var(--text);padding:0;box-shadow:0 30px 80px -20px rgba(0,0,0,.5)}
 .studio-dlg::backdrop{background:rgba(10,10,14,.55);backdrop-filter:blur(3px)}
 .dlg-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line)}
 .dlg-head h3{font-family:var(--display);font-weight:600;font-size:19px}
@@ -519,6 +678,19 @@ footer a:hover{border-color:var(--text)}
 .dlg-use label{display:inline-flex;align-items:center;gap:7px;color:var(--text);font-weight:500;cursor:pointer;padding:5px 12px 5px 10px;border:1px solid var(--line);border-radius:99px;background:var(--surface-2)}
 .dlg-use label:has(input:checked){border-color:var(--accent)}
 .dlg-use input{accent-color:var(--accent)}
+
+/* Dialog chrome in one header row (title, prompt switches, actions) so the studio gets the height. */
+.studio-dlg .dlg-head{flex-wrap:wrap;gap:10px 16px;padding:12px 18px}
+.studio-dlg .dlg-title{min-width:0;flex:1 1 220px}
+.studio-dlg .dlg-actions{display:flex;align-items:center;gap:8px;margin-left:auto}
+.studio-dlg .dlg-use{order:3;flex:1 1 100%}
+.studio-dlg .dlg-body{padding:14px 18px 18px}
+@media(min-width:900px){
+  .studio-dlg .dlg-title .dlg-note{display:none}
+  .studio-dlg .dlg-use{order:0;flex:0 1 auto}
+  .studio-dlg .cps-right{max-height:calc(100vh - 136px)}
+  .studio-dlg .cps-stage{height:clamp(340px,calc(100vh - 276px),560px)}
+}
 .dlg-foot{display:flex;justify-content:flex-end;gap:8px;padding:12px 18px 16px;border-top:1px solid var(--line)}
 </style>
 </head>
@@ -688,24 +860,25 @@ footer a:hover{border-color:var(--text)}
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <dialog class="studio-dlg" id="studioDlg" aria-labelledby="dlgTitle">
-  <div class="dlg-head"><h3 id="dlgTitle"></h3><button type="button" class="icon-btn" id="dlgClose" aria-label="Close">×</button></div>
-  <div class="dlg-body">
-    <p class="dlg-note" data-i18n="dlgNote"></p>
+  <div class="dlg-head">
+    <div class="dlg-title"><h3 id="dlgTitle"></h3><p class="dlg-note" data-i18n="dlgNote"></p></div>
     <div class="dlg-use"><span data-i18n="dlgUse"></span>
       <label><input type="checkbox" id="dlgCam"> <span data-i18n="useCam"></span></label>
       <label><input type="checkbox" id="dlgPose"> <span data-i18n="usePose"></span></label>
       <label><input type="checkbox" id="dlgLight"> <span data-i18n="useLight"></span></label>
     </div>
+    <div class="dlg-actions"><button type="button" class="btn" id="dlgRemove" data-i18n="angleRemove"></button><button type="button" class="btn primary" id="dlgDone" data-i18n="dlgDone"></button><button type="button" class="icon-btn" id="dlgClose" aria-label="Close">×</button></div>
+  </div>
+  <div class="dlg-body">
     <div id="studio"></div>
   </div>
-  <div class="dlg-foot"><button type="button" class="btn" id="dlgRemove" data-i18n="angleRemove"></button><button type="button" class="btn primary" id="dlgDone" data-i18n="dlgDone"></button></div>
 </dialog>
 
 <script src="vendor/three.min.js"></script>
-<script src="studio-model.js"></script>
-<script src="studio-body-data.js"></script>
-<script src="studio-surface.js"></script>
-<script src="studio.js"></script>
+<script src="studio-model.js?v=sync-1"></script>
+<script src="studio-body-data.js?v=sync-1"></script>
+<script src="studio-surface.js?v=sync-1"></script>
+<script src="studio.js?v=sync-1"></script>
 <script>
 /* ================= 数据 ================= */
 const MAX_SHOTS = 12;
@@ -1362,6 +1535,7 @@ function openAngle(i) {
   const sh = state.shots[i];
   if (!sh.angle) { const v0 = studio.value(); sh.angle = { ...v0, useCam: false, usePose: false, useLight: false }; }
   document.getElementById("dlgTitle").textContent = t("dlgTitle").replace("{id}", shotId(i));
+  document.getElementById("dlgTitle").title = t("dlgNote");
   studio.setRatio(state.ratio || "16:9");
   studio.set(sh.angle);
   syncDlg();
