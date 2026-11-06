@@ -692,6 +692,30 @@ footer a:hover{border-color:var(--text)}
   .studio-dlg .cps-stage{height:clamp(340px,calc(100vh - 276px),560px)}
 }
 .dlg-foot{display:flex;justify-content:flex-end;gap:8px;padding:12px 18px 16px;border-top:1px solid var(--line)}
+
+/* ---- Phones: landscape hint, simple mode, full screen ---- */
+.cps-rotate{display:flex;align-items:center;gap:8px;padding:8px 10px 8px 14px;border:1px solid color-mix(in srgb,var(--accent) 35%,var(--line));border-radius:14px;background:color-mix(in srgb,var(--accent) 8%,var(--surface));font-size:12.5px;color:var(--text)}
+.cps-rotate[hidden]{display:none}
+.cps-rotate-text{flex:1;line-height:1.4}
+.cps-rotate button{flex:none;height:28px;padding:0 12px;border:1px solid var(--line);border-radius:99px;background:var(--surface);color:var(--text);font-size:12px;cursor:pointer}
+.cps-rotate [data-rotate-close]{padding:0 9px;color:var(--faint)}
+.cps .cps-simple-btn{display:none}
+@media (pointer:coarse),(max-width:900px){.cps .cps-view-tools .cps-simple-btn{display:inline-flex}}
+.cps .cps-view-tools .cps-simple-btn[aria-pressed="true"]{background:var(--text);color:var(--on-text);border-color:var(--text)}
+.cps.cps-simple [data-subtab="joints"]{display:none}
+.cps.cps-simple .cps-subtabs{grid-template-columns:repeat(2,1fr)}
+.cps.cps-simple .cps-sliders:has([data-angle^="cam."]),.cps.cps-simple .cps-sliders:has([data-angle^="light."]){display:none}
+.cps:fullscreen{background:var(--bg);padding:12px;overflow:auto}
+.cps:fullscreen .cps-left,.cps:fullscreen .cps-right{top:0}
+.proj-wrap{position:relative}
+.proj-menu{position:absolute;right:0;top:calc(100% + 8px);z-index:60;min-width:230px;display:grid;gap:2px;padding:6px;border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:0 18px 40px -16px rgba(0,0,0,.35)}
+.proj-menu[hidden]{display:none}
+.proj-menu button{text-align:left;border:0;background:transparent;color:var(--text);font-size:13px;padding:9px 10px;border-radius:9px;cursor:pointer}
+.proj-menu button:hover{background:var(--surface-2)}
+.proj-menu p{font-size:11.5px;color:var(--faint);padding:4px 10px 6px;line-height:1.45}
+.studio-help{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px 0 6px;border:1px solid var(--line);border-radius:99px;background:var(--surface);color:var(--text);font-size:12.5px;font-weight:500;cursor:pointer}
+.studio-help>span:first-child{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:var(--text);color:var(--on-text);font-size:11px;font-weight:700}
+.studio-help:hover{border-color:var(--line-strong)}
 </style>
 </head>
 <body>
@@ -703,6 +727,15 @@ footer a:hover{border-color:var(--text)}
       <span data-i18n="brand">AI Video Prompt Builder</span>
     </a>
     <div class="controls">
+      <div class="proj-wrap">
+        <button type="button" class="guide-btn" id="projBtn" aria-haspopup="menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span class="lbl" data-i18n="projMenu"></span></button>
+        <div class="proj-menu" id="projMenu" role="menu" hidden>
+          <button type="button" role="menuitem" id="projExport" data-i18n="projExport"></button>
+          <button type="button" role="menuitem" id="projImport" data-i18n="projImport"></button>
+          <p data-i18n="projNote"></p>
+        </div>
+        <input type="file" id="projFile" accept=".json,application/json" hidden>
+      </div>
       <button type="button" class="guide-btn" id="guideBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg><span class="lbl" data-i18n="guide"></span></button>
       <div class="switch" role="group" aria-label="Language">
         <button type="button" data-lang-btn="en" aria-pressed="true">EN</button>
@@ -867,7 +900,7 @@ footer a:hover{border-color:var(--text)}
       <label><input type="checkbox" id="dlgPose"> <span data-i18n="usePose"></span></label>
       <label><input type="checkbox" id="dlgLight"> <span data-i18n="useLight"></span></label>
     </div>
-    <div class="dlg-actions"><button type="button" class="btn" id="dlgRemove" data-i18n="angleRemove"></button><button type="button" class="btn primary" id="dlgDone" data-i18n="dlgDone"></button><button type="button" class="icon-btn" id="dlgClose" aria-label="Close">×</button></div>
+    <div class="dlg-actions"><button type="button" class="studio-help" id="studioHelp"><span aria-hidden="true">?</span> <span data-i18n="studioHelp"></span></button><button type="button" class="btn" id="dlgRemove" data-i18n="angleRemove"></button><button type="button" class="btn primary" id="dlgDone" data-i18n="dlgDone"></button><button type="button" class="icon-btn" id="dlgClose" aria-label="Close">×</button></div>
   </div>
   <div class="dlg-body">
     <div id="studio"></div>
@@ -875,10 +908,10 @@ footer a:hover{border-color:var(--text)}
 </dialog>
 
 <script src="vendor/three.min.js"></script>
-<script src="studio-model.js?v=sync-1"></script>
-<script src="studio-body-data.js?v=sync-1"></script>
-<script src="studio-surface.js?v=sync-1"></script>
-<script src="studio.js?v=sync-1"></script>
+<script src="studio-model.js?v=sync-2"></script>
+<script src="studio-body-data.js?v=sync-2"></script>
+<script src="studio-surface.js?v=sync-2"></script>
+<script src="studio.js?v=sync-2"></script>
 <script>
 /* ================= 数据 ================= */
 const MAX_SHOTS = 12;
@@ -1218,6 +1251,16 @@ const I18N = {
     pgMaster:"Master character image", pgBg:"Empty background", pgScript:"Review the director script", pgStill:"still image", pgVideo:"video",
     doneOff:"Mark done", doneOn:"Done",
     tourBack:"Back", tourNext:"Next", tourFinish:"Let's go", tourStepOf:"Step {n} of {total}", close:"Close",
+    studioHelp:"How to use",
+    projMenu:"Project", projExport:"Export project (.json)", projImport:"Import project…", projNote:"All projects — every shot, its 3D camera and pose, and progress — plus language and theme, in one file. Importing adds them as new projects.", projSaved:"Project exported", projLoaded:"Project loaded", projBad:"This file isn't a project from AI Video Prompt Builder",
+    studioTour:[
+      ["Orbit the view","<b>Drag the empty background</b> to look around the model; scroll to zoom. This only moves your view — the real camera is the yellow icon."],
+      ["Pose by dragging","On the <b>Pose</b> tab, <b>click a joint or the body</b> to select it, then drag. Drag a wrist or ankle and the whole arm or leg follows. Drag the orange ring at the feet to turn or move the figure."],
+      ["Fine control","Each joint has <b>sliders</b> for exact angles; the <b>arrow keys</b> nudge the selected joint. Pick any joint on the little body map."],
+      ["Camera presets","On the <b>Camera</b> tab, start from a preset — front, three-quarter, low angle… — then drag the camera handles or choose a lens."],
+      ["Use it in the prompt","Tick <b>Camera angle</b>, <b>Pose</b> or <b>Lighting</b> to write what you set up here into this shot's prompts."],
+      ["Save a reference","<b>Download camera view</b> saves the exact shot as a PNG you can upload to your image tool as a pose and composition reference."]
+    ],
     tour:[
       ["Welcome!","This page <b>writes the prompts for you</b>. Fill in a short form, then copy each prompt into your AI tool (Magnific, Grok, Kling…), one step at a time. No AI experience needed."],
       ["Start from an example","Pick one from <b>Examples</b>. It opens as a new project, so you can play without losing anything. The easiest way to learn: change a few words at a time."],
@@ -1324,6 +1367,16 @@ const I18N = {
     pgMaster:"角色主图", pgBg:"空背景", pgScript:"看一遍分镜脚本", pgStill:"静帧", pgVideo:"视频",
     doneOff:"标记完成", doneOn:"已完成",
     tourBack:"上一步", tourNext:"下一步", tourFinish:"开始吧", tourStepOf:"第 {n} / {total} 步", close:"关闭",
+    studioHelp:"如何操作",
+    projMenu:"项目", projExport:"导出项目（.json）", projImport:"导入项目…", projNote:"所有项目（每个镜头的内容、3D 镜头与姿势、进度）以及语言和主题都存在一个文件里。导入时会加成新的项目。", projSaved:"项目已导出", projLoaded:"项目已载入", projBad:"这个文件不是 AI Video Prompt Builder 的项目",
+    studioTour:[
+      ["旋转视角","<b>拖动空白背景</b>就能绕着人物看，滚轮可以放大缩小。这只是你的观察视角，真正的相机是黄色图标。"],
+      ["拖动摆姿势","在<b>姿势</b>页签，<b>点一下关节或身体</b>选中它，再拖动。拖手腕或脚踝，整条手臂或腿会跟着动。拖脚下的橙色圆圈可以旋转或移动人物。"],
+      ["精细调整","每个关节都有<b>滑杆</b>可以设定精确角度，<b>方向键</b>也可以微调选中的关节。在小身体图上可以点选任何关节。"],
+      ["镜头预设","在<b>镜头</b>页签，先选一个常用角度（正面、四分之三、仰拍……），再拖动相机控制点或换镜头焦距。"],
+      ["写进提示词","勾选<b>镜头角度</b>、<b>姿势</b>或<b>光线</b>，就会把这里设定的内容写进这个镜头的提示词。"],
+      ["保存参考图","<b>下载镜头画面</b>会把这个画面存成 PNG，可以上传到生图工具当作姿势和构图参考。"]
+    ],
     tour:[
       ["欢迎!","这个页面会<b>帮你写提示词</b>。你只要填一张简单的表,然后把每段提示词复制到 AI 工具(Magnific、Grok、Kling…)里,一步一步做出短视频。不需要任何 AI 经验。"],
       ["从示例开始","在「<b>示例</b>」里挑一个。它会作为新项目打开,随便改都不会弄丢东西。最简单的学法:一次只改几个词。"],
@@ -1978,7 +2031,54 @@ document.getElementById("progress").addEventListener("click", e => {
 });
 
 /* ================= 新手引导 ================= */
+/* ================= 项目导出 / 导入 ================= */
+const PROJECT_TYPE = "ai-video-prompt-builder", PROJECT_VERSION = 1;
+const projBtn = document.getElementById("projBtn"), projMenu = document.getElementById("projMenu"), projFile = document.getElementById("projFile");
+const closeProjMenu = () => { projMenu.hidden = true; projBtn.setAttribute("aria-expanded", "false"); };
+projBtn.addEventListener("click", e => { e.stopPropagation(); projMenu.hidden = !projMenu.hidden; projBtn.setAttribute("aria-expanded", String(!projMenu.hidden)); });
+document.addEventListener("click", e => { if (!projMenu.hidden && !e.target.closest(".proj-wrap")) closeProjMenu(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !projMenu.hidden) { closeProjMenu(); projBtn.focus(); } });
+function exportProjects() {
+  const data = { app: PROJECT_TYPE, version: PROJECT_VERSION, exportedAt: new Date().toISOString(), language: lang,
+    theme: document.documentElement.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"),
+    current: store.current, projects: store.projects };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" }), url = URL.createObjectURL(blob);
+  const a = document.createElement("a"); a.href = url; a.download = `video-prompt-projects-${new Date().toISOString().slice(0, 10)}.json`;
+  document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+  showToast(t("projSaved"));
+}
+function importProjects(data) {
+  if (!data || data.app !== PROJECT_TYPE || !(data.version >= 1) || !data.projects || typeof data.projects !== "object") throw new Error("bad");
+  const names = new Set(Object.values(store.projects).map(p => p.name)); let open = null;
+  for (const [oldId, p] of Object.entries(data.projects)) {
+    if (!p || typeof p !== "object") continue;
+    let name = String(p.name || t("untitled")); while (names.has(name)) name += lang === "zh" ? "（导入）" : " (imported)"; names.add(name);
+    const id = uid(); store.projects[id] = { name, data: normalizeState(clone(p.data || {})), progress: p.progress && typeof p.progress === "object" ? p.progress : {}, updated: Date.now() };
+    if (oldId === data.current || !open) open = id;
+  }
+  if (!open) throw new Error("bad");
+  for (const [sel, v] of [["data-lang-btn", data.language], ["data-theme-btn", data.theme]]) if (v) document.querySelector(`[${sel}="${v}"]`)?.click();
+  switchProject(open);
+}
+document.getElementById("projExport").addEventListener("click", () => { closeProjMenu(); exportProjects(); });
+document.getElementById("projImport").addEventListener("click", () => { closeProjMenu(); projFile.value = ""; projFile.click(); });
+projFile.addEventListener("change", async () => {
+  const file = projFile.files[0]; if (!file) return;
+  try { importProjects(JSON.parse(await file.text())); showToast(t("projLoaded")); }
+  catch(e) { showToast(t("projBad")); }
+});
 const TOUR_TARGETS = [null, "#exSel", "#toolSel", "#projectBar", "#tourChar", "#tourStyle", "#shotForms", "#cardMaster", "#cardBg", "#cardScript", "#shot0", "#progress", "#exportBtn"];
+// The 3D studio's own tour (inside the shot dialog); each step can switch the studio to its tab.
+const STUDIO_TOUR = [
+  { sel: "#studio .cps-stage" },
+  { sel: "#studio .cps-stage", tab: "pose", sub: "presets" },
+  { sel: "#studio .cps-joint-edit", tab: "pose", sub: "joints" },
+  { sel: "#studio .cps-row:has([data-campreset])", tab: "camera" },
+  { sel: "#studioDlg .dlg-use" },
+  { sel: "#studio .cps-download" }
+];
+let tourSet = "main", tourHome = null;
+const tourSteps = () => t(tourSet === "studio" ? "studioTour" : "tour");
 const tourEl = document.getElementById("tour");
 const tourSpot = document.getElementById("tourSpot");
 const tourCard = document.getElementById("tourCard");
@@ -1987,12 +2087,17 @@ let tourOpener = null;
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 function tourTarget() {
-  const sel = TOUR_TARGETS[tourIdx];
+  const sel = tourSet === "studio" ? STUDIO_TOUR[tourIdx].sel : TOUR_TARGETS[tourIdx];
   const el = sel ? document.querySelector(sel) : null;
   // 下拉框本身太小,高亮它所在的整个字段
   return el && el.tagName === "SELECT" ? el.closest(".field") : el;
 }
-function startTour() {
+function startStudioTour() { startTour("studio"); }
+function startTour(set = "main") {
+  tourSet = set;
+  // A modal dialog sits above the page, so the studio tour moves into the dialog while it runs.
+  const dlgEl = document.getElementById("studioDlg");
+  if (set === "studio" && dlgEl.open) { tourHome = tourHome || tourEl.parentNode; dlgEl.append(tourEl); }
   tourOpener = document.activeElement;
   tourIdx = 0;
   tourEl.hidden = false;
@@ -2003,10 +2108,16 @@ function startTour() {
 function endTour() {
   tourEl.hidden = true;
   tourIdx = -1;
+  if (tourHome && tourEl.parentNode !== tourHome) tourHome.append(tourEl);
   if (tourOpener && tourOpener.focus) tourOpener.focus();
 }
 function showTourStep() {
-  const steps = t("tour");
+  const steps = tourSteps();
+  if (tourSet === "studio") {
+    const step = STUDIO_TOUR[tourIdx], click = sel => document.querySelector(sel)?.click();
+    if (step.tab) click(`#studio [data-tab="${step.tab}"]`);
+    if (step.sub) click(`#studio [data-subtab="${step.sub}"]`);
+  }
   const [title, body] = steps[tourIdx];
   document.getElementById("tourStep").textContent = t("tourStepOf").replace("{n}", tourIdx + 1).replace("{total}", steps.length);
   document.getElementById("tourTitle").textContent = title;
@@ -2039,7 +2150,7 @@ function positionTour() {
     tourCard.style.left = tourCard.style.top = "";
     return;
   }
-  const pad = 8, topLimit = 64;
+  const pad = 8, topLimit = tourSet === "studio" ? 8 : 64;
   const r = el.getBoundingClientRect();
   const top = Math.max(r.top - pad, topLimit);
   const bottom = Math.min(r.bottom + pad, window.innerHeight - 8);
@@ -2065,15 +2176,16 @@ function positionTour() {
 function tourGo(delta) {
   const n = tourIdx + delta;
   if (n < 0) return;
-  if (n >= t("tour").length) { endTour(); return; }
+  if (n >= tourSteps().length) { endTour(); return; }
   tourIdx = n;
   showTourStep();
 }
 document.getElementById("tourNext").addEventListener("click", () => tourGo(1));
 document.getElementById("tourBack").addEventListener("click", () => tourGo(-1));
 document.getElementById("tourClose").addEventListener("click", endTour);
-document.getElementById("tourBtn").addEventListener("click", startTour);
-document.getElementById("guideBtn").addEventListener("click", startTour);
+document.getElementById("tourBtn").addEventListener("click", () => startTour());
+document.getElementById("guideBtn").addEventListener("click", () => startTour());
+document.getElementById("studioHelp").addEventListener("click", () => startStudioTour());
 tourEl.addEventListener("click", e => { if (e.target === tourEl) endTour(); });
 document.addEventListener("keydown", e => {
   if (tourIdx < 0) return;

@@ -17,7 +17,7 @@ const CamPose = (() => {
   const ui = {
     en: {
       editor: "Studio view · drag background to orbit", actual: "CAMERA VIEW", front: "Front", side: "Right", back: "Back", frame: "Fit scene",
-      selected: "Selected joint", resetPart: "Reset joint", mirror: "Mirror joint", flip: "Swap sides", joints: "18 parts · 54 angle controls", pagePoses: "Poses", stool: "On a stool", posesLabel: "Pose", railPrev: "Previous options", railNext: "More options", gaze: "Gaze", gazeCamera: "Camera", gazeOther: "Other", gazePick: "Pointer", gazePicking: "Drag in 3D…", gazeAhead: "Ahead", lens: "Lens (mm)", lensAuto: "Auto", facing: "Facing", faceFront: "Front", faceRight: "Right side", faceBack: "Back", faceLeft: "Left side", turnLabel: "Turn the figure", turnHint: "Or drag the dot on the orange ring at the feet; drag the ring itself to move the figure", pageFigure: "Body type", pageJoints: "Joints", mapLeft: "L", mapRight: "R",
+      selected: "Selected joint", resetPart: "Reset joint", mirror: "Mirror joint", flip: "Swap sides", joints: "18 parts · 54 angle controls", pagePoses: "Poses", stool: "On a stool", posesLabel: "Pose", simpleMode: "Simple mode", rotateHint: "Tip: turn your phone sideways — the 3D studio is easier in landscape.", fullscreen: "Full screen", railPrev: "Previous options", railNext: "More options", gaze: "Gaze", gazeCamera: "Camera", gazeOther: "Other", gazePick: "Pointer", gazePicking: "Drag in 3D…", gazeAhead: "Ahead", lens: "Lens (mm)", lensAuto: "Auto", facing: "Facing", faceFront: "Front", faceRight: "Right side", faceBack: "Back", faceLeft: "Left side", turnLabel: "Turn the figure", turnHint: "Or drag the dot on the orange ring at the feet; drag the ring itself to move the figure", pageFigure: "Body type", pageJoints: "Joints", mapLeft: "L", mapRight: "R",
       fine: "Select a joint or body surface. Drag to pose; use sliders or arrow keys for precise angles.",
       cameraHelp: "Yellow is the actual camera: drag it closer, through the pink reference arc. Green: orbit · pink: elevation. The target marker shows where the camera aims.",
       unsupported: "This browser could not start 3D. Enable WebGL or try another browser. Angle controls and prompt output still work.",
@@ -28,7 +28,7 @@ const CamPose = (() => {
     },
     zh: {
       editor: "工作视图 · 拖动空白处旋转", actual: "实际镜头画面", front: "正面", side: "右侧", back: "背面", frame: "查看整个场景",
-      selected: "当前关节", resetPart: "重置此部位", mirror: "镜像此部位", flip: "左右互换", joints: "18 个部位 · 54 项角度控制", pagePoses: "姿势", stool: "坐凳子", posesLabel: "姿势", railPrev: "上一组选项", railNext: "更多选项", gaze: "视线", gazeCamera: "看镜头", gazeOther: "看对方", gazePick: "跟着鼠标", gazePicking: "在画面上拖动…", gazeAhead: "正前方", lens: "镜头 (mm)", lensAuto: "自动", facing: "人物朝向", faceFront: "正面", faceRight: "右侧", faceBack: "背面", faceLeft: "左侧", turnLabel: "旋转人物", turnHint: "也可以拖动脚下橙色圆圈上的圆点；拖动圆圈本身可以移动人物", pageFigure: "体型", pageJoints: "关节", mapLeft: "左", mapRight: "右",
+      selected: "当前关节", resetPart: "重置此部位", mirror: "镜像此部位", flip: "左右互换", joints: "18 个部位 · 54 项角度控制", pagePoses: "姿势", stool: "坐凳子", posesLabel: "姿势", simpleMode: "简化模式", rotateHint: "建议横屏使用 3D 工作室，操作更顺手。", fullscreen: "全屏", railPrev: "上一组选项", railNext: "更多选项", gaze: "视线", gazeCamera: "看镜头", gazeOther: "看对方", gazePick: "跟着鼠标", gazePicking: "在画面上拖动…", gazeAhead: "正前方", lens: "镜头 (mm)", lensAuto: "自动", facing: "人物朝向", faceFront: "正面", faceRight: "右侧", faceBack: "背面", faceLeft: "左侧", turnLabel: "旋转人物", turnHint: "也可以拖动脚下橙色圆圈上的圆点；拖动圆圈本身可以移动人物", pageFigure: "体型", pageJoints: "关节", mapLeft: "左", mapRight: "右",
       fine: "点选关节点或人物表面，拖动调整姿势；滑块和方向键可精确调角度。",
       cameraHelp: "黄色就是真实相机，可穿过粉色参考弧继续靠近。绿色调方位，粉色调仰俯；瞄准点标出实际朝向。",
       unsupported: "浏览器无法启动 3D，请启用 WebGL 或换一个浏览器。角度控制和提示词仍可使用。",
@@ -53,6 +53,9 @@ const CamPose = (() => {
     const cur = () => (state.editing === "b" && state.second ? state.pose2 : state.pose);
     let view = { yaw: 25, pitch: 12, dist: 3.8 };
     let presetGlide = 0, ringPts = [], gazePick = false;
+    // Simple mode (handy on phones): presets, camera angles and the turn ring only; no joint editing.
+    let simple = false;
+    try { simple = localStorage.getItem("promptlab.simple") === "1"; } catch (e) {}
     // Where each figure is looking: null (free), "camera", "other", "ahead" or { point } — camera / other keep following.
     const gaze = { a: null, b: null }, gazeCache = { a: "", b: "" };
     let width = 0, height = 0, handles = [], dragging = null, scheduled = 0, lost = false, drawing = false;
@@ -60,7 +63,8 @@ const CamPose = (() => {
     root.classList.add("cps");
     root.innerHTML = `
       <div class="cps-left">
-        <div class="cps-view-tools"><span class="cps-editor-label"></span><div>
+        <div class="cps-rotate" hidden><span class="cps-rotate-text"></span><button type="button" data-fullscreen></button><button type="button" data-rotate-close aria-label="Close">×</button></div>
+        <div class="cps-view-tools"><span class="cps-editor-label"></span><button type="button" class="cps-simple-btn" data-simple aria-pressed="false"></button><div>
           <button type="button" data-view="front"></button><button type="button" data-view="side"></button><button type="button" data-view="back"></button><button type="button" data-view="frame"></button>
         </div><div class="cps-render-modes"><button type="button" data-mode="volume" aria-pressed="true"></button><button type="button" data-mode="drawing" aria-pressed="false"></button></div><div class="cps-render-modes cps-finishes" role="group"><button type="button" data-finish="clay"></button><button type="button" data-finish="wood"></button><button type="button" data-finish="skin"></button></div><button type="button" class="cps-download" data-download></button></div>
       <div class="cps-stage fresh">
@@ -458,14 +462,16 @@ const CamPose = (() => {
     function project(point) {
       const p = V(point).project(editorCamera); return { x: (p.x + 1) * width / 2, y: (1 - p.y) * height / 2, z: p.z };
     }
+    const coarse = matchMedia("(pointer: coarse)");
     function handle(p, id, color, radius = 6, label = "") {
       const q = project(p); if (q.z < -1 || q.z > 1) return;
+      if (coarse.matches) radius += 1.5;
       const active = id === "part:" + state.part;
       ctx.beginPath(); ctx.arc(q.x, q.y, radius + (active ? 3 : 0), 0, Math.PI * 2);
       ctx.fillStyle = active ? "#ffcc96" : color; ctx.fill(); ctx.lineWidth = active ? 2 : 1.5; ctx.strokeStyle = "#17202d"; ctx.stroke();
       if (active) { ctx.beginPath(); ctx.arc(q.x, q.y, radius + 6, 0, Math.PI * 2); ctx.strokeStyle = "rgba(255,204,150,.6)"; ctx.lineWidth = 1; ctx.stroke(); }
       if (label) { ctx.font = "11px system-ui"; ctx.fillStyle = color; ctx.fillText(label, q.x + 13, q.y + 4); }
-      handles.push({ ...q, id, radius: Math.max(12, radius + 5) });
+      handles.push({ ...q, id, radius: Math.max(coarse.matches ? 22 : 12, radius + 5) });
     }
     const controlPoint = (id, cam = state.cam) => M.cameraControlPoint(cam, id, controlCenter);
     function insetRect() {
@@ -597,7 +603,7 @@ const CamPose = (() => {
         const joints = Object.entries(PARTS).map(([part, config]) => ({ part, point: EJ[config.joint] }));
         // Paint far handles first so the nearest overlapping joint remains selectable.
         joints.sort((a, b) => V(b.point).distanceTo(editorCamera.position) - V(a.point).distanceTo(editorCamera.position));
-        for (const { part, point } of joints) handle(point, "part:" + part, part.startsWith("l") ? "#8edcce" : "#b4c6ef", part === state.part ? 5.5 : 4);
+        if (!simple) for (const { part, point } of joints) handle(point, "part:" + part, part.startsWith("l") ? "#8edcce" : "#b4c6ef", part === state.part ? 5.5 : 4);
         // While dragging, show the numbers being changed next to what is moving.
         if (dragging) {
           const pose = cur(), text = ui[lang], pill = (pt, label) => {
@@ -673,6 +679,8 @@ const CamPose = (() => {
       root.querySelector(".cps-editor-label").textContent = text.editor;
       root.querySelectorAll("[data-view]").forEach(b => { b.textContent = text[b.dataset.view]; });
       root.querySelector(".cps-finishes").setAttribute("aria-label", text.finish);
+      root.querySelector(".cps-rotate-text").textContent = text.rotateHint; root.querySelector("[data-fullscreen]").textContent = text.fullscreen;
+      { const b = root.querySelector("[data-simple]"); if (b) b.textContent = text.simpleMode; }
       root.querySelectorAll("[data-finish]").forEach(b => { b.textContent = text["finish_" + b.dataset.finish]; b.setAttribute("aria-pressed", b.dataset.finish === finish); });
       root.querySelectorAll("[data-mode]").forEach(b => { b.textContent = text[b.dataset.mode]; b.setAttribute("aria-pressed", drawing === (b.dataset.mode === "drawing")); });
       root.querySelector(".cps-inset-label").textContent = text.actual;
@@ -905,8 +913,9 @@ const CamPose = (() => {
       // Grabbing the ring itself (not its dot) moves the figure across the floor.
       for (let i = 1; i < ringPts.length; i++) {
         const a = ringPts[i - 1], b = ringPts[i], vx = b.x - a.x, vy = b.y - a.y, t = clamp(((p.x - a.x) * vx + (p.y - a.y) * vy) / (vx * vx + vy * vy || 1), 0, 1);
-        if (Math.hypot(a.x + vx * t - p.x, a.y + vy * t - p.y) < 7) return "move";
+        if (Math.hypot(a.x + vx * t - p.x, a.y + vy * t - p.y) < (coarse.matches ? 16 : 7)) return "move";
       }
+      if (simple) return null;
       raycaster.setFromCamera({ x: p.x / width * 2 - 1, y: 1 - p.y / height * 2 }, editorCamera);
       const hit = raycaster.intersectObjects(meshes.filter(m => m.visible && (m.userData.figure === "a" || state.second)), false)[0];
       if (!hit) return null;
@@ -943,7 +952,7 @@ const CamPose = (() => {
       if (gazePick && state.tab === "pose") {
         // Press and drag: the head follows the pointer until release; the mode stays on for more.
         const p = point(e); dragging = { id: "gaze", pointer: e.pointerId, last: p };
-        canvas.setPointerCapture(e.pointerId); gazeAt(p, false); e.preventDefault(); return;
+        try { canvas.setPointerCapture(e.pointerId); } catch (err) {} gazeAt(p, false); e.preventDefault(); return;
       }
       const p = point(e); let id = pick(p);
       if (id?.startsWith("part:")) {
@@ -960,7 +969,7 @@ const CamPose = (() => {
         const normal = new THREE.Vector3(); editorCamera.getWorldDirection(normal);
         dragging.ik = { side: state.part[0], kind: reach[0], joint, plane: new THREE.Plane().setFromNormalAndCoplanarPoint(normal, V(J[joint])) };
       }
-      canvas.setPointerCapture(e.pointerId); canvas.style.cursor = "grabbing"; e.preventDefault();
+      try { canvas.setPointerCapture(e.pointerId); } catch (err) {} canvas.style.cursor = "grabbing"; e.preventDefault();
     });
     function nudge(part, dx, dy) {
       const controls = PARTS[part].controls;
@@ -1038,11 +1047,38 @@ const CamPose = (() => {
     });
     const end = e => { if (dragging && e.pointerId === dragging.pointer) { const wasGaze = dragging.id === "gaze"; dragging = null; canvas.style.cursor = gazePick ? "crosshair" : "default"; if (wasGaze) renderPanel(); render(); } };
     canvas.addEventListener("pointerup", end); canvas.addEventListener("pointercancel", end); canvas.addEventListener("lostpointercapture", end);
+    // Two fingers: pinch to zoom the studio view (the first finger's drag is cancelled).
+    const touches = new Map(); let pinch = 0;
+    canvas.addEventListener("pointerdown", e => { if (e.pointerType !== "touch") return; touches.set(e.pointerId, [e.clientX, e.clientY]); if (touches.size === 2) { dragging = null; const [a, b] = [...touches.values()]; pinch = Math.hypot(a[0] - b[0], a[1] - b[1]); } }, true);
+    canvas.addEventListener("pointermove", e => {
+      if (!touches.has(e.pointerId)) return; touches.set(e.pointerId, [e.clientX, e.clientY]);
+      if (touches.size === 2 && pinch) { const [a, b] = [...touches.values()], d = Math.hypot(a[0] - b[0], a[1] - b[1]); if (d > 0) { view.dist = clamp(view.dist * pinch / d, 1.7, 9); pinch = d; render(); } e.stopImmediatePropagation(); }
+    }, true);
+    const lift = e => { touches.delete(e.pointerId); if (touches.size < 2) pinch = 0; };
+    canvas.addEventListener("pointerup", lift, true); canvas.addEventListener("pointercancel", lift, true);
     canvas.addEventListener("wheel", e => { e.preventDefault(); view.dist = clamp(view.dist * (1 + Math.sign(e.deltaY) * 0.08), 1.7, 9); render(); }, { passive: false });
     canvas.addEventListener("webglcontextlost", e => { e.preventDefault(); lost = true; status.hidden = false; status.textContent = ui[lang].context; });
     canvas.addEventListener("webglcontextrestored", () => { lost = false; status.hidden = true; render(); });
     preview.addEventListener('toggle', render);
     state.cam = M.constrainCamera(state.cam, M.skeleton(state.pose));
+    // Phones held upright: suggest landscape (and offer full screen, which can lock to landscape).
+    const rotateBar = root.querySelector(".cps-rotate"), portraitTouch = matchMedia("(orientation: portrait) and (pointer: coarse) and (max-width: 900px)");
+    let rotateDismissed = false; try { rotateDismissed = sessionStorage.getItem("promptlab.rotateHint") === "0"; } catch (e) {}
+    const syncRotate = () => { rotateBar.hidden = rotateDismissed || !portraitTouch.matches; };
+    portraitTouch.addEventListener?.("change", syncRotate); syncRotate();
+    rotateBar.querySelector("[data-rotate-close]").addEventListener("click", () => { rotateDismissed = true; try { sessionStorage.setItem("promptlab.rotateHint", "0"); } catch (e) {} syncRotate(); });
+    rotateBar.querySelector("[data-fullscreen]").addEventListener("click", async () => {
+      try { if (!document.fullscreenElement) await root.requestFullscreen(); await screen.orientation?.lock?.("landscape"); } catch (e) {}
+      setTimeout(size, 300);
+    });
+    document.addEventListener("fullscreenchange", () => setTimeout(size, 200));
+    const syncSimple = () => { root.classList.toggle("cps-simple", simple); const b = root.querySelector("[data-simple]"); b.setAttribute("aria-pressed", simple); b.textContent = ui[lang].simpleMode; };
+    root.querySelector("[data-simple]").addEventListener("click", () => {
+      simple = !simple; try { localStorage.setItem("promptlab.simple", simple ? "1" : "0"); } catch (e) {}
+      if (simple && state.poseTab === "joints") state.poseTab = "presets";
+      syncSimple(); renderPanel(); render();
+    });
+    syncSimple();
     // Follow the page's day / night theme.
     const themeWatch = new MutationObserver(() => render()); themeWatch.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
     const darkMedia = matchMedia("(prefers-color-scheme: dark)"), onScheme = () => render(); darkMedia.addEventListener?.("change", onScheme);
