@@ -68,3 +68,7 @@ No install, no build step. Open `index.html` in any modern browser, on desktop o
 1. Repository **Settings → Pages**
 2. Source: **Deploy from a branch**, branch `main`, folder `/ (root)`
 3. Save and wait 1–2 minutes, then open `https://chengwq95.github.io/ai-video-prompt-builder/`
+
+## License
+
+[MIT](LICENSE). Bundled third-party files keep their own licences; see `vendor/README.md` and `vendor/HUMAN-ASSETS-LICENSE.md`.
